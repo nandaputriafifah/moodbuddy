@@ -5,12 +5,17 @@ import {Router} from "@angular/router";
 import {User} from "./user";
 import firebase from "firebase/compat/app";
 import auth = firebase.auth;
+import {error} from "protractor";
+import {user} from "@angular/fire/auth";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
   userData: any;
+  userId: any;
+  userEmail: any;
+
   constructor(
     public afStore: AngularFirestore,
     public ngFireAuth: AngularFireAuth,
@@ -33,10 +38,56 @@ export class AuthenticationService {
   SignIn(email, password) {
     return this.ngFireAuth.signInWithEmailAndPassword(email, password);
   }
-  // Register user with email/password
-  RegisterUser(email, password) {
-    return this.ngFireAuth.createUserWithEmailAndPassword(email, password);
+  // Register user with email, password, name, username
+  RegisterUser(email, password, name, username) {
+    return this.ngFireAuth.createUserWithEmailAndPassword(email, password).then((result) => {
+      const userRef: AngularFirestoreDocument<any> = this.afStore.doc(
+        `users/${result.user.uid}`
+      );
+      const userData: User = {
+        uid: result.user.uid,
+        email: result.user.email,
+        displayName: name,
+        emailVerified: result.user.emailVerified,
+      };
+      return userRef.set(userData, {
+        merge: true,
+      });
+
+      // this.SetUserData(result.user);
+      // console.log(result);
+    }).catch((error) => {
+      window.alert(error);
+    });
+    // return this.ngFireAuth.createUserWithEmailAndPassword(email, password).then((user) => {
+    //   if (user) {
+    //     console.log(user);
+    //     this.userId = user['user'].uid;
+    //     this.userEmail = user['user'].email;
+    //
+    //     // Inserting into database
+    //     firebase.database().ref('users/' + this.userId).set({
+    //         displayName: name,
+    //         displayUsername: username,
+    //         displayEmail: email
+    //     },(error) => {
+    //       if (error) {
+    //         console.log(error);
+    //       } else {
+    //         console.log('New User Saved');
+    //       }
+    //     });
+    //   }
+    //   return user;
+    // }).catch((error) => {
+    //   // Handle Errors here.
+    //   const errorCode = error.code;
+    //   const errorMessage = error.message;
+    //   console.log(errorMessage);
+    //   return errorMessage;
+    // });
   }
+
   // Email verification when new user register
   SendVerificationMail() {
     return firebase.auth().currentUser.sendEmailVerification()

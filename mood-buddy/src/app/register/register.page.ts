@@ -16,8 +16,8 @@ export class RegisterPage implements OnInit {
 
   ngOnInit() {
   }
-  signUp(email, password){
-    this.authService.RegisterUser(email.value, password.value)
+  signUp(email, password, name, username){
+    this.authService.RegisterUser(email.value, password.value, name.value, username.value)
       .then((res) => {
         this.authService.SendVerificationMail()
         this.router.navigate(['verify-email']);
