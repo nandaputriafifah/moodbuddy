@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {AuthenticationService} from "../shared/authentication.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-dashboard',
@@ -9,10 +9,14 @@ import {AuthenticationService} from "../shared/authentication.service";
 export class DashboardPage implements OnInit {
 
   constructor(
-    public authService: AuthenticationService
+    public router: Router
   ) { }
 
   ngOnInit() {
+  }
+
+  goToAddMoodPage() {
+    this.router.navigate(['/dashboard/add-mood']);
   }
 
 }

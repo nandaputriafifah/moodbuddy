@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Mood Check-In</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <!-- Display default input with current date   -->
+    <ion-input
+      [(ngModel)]="dateNumber"
+      value="{{ date | date: 'MMMM dd, YYY' }}"
+      id="date"
+      class="ion-text-start"
+    ></ion-input>
+    <ion-popover
+      trigger="date"
+      side="start"
+      alignment="end"
+      size="auto">
+      <ng-template>
+        <ion-datetime
+          presentation="date"
+          [(ngModel)]="date"
+          locale="en-US"
+        ></ion-datetime>
+      </ng-template>
+    </ion-popover>
+  </ion-card>
+
+  <ion-card>
+    <ion-label>How's your feeling?</ion-label>
+    <br>
+    <ion-button>Unhappy</ion-button>
+    <ion-button>Sad</ion-button>
+    <ion-button>Neutral</ion-button>
+    <ion-button>Good</ion-button>
+    <ion-button>Happy</ion-button>
+  </ion-card>
+
+  <ion-card>
+    <ion-label>Which words can describe your feelings?</ion-label>
+    <br>
+    <ion-button>Joy</ion-button>
+    <ion-button>Sadness</ion-button>
+    <ion-button>Acceptance</ion-button>
+    <ion-button>Disgust</ion-button>
+    <ion-button>Fear</ion-button>
+    <ion-button>Anger</ion-button>
+    <ion-button>Surprised</ion-button>
+    <ion-button>Anticipation</ion-button>
+  </ion-card>
+
+  <ion-card>
+    <ion-label>What’s going on, what’s making you feel this way?</ion-label>
+    <br>
+    <ion-button>Joy</ion-button>
+    <ion-button>Sadness</ion-button>
+    <ion-button>Acceptance</ion-button>
+    <ion-button>Disgust</ion-button>
+    <ion-button>Fear</ion-button>
+    <ion-button>Anger</ion-button>
+    <ion-button>Surprised</ion-button>
+    <ion-button>Anticipation</ion-button>
+  </ion-card>
+
+</ion-content>

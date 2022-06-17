@@ -1,9 +1,33 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>dashboard</ion-title>
-  </ion-toolbar>
-</ion-header>
-
+<!--  This is for display tabs button    -->
 <ion-content>
-  <ion-button type="submit" (click)="authService.SignOut()" expand="block">Logout</ion-button>
+  <ion-tabs>
+    <ion-tab-bar slot="bottom">
+      <!--  Tabs Landing Page    -->
+      <ion-tab-button tab="landing-page">
+        <ion-icon name="home"></ion-icon>
+      </ion-tab-button>
+
+      <!--  Tabs Journal    -->
+      <ion-tab-button tab="journal">
+        <ion-icon name="book"></ion-icon>
+      </ion-tab-button>
+
+      <!--  Tabs Add Mood    -->
+      <!--  When click add mood button on tabs, directly
+          go to add mood page -->
+      <ion-tab-button type="submit" (click)="goToAddMoodPage()">
+        <ion-icon name="add-circle"></ion-icon>
+      </ion-tab-button>
+
+      <!--  Tabs Shop    -->
+      <ion-tab-button tab="shop">
+        <ion-icon name="storefront"></ion-icon>
+      </ion-tab-button>
+
+      <!--  Tabs Settings    -->
+      <ion-tab-button tab="settings">
+        <ion-icon name="settings"></ion-icon>
+      </ion-tab-button>
+    </ion-tab-bar>
+  </ion-tabs>
 </ion-content>
