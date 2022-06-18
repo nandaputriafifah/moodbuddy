@@ -38,8 +38,8 @@ export class AuthenticationService {
   SignIn(email, password) {
     return this.ngFireAuth.signInWithEmailAndPassword(email, password);
   }
-  // Register user with email, password, name, username
-  RegisterUser(email, password, name, username) {
+  // Register user with email, password, name
+  RegisterUser(email, password, name) {
     return this.ngFireAuth.createUserWithEmailAndPassword(email, password).then((result) => {
       const userRef: AngularFirestoreDocument<any> = this.afStore.doc(
         `users/${result.user.uid}`
@@ -49,16 +49,16 @@ export class AuthenticationService {
         uid: result.user.uid,
         email: result.user.email,
         displayName: name,
-        username: username,
         emailVerified: result.user.emailVerified,
-        moodCheckIn: {
-          moodId: null,
-          date: null,
-          currentMood: null,
-          currentFeeling: null,
-          activities: null,
-          notes: null
-        }
+        moodCount: 0
+        // moodCheckIn: {
+        //   moodId: '',
+        //   date: '',
+        //   currentMood: '',
+        //   currentFeeling: '',
+        //   activities: [''],
+        //   notes: ''
+        // }
       };
       return userRef.set(userData, {
         merge: true,
@@ -126,16 +126,16 @@ export class AuthenticationService {
       uid: user.uid,
       email: user.email,
       displayName: user.displayName,
-      username: user.username,
       emailVerified: user.emailVerified,
-      moodCheckIn: {
-        moodId: user.moodId,
-        date: user.date,
-        currentMood: user.currentMood,
-        currentFeeling: user.currentFeeling,
-        activities: user.activities,
-        notes: user.notes
-      }
+      moodCount: 0
+      // moodCheckIn: {
+      //   moodId: user.moodId,
+      //   date: user.date,
+      //   currentMood: user.currentMood,
+      //   currentFeeling: user.currentFeeling,
+      //   activities: user.activities,
+      //   notes: user.notes
+      // }
     };
     return userRef.set(userData, {
       merge: true,

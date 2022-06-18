@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {UserService} from "../../shared/user.service";
-import {NgForm} from "@angular/forms";
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import firebase from "firebase/compat/app";
 import {Router} from "@angular/router";
+
 
 @Component({
   selector: 'app-add-mood',
@@ -11,15 +12,35 @@ import {Router} from "@angular/router";
 export class AddMoodPage implements OnInit {
   date: string;
   dateNumber: any;
-  // day: string;
-  // month: string;
+  doc: any;
+  moodList: {moodId: string; date: string; currentMood: string; currentFeeling: string; activities: string; notes: string }[];
+  addMood: {date: string; currentMood: string; currentFeeling: string; activities: string; notes: string };
+
 
   constructor(
-    private router: Router,
-    private userSrv: UserService
+    private firestore: AngularFirestore,
+    private router: Router
   ) { }
 
   ngOnInit() {
+    this.addMood = {date: '', currentMood: '', currentFeeling: '', activities: '', notes: '' }
+    // Define auth
+    firebase.auth().onAuthStateChanged((user) => {
+      this.firestore.collection('users/').snapshotChanges().subscribe(res=>{
+        if(res){
+          this.moodList = res.map(e=>{
+            return{
+              moodId: e.payload.doc.id,
+              date: e.payload.doc.data()['date'],
+              currentMood: e.payload.doc.data()['currentMood'],
+              currentFeeling: e.payload.doc.data()['currentFeeling'],
+              activities: e.payload.doc.data()['activities'],
+              notes: e.payload.doc.data()['notes']
+            }
+          })
+        }
+      })
+    });
     setTimeout(() => {
       // Get current date
       this.dateNumber = new Date().toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' });
@@ -30,16 +51,21 @@ export class AddMoodPage implements OnInit {
     });
   }
 
-  // onSubmit(form: NgForm) {
-  //   console.log('Form', form);
-  //
-  //   this.userSrv.create(form.value).then(res => {
-  //     console.log('res', res);
-  //     this.router.navigateByUrl('/dashboard/tabs/journal');
-  //   }).catch(error => console.log(error));
-  //
-  //   form.reset();
-  //   this.router.navigateByUrl('/dashboard/tabs/journal');
-  // }
-
+  AddMood(date, currentMood, currentFeeling, activities, notes){
+    let addMood = {}
+    addMood['date'] = date
+    addMood['currentMood'] = currentMood
+    addMood['currentFeeling'] = currentFeeling
+    addMood['activities'] = activities
+    addMood['notes'] = notes
+    console.log(addMood)
+    firebase.auth().onAuthStateChanged((user) => {
+      // Create new collection named 'moodCheckIn'
+      // Firestore will create id for everytime user added mood
+      this.firestore.collection('/users/').doc(user.uid).collection('moodCheckIn/').add(addMood).then(()=>{
+        this.addMood = {date: '', currentMood: '', currentFeeling: '', activities: '', notes: ''}
+        this.router.navigate(['/dashboard/tabs/landing-page']);
+      })
+    });
+  }
 }
