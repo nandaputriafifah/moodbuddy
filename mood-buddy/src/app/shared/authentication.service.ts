@@ -44,48 +44,28 @@ export class AuthenticationService {
       const userRef: AngularFirestoreDocument<any> = this.afStore.doc(
         `users/${result.user.uid}`
       );
+      // Inserting adata to firestore database
       const userData: User = {
         uid: result.user.uid,
         email: result.user.email,
         displayName: name,
+        username: username,
         emailVerified: result.user.emailVerified,
+        moodCheckIn: {
+          moodId: null,
+          date: null,
+          currentMood: null,
+          currentFeeling: null,
+          activities: null,
+          notes: null
+        }
       };
       return userRef.set(userData, {
         merge: true,
       });
-
-      // this.SetUserData(result.user);
-      // console.log(result);
     }).catch((error) => {
       window.alert(error);
     });
-    // return this.ngFireAuth.createUserWithEmailAndPassword(email, password).then((user) => {
-    //   if (user) {
-    //     console.log(user);
-    //     this.userId = user['user'].uid;
-    //     this.userEmail = user['user'].email;
-    //
-    //     // Inserting into database
-    //     firebase.database().ref('users/' + this.userId).set({
-    //         displayName: name,
-    //         displayUsername: username,
-    //         displayEmail: email
-    //     },(error) => {
-    //       if (error) {
-    //         console.log(error);
-    //       } else {
-    //         console.log('New User Saved');
-    //       }
-    //     });
-    //   }
-    //   return user;
-    // }).catch((error) => {
-    //   // Handle Errors here.
-    //   const errorCode = error.code;
-    //   const errorMessage = error.message;
-    //   console.log(errorMessage);
-    //   return errorMessage;
-    // });
   }
 
   // Email verification when new user register
@@ -146,7 +126,16 @@ export class AuthenticationService {
       uid: user.uid,
       email: user.email,
       displayName: user.displayName,
+      username: user.username,
       emailVerified: user.emailVerified,
+      moodCheckIn: {
+        moodId: user.moodId,
+        date: user.date,
+        currentMood: user.currentMood,
+        currentFeeling: user.currentFeeling,
+        activities: user.activities,
+        notes: user.notes
+      }
     };
     return userRef.set(userData, {
       merge: true,

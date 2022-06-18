@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import {UserService} from "../../shared/user.service";
+import {NgForm} from "@angular/forms";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-add-mood',
@@ -11,7 +14,10 @@ export class AddMoodPage implements OnInit {
   // day: string;
   // month: string;
 
-  constructor() { }
+  constructor(
+    private router: Router,
+    private userSrv: UserService
+  ) { }
 
   ngOnInit() {
     setTimeout(() => {
@@ -23,5 +29,17 @@ export class AddMoodPage implements OnInit {
       // this.month = new Date().toLocaleString('en-us',{ month: 'long' });
     });
   }
+
+  // onSubmit(form: NgForm) {
+  //   console.log('Form', form);
+  //
+  //   this.userSrv.create(form.value).then(res => {
+  //     console.log('res', res);
+  //     this.router.navigateByUrl('/dashboard/tabs/journal');
+  //   }).catch(error => console.log(error));
+  //
+  //   form.reset();
+  //   this.router.navigateByUrl('/dashboard/tabs/journal');
+  // }
 
 }
