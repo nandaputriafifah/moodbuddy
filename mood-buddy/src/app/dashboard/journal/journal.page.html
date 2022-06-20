@@ -5,9 +5,15 @@
 </ion-header>
 
 <ion-content>
-<!--  <ion-list>-->
-<!--    <ion-item *ngFor="let user of users">-->
-<!--      <ion-label>{{user.displayName}}</ion-label>-->
-<!--    </ion-item>-->
-<!--  </ion-list>-->
+  <ion-list>
+    <ion-item *ngFor="let mood of moodList">
+      <ion-card>
+        <ion-label>{{mood.date}}</ion-label>
+        <ion-label>{{mood.currentMood}}</ion-label>
+        <ion-label>{{mood.currentFeeling}}</ion-label>
+        <ion-label>{{mood.activities}}</ion-label>
+        <ion-label>{{mood.notes}}</ion-label>
+      </ion-card>
+    </ion-item>
+  </ion-list>
 </ion-content>

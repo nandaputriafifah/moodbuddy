@@ -13,7 +13,6 @@ export class AddMoodPage implements OnInit {
   date: string;
   dateNumber: any;
   doc: any;
-  moodList: {moodId: string; date: string; currentMood: string; currentFeeling: string; activities: string; notes: string }[];
   addMood: {date: string; currentMood: string; currentFeeling: string; activities: string; notes: string };
 
   /** This is list of mood, feelings, activities that available for inputs**/
@@ -69,23 +68,6 @@ export class AddMoodPage implements OnInit {
 
   ngOnInit() {
     this.addMood = {date: '', currentMood: '', currentFeeling: '', activities: '', notes: '' }
-    // Define user authentication
-    firebase.auth().onAuthStateChanged((user) => {
-      this.firestore.collection('users/').snapshotChanges().subscribe(res=>{
-        if(res){
-          this.moodList = res.map(e=>{
-            return{
-              moodId: e.payload.doc.id,
-              date: e.payload.doc.data()['date'],
-              currentMood: e.payload.doc.data()['currentMood'],
-              currentFeeling: e.payload.doc.data()['currentFeeling'],
-              activities: e.payload.doc.data()['activities'],
-              notes: e.payload.doc.data()['notes']
-            }
-          })
-        }
-      })
-    });
     setTimeout(() => {
       // Get current date
       this.dateNumber = new Date().toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' });
@@ -114,4 +96,12 @@ export class AddMoodPage implements OnInit {
       })
     });
   }
+
+  // AddMoodCount() {
+  //   firebase.auth().onAuthStateChanged((user) => {
+  //     this.firestore.collection('/users/').doc(user.uid).update({
+  //       moodCount: this.totalMoodCount +=
+  //     });
+  //   });
+  // }
 }
