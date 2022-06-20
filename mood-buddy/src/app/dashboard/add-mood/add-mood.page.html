@@ -8,103 +8,73 @@
 </ion-header>
 
 <ion-content>
-<!--    <ion-card>-->
-<!--      &lt;!&ndash; Display default input with current date   &ndash;&gt;-->
-<!--      <ion-input-->
-<!--        [(ngModel)]="dateNumber"-->
-<!--        formControlName="date"-->
-<!--        value="{{ date | date: 'MMMM dd, YYY' }}"-->
-<!--        id="date"-->
-<!--        class="ion-text-start"-->
-<!--      ></ion-input>-->
-<!--      <ion-popover-->
-<!--        trigger="date"-->
-<!--        side="start"-->
-<!--        alignment="end"-->
-<!--        size="auto">-->
-<!--        <ng-template>-->
-<!--          <ion-datetime-->
-<!--            presentation="date"-->
-<!--            [(ngModel)]="date"-->
-<!--            locale="en-US"-->
-<!--          ></ion-datetime>-->
-<!--        </ng-template>-->
-<!--      </ion-popover>-->
-<!--    </ion-card>-->
 
-<!--    <ion-card>-->
-<!--      <ion-label>How's your feeling?</ion-label>-->
-<!--      <br>-->
-<!--      <ion-button>Unhappy</ion-button>-->
-<!--      <ion-button>Sad</ion-button>-->
-<!--      <ion-button>Neutral</ion-button>-->
-<!--      <ion-button>Good</ion-button>-->
-<!--      <ion-button>Happy</ion-button>-->
-<!--    </ion-card>-->
-
-<!--    <ion-card>-->
-<!--      <ion-label>Which words can describe your feelings?</ion-label>-->
-<!--      <br>-->
-<!--      <ion-button>Joy</ion-button>-->
-<!--      <ion-button>Sadness</ion-button>-->
-<!--      <ion-button>Acceptance</ion-button>-->
-<!--      <ion-button>Disgust</ion-button>-->
-<!--      <ion-button>Fear</ion-button>-->
-<!--      <ion-button>Anger</ion-button>-->
-<!--      <ion-button>Surprised</ion-button>-->
-<!--      <ion-button>Anticipation</ion-button>-->
-<!--    </ion-card>-->
-
-<!--    <ion-card>-->
-<!--      <ion-label>What’s going on, what’s making you feel this way?</ion-label>-->
-<!--      <br>-->
-<!--      <ion-button>Work</ion-button>-->
-<!--      <ion-button>Friends</ion-button>-->
-<!--      <ion-button>Family</ion-button>-->
-<!--      <ion-button>Love</ion-button>-->
-<!--      <ion-button>Study</ion-button>-->
-<!--      <ion-button>Travel</ion-button>-->
-<!--      <ion-button>Shopping</ion-button>-->
-<!--      <ion-button>Cleaning</ion-button>-->
-<!--      <ion-button>Health</ion-button>-->
-<!--      <ion-button>Pets</ion-button>-->
-<!--      <ion-button>Gym</ion-button>-->
-<!--      <ion-button>Movies</ion-button>-->
-<!--      <ion-button>Music</ion-button>-->
-<!--      <ion-button>Gaming</ion-button>-->
-<!--      <ion-button>Party</ion-button>-->
-<!--      <ion-button>Reading</ion-button>-->
-<!--      <ion-button>Eating</ion-button>-->
-<!--      <ion-button>Self-care</ion-button>-->
-<!--      <ion-button>Time Alone</ion-button>-->
-<!--      <ion-button>Helping Others</ion-button>-->
-<!--    </ion-card>-->
   <ion-row>
-    <ion-col size="12" >
-      <ion-item>
-        <ion-input [(ngModel)]="addMood.date" placeholder="Date"></ion-input>
-      </ion-item>
-    </ion-col>
-    <ion-col size="12" >
-      <ion-item>
-        <ion-input [(ngModel)]="addMood.currentMood" placeholder="CurrentMood"></ion-input>
-      </ion-item>
-    </ion-col>
-    <ion-col size="12">
-      <ion-item>
-        <ion-input [(ngModel)]="addMood.currentFeeling" placeholder="CurrentFeeling"></ion-input>
-      </ion-item>
-    </ion-col>
-    <ion-col size="12">
-      <ion-item>
-        <ion-input [(ngModel)]="addMood.activities" placeholder="Activities"></ion-input>
-      </ion-item>
-    </ion-col>
+    <!-- Input Date -->
+    <ion-card>
+      <ion-input
+        [(ngModel)]="addMood.date"
+        value="{{ date | date: 'MMMM dd, YYY' }}"
+        id="date"
+        class="ion-text-start"
+      ></ion-input>
+      <ion-popover
+        trigger="date"
+        side="start"
+        alignment="end"
+        size="auto">
+        <ng-template>
+          <ion-datetime
+            presentation="date"
+            [(ngModel)]="date"
+            locale="en-US"
+          ></ion-datetime>
+        </ng-template>
+      </ion-popover>
+    </ion-card>
+
+    <!-- Current Mood -->
+    <ion-card>
+      <ion-label>How's your feeling?</ion-label>
+      <br>
+      <ion-radio-group [(ngModel)]="addMood.currentMood" >
+        <ion-item *ngFor="let mood of Mood">
+          <ion-label>{{mood.moodName}}</ion-label>
+          <ion-radio value="{{mood.moodName}}"></ion-radio>
+        </ion-item>
+      </ion-radio-group>
+    </ion-card>
+
+    <!-- Current Feeling -->
+    <ion-card>
+      <ion-label>Which words can describe your feelings?</ion-label>
+      <br>
+      <ion-select multiple="true" [(ngModel)]="addMood.currentFeeling">
+        <ion-item *ngFor="let feelings of Feelings">
+          <ion-select-option value="{{feelings.feelingName}}">{{feelings.feelingName}}</ion-select-option>
+        </ion-item>
+      </ion-select>
+    </ion-card>
+
+    <!-- Activities -->
+    <ion-card>
+      <ion-label>What’s going on, what’s making you feel this way?</ion-label>
+      <br>
+      <ion-select multiple="true" [(ngModel)]="addMood.activities">
+        <ion-item *ngFor="let activities of Activities">
+          <ion-select-option value="{{activities.activityName}}">{{activities.activityName}}</ion-select-option>
+        </ion-item>
+      </ion-select>
+    </ion-card>
+
+    <!-- Notes -->
     <ion-col size="12">
       <ion-item>
         <ion-input [(ngModel)]="addMood.notes" placeholder="Notes"></ion-input>
       </ion-item>
     </ion-col>
+
+    <!--Submit Button -->
     <ion-col size="10" offset="1">
       <ion-button expand="block"
                   color="success"
