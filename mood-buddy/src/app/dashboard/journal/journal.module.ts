@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { JournalPageRoutingModule } from './journal-routing.module';
 
 import { JournalPage } from './journal.page';
+import {UpdatemoodComponent} from "../../components/updatemood/updatemood.component";
 
 @NgModule({
   imports: [
@@ -15,6 +16,8 @@ import { JournalPage } from './journal.page';
     IonicModule,
     JournalPageRoutingModule
   ],
-  declarations: [JournalPage]
+  //ADD THE ENTRY COMPONENT AND THE DECLARATION
+  entryComponents:[UpdatemoodComponent],
+  declarations: [JournalPage, UpdatemoodComponent]
 })
 export class JournalPageModule {}

@@ -92,7 +92,7 @@ export class AddMoodPage implements OnInit {
       // Firestore will create id for everytime user added mood
       this.firestore.collection('/users/').doc(user.uid).collection('moodCheckIn/').add(addMood).then(()=>{
         this.addMood = {date: '', currentMood: '', currentFeeling: '', activities: '', notes: ''}
-        this.router.navigate(['/dashboard/tabs/landing-page']);
+        this.router.navigate(['/dashboard/tabs/journal']);
       })
     });
   }

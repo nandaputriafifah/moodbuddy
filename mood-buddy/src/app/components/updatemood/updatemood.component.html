@@ -1,9 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Mood Check-In</ion-title>
-    <ion-buttons>
-      <ion-back-button mode="md" defaultHref = "/dashboard/tabs/landing-page"></ion-back-button>
-    </ion-buttons>
+    <ion-title>edit-mood</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -12,7 +9,7 @@
     <!-- Input Date -->
     <ion-card>
       <ion-input
-        [(ngModel)]="addMood.date"
+        [(ngModel)]="date"
         value="{{ date | date: 'MMMM dd, YYY' }}"
         id="date"
         class="ion-text-start"
@@ -36,7 +33,7 @@
     <ion-card>
       <ion-label>How's your feeling?</ion-label>
       <br>
-      <ion-radio-group [(ngModel)]="addMood.currentMood" >
+      <ion-radio-group [(ngModel)]="currentMood" >
         <ion-item *ngFor="let mood of Mood">
           <ion-label>{{mood.moodName}}</ion-label>
           <ion-radio value="{{mood.moodName}}"></ion-radio>
@@ -48,7 +45,7 @@
     <ion-card>
       <ion-label>Which words can describe your feelings?</ion-label>
       <br>
-      <ion-select multiple="true" [(ngModel)]="addMood.currentFeeling">
+      <ion-select multiple="true" [(ngModel)]="currentFeeling">
         <ion-item *ngFor="let feelings of Feelings">
           <ion-select-option value="{{feelings.feelingName}}">{{feelings.feelingName}}</ion-select-option>
         </ion-item>
@@ -59,7 +56,7 @@
     <ion-card>
       <ion-label>What’s going on, what’s making you feel this way?</ion-label>
       <br>
-      <ion-select multiple="true" [(ngModel)]="addMood.activities">
+      <ion-select multiple="true" [(ngModel)]="activities">
         <ion-item *ngFor="let activities of Activities">
           <ion-select-option value="{{activities.activityName}}">{{activities.activityName}}</ion-select-option>
         </ion-item>
@@ -69,19 +66,15 @@
     <!-- Notes -->
     <ion-col size="12">
       <ion-item>
-        <ion-input [(ngModel)]="addMood.notes" placeholder="Notes"></ion-input>
+        <ion-input [(ngModel)]="notes" placeholder="Notes"></ion-input>
       </ion-item>
     </ion-col>
 
+    <!-- Close Button   -->
+    <ion-button expand="block" color="danger" (click)="CloseModal()">Cancel</ion-button>
+
     <!--Submit Button -->
-    <ion-col size="10" offset="1">
-      <ion-button expand="block"
-                  color="success"
-                  (click)="AddMood(addMood.date,
-                  addMood.currentMood,
-                  addMood.currentFeeling,
-                  addMood.activities,
-                  addMood.notes)">Add</ion-button>
-    </ion-col>
+    <ion-button expand="block" color="success" (click)="UpdateMood(date, currentMood, currentFeeling, activities, notes)">Update</ion-button>
   </ion-row>
+
 </ion-content>

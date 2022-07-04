@@ -13,6 +13,9 @@
         <ion-label>{{mood.currentFeeling}}</ion-label>
         <ion-label>{{mood.activities}}</ion-label>
         <ion-label>{{mood.notes}}</ion-label>
+        <ion-button (click)="UpdateMood(mood.moodId, mood.date, mood.currentMood,
+                    mood.currentFeeling, mood.activities, mood.notes)">Edit</ion-button>
+        <ion-button size="small" color="danger" (click)="DeleteMood(mood.moodId)"><ion-icon name="trash-outline"></ion-icon></ion-button>
       </ion-card>
     </ion-item>
   </ion-list>

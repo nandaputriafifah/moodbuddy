@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import firebase from "firebase/compat/app";
 import {AngularFirestore} from "@angular/fire/compat/firestore";
+import {Router} from "@angular/router";
+import {ModalController} from "@ionic/angular";
+import {UpdatemoodComponent} from "../../components/updatemood/updatemood.component";
 
 @Component({
   selector: 'app-journal',
@@ -10,7 +13,11 @@ import {AngularFirestore} from "@angular/fire/compat/firestore";
 export class JournalPage implements OnInit {
   moodList: {moodId: string; date: string; currentMood: string; currentFeeling: string; activities: string; notes: string }[];
 
-  constructor(private firestore: AngularFirestore) { }
+  constructor(
+    private firestore: AngularFirestore,
+    private router: Router,
+    private modalController: ModalController
+    ) { }
 
   ngOnInit() {
     // Define user authentication
@@ -32,4 +39,25 @@ export class JournalPage implements OnInit {
     });
   }
 
+  async UpdateMood(id, date, currentMood, currentFeeling, activities, notes) {
+    const modal = await this.modalController.create({
+      component:  UpdatemoodComponent,
+      cssClass: 'my-custom-class',
+      componentProps: {
+        'id': id,
+        'date': date,
+        'currentMood': currentMood,
+        'currentFeeling': currentFeeling,
+        'activities': activities,
+        'notes': notes
+      }
+    });
+    return await modal.present();
+  }
+
+  DeleteMood(id){
+    firebase.auth().onAuthStateChanged((user) => {
+      this.firestore.collection('users/').doc(user.uid).collection('moodCheckIn/').doc(id).delete()
+    });
+  }
 }
