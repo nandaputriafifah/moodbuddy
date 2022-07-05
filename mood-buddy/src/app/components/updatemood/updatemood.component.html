@@ -10,7 +10,7 @@
     <ion-card>
       <ion-input
         [(ngModel)]="date"
-        value="{{ date | date: 'MMMM dd, YYY' }}"
+        value="{{ dateValue | date: 'MMMM dd, YYY' }}"
         id="date"
         class="ion-text-start"
       ></ion-input>
@@ -22,7 +22,8 @@
         <ng-template>
           <ion-datetime
             presentation="date"
-            [(ngModel)]="date"
+            [(ngModel)]="dateValue"
+            [max]="maxDate"
             locale="en-US"
           ></ion-datetime>
         </ng-template>

@@ -1,7 +1,8 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {AngularFirestore} from "@angular/fire/compat/firestore";
 import {ModalController} from "@ionic/angular";
 import firebase from "firebase/compat/app";
+import {DatePipe} from "@angular/common";
 
 @Component({
   selector: 'app-updatemood',
@@ -15,6 +16,10 @@ export class UpdatemoodComponent implements OnInit {
   @Input() currentFeeling: string;
   @Input() activities: string;
   @Input() notes: string;
+
+  dateValue: string;
+  maxDate: string;
+
 
   /** This is list of mood, feelings, activities that available for inputs**/
   // List mood
@@ -67,7 +72,12 @@ export class UpdatemoodComponent implements OnInit {
     private modalController: ModalController
   ) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    // Add [max] option in updatemood.component.html to disable input future date
+    // Change format maxDate into yyyy-mm-dd ([max] option ONLY works in this date format)
+    this.maxDate = new Date().toISOString().split('T')[0];
+    console.log('THIS IS MAX DATE -->' + this.maxDate);
+  }
 
   UpdateMood(date, currentMood, currentFeeling, activities, notes){
     let updateMood = {}

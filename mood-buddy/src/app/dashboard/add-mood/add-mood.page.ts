@@ -11,6 +11,7 @@ import {Router} from "@angular/router";
 })
 export class AddMoodPage implements OnInit {
   date: string;
+  maxDate: string;
   dateNumber: any;
   doc: any;
   addMood: {date: string; currentMood: string; currentFeeling: string; activities: string; notes: string };
@@ -67,14 +68,14 @@ export class AddMoodPage implements OnInit {
   ) {}
 
   ngOnInit() {
+    // Add [max] option in add-mood.page.html to disable input future date
+    // Change format maxDate into yyyy-mm-dd ([max] option ONLY works in this date format)
+    this.maxDate = new Date().toISOString().split('T')[0];
+    console.log('THIS IS MAX DATE -->' + this.maxDate);
     this.addMood = {date: '', currentMood: '', currentFeeling: '', activities: '', notes: '' }
     setTimeout(() => {
       // Get current date
       this.dateNumber = new Date().toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' });
-      // // Get today's day name
-      // this.day = new Date().toLocaleString('en-us', {weekday:'long'});
-      // // Get today's month name
-      // this.month = new Date().toLocaleString('en-us',{ month: 'long' });
     });
   }
 
