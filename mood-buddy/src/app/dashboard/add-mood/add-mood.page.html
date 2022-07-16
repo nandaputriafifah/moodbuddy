@@ -16,6 +16,8 @@
         value="{{ date | date: 'MMMM dd, YYY' }}"
         id="date"
         class="ion-text-start"
+        #dates = "ngModel"
+        required
       ></ion-input>
       <ion-popover
         trigger="date"
@@ -31,46 +33,76 @@
           ></ion-datetime>
         </ng-template>
       </ion-popover>
+      <ion-item lines="none" *ngIf="!dates.valid && dates.touched">
+        <ion-note color="danger">Please select date</ion-note>
+      </ion-item>
     </ion-card>
 
     <!-- Current Mood -->
     <ion-card>
       <ion-label>How's your feeling?</ion-label>
       <br>
-      <ion-radio-group [(ngModel)]="addMood.currentMood" >
+      <ion-radio-group
+        [(ngModel)]="addMood.currentMood"
+        #mood = "ngModel"
+        required>
         <ion-item *ngFor="let mood of Mood">
           <ion-label>{{mood.moodName}}</ion-label>
           <ion-radio value="{{mood.moodName}}"></ion-radio>
         </ion-item>
       </ion-radio-group>
+      <ion-item lines="none" *ngIf="!mood.valid && mood.touched">
+        <ion-note color="danger">Please select your mood</ion-note>
+      </ion-item>
     </ion-card>
 
     <!-- Current Feeling -->
     <ion-card>
       <ion-label>Which words can describe your feelings?</ion-label>
       <br>
-      <ion-select multiple="true" [(ngModel)]="addMood.currentFeeling">
+      <ion-select
+        [(ngModel)]="addMood.currentFeeling"
+        multiple="true"
+        #feeling = "ngModel"
+        required>
         <ion-item *ngFor="let feelings of Feelings">
           <ion-select-option value="{{feelings.feelingName}}">{{feelings.feelingName}}</ion-select-option>
         </ion-item>
       </ion-select>
+      <ion-item lines="none" *ngIf="!feeling.valid && feeling.touched">
+        <ion-note color="danger">Please select your feelings</ion-note>
+      </ion-item>
     </ion-card>
 
     <!-- Activities -->
     <ion-card>
       <ion-label>What’s going on, what’s making you feel this way?</ion-label>
       <br>
-      <ion-select multiple="true" [(ngModel)]="addMood.activities">
+      <ion-select
+        [(ngModel)]="addMood.activities"
+        multiple="true"
+        #activities = "ngModel"
+        required>
         <ion-item *ngFor="let activities of Activities">
           <ion-select-option value="{{activities.activityName}}">{{activities.activityName}}</ion-select-option>
         </ion-item>
       </ion-select>
+      <ion-item lines="none" *ngIf="!activities.valid && activities.touched">
+        <ion-note color="danger">Please select your activities</ion-note>
+      </ion-item>
     </ion-card>
 
     <!-- Notes -->
     <ion-col size="12">
       <ion-item>
-        <ion-input [(ngModel)]="addMood.notes" placeholder="Notes"></ion-input>
+        <ion-input
+          [(ngModel)]="addMood.notes"
+          placeholder="Notes"
+          #notes = "ngModel"
+          required></ion-input>
+      </ion-item>
+      <ion-item lines="none" *ngIf="!notes.valid && notes.touched">
+        <ion-note color="danger">Please write your notes</ion-note>
       </ion-item>
     </ion-col>
 
@@ -78,6 +110,7 @@
     <ion-col size="10" offset="1">
       <ion-button expand="block"
                   color="success"
+                  [disabled]="!dates.valid || !mood.valid || !feeling.valid || !activities.valid || !notes.valid"
                   (click)="AddMood(
                   addMood.date,
                   addMood.currentMood,

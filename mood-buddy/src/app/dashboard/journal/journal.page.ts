@@ -4,6 +4,8 @@ import {AngularFirestore} from "@angular/fire/compat/firestore";
 import {Router} from "@angular/router";
 import {ModalController} from "@ionic/angular";
 import {UpdatemoodComponent} from "../../components/updatemood/updatemood.component";
+import {orderBy} from "@angular/fire/firestore";
+import {orderByChild} from "@angular/fire/database";
 
 @Component({
   selector: 'app-journal',
@@ -24,7 +26,7 @@ export class JournalPage implements OnInit {
 
   ngOnInit() {
     // Define user authentication
-      this.firestore.collection('users/').doc(this.userId).collection('moodCheckIn/').snapshotChanges().subscribe(res=>{
+      this.firestore.collection('users/').doc(this.userId).collection('moodCheckIn/', ref => ref.orderBy('date', 'desc')).snapshotChanges().subscribe(res=>{
         if(res){
           this.moodList = res.map(e=>{
             return{
