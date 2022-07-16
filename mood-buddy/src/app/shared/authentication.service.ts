@@ -5,8 +5,6 @@ import {Router} from "@angular/router";
 import {User} from "./user";
 import firebase from "firebase/compat/app";
 import auth = firebase.auth;
-import {error} from "protractor";
-import {user} from "@angular/fire/auth";
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +12,6 @@ import {user} from "@angular/fire/auth";
 export class AuthenticationService {
   userData: any;
   userId: any;
-  userEmail: any;
 
   constructor(
     public afStore: AngularFirestore,
@@ -44,21 +41,13 @@ export class AuthenticationService {
       const userRef: AngularFirestoreDocument<any> = this.afStore.doc(
         `users/${result.user.uid}`
       );
-      // Inserting adata to firestore database
+      // Inserting data to firestore database
       const userData: User = {
         uid: result.user.uid,
         email: result.user.email,
         displayName: name,
         emailVerified: result.user.emailVerified,
         moodCount: 0
-        // moodCheckIn: {
-        //   moodId: '',
-        //   date: '',
-        //   currentMood: '',
-        //   currentFeeling: '',
-        //   activities: [''],
-        //   notes: ''
-        // }
       };
       return userRef.set(userData, {
         merge: true,
@@ -111,12 +100,23 @@ export class AuthenticationService {
         this.ngZone.run(() => {
           this.router.navigate(['dashboard/tabs/landing-page']);
         });
-        this.SetUserData(result.user);
+        // Firebase will capture creationTime and lastSignInTime everytime user log in with Google.
+        // creationTime equal to lastSignInTime means user is log in with Google for the FIRST time, and
+        // the database should write user data using function SetUserData(user).
+        // If user already log in with Google before, database should NOT write user data again.
+        // This condition prohibit database to overwrite value 'moodCount' in SetUserData whenever user log in with Google.
+        if (result.user.metadata.creationTime == result.user.metadata.lastSignInTime) {
+          this.SetUserData(result.user);
+        }
+        console.log(result.user.metadata);
+        console.log(`Creation Time: ${result.user.metadata.creationTime}`);
+        console.log(`Last Sign In Time: ${result.user.metadata.lastSignInTime}`);
       })
       .catch((error) => {
         window.alert(error);
       });
   }
+
   // Store user in localStorage
   SetUserData(user) {
     const userRef: AngularFirestoreDocument<any> = this.afStore.doc(
@@ -128,19 +128,12 @@ export class AuthenticationService {
       displayName: user.displayName,
       emailVerified: user.emailVerified,
       moodCount: 0
-      // moodCheckIn: {
-      //   moodId: user.moodId,
-      //   date: user.date,
-      //   currentMood: user.currentMood,
-      //   currentFeeling: user.currentFeeling,
-      //   activities: user.activities,
-      //   notes: user.notes
-      // }
     };
     return userRef.set(userData, {
       merge: true,
     });
   }
+
   // Sign-out
   SignOut() {
     return this.ngFireAuth.signOut().then(() => {

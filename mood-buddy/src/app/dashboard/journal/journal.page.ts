@@ -11,18 +11,20 @@ import {UpdatemoodComponent} from "../../components/updatemood/updatemood.compon
   styleUrls: ['./journal.page.scss'],
 })
 export class JournalPage implements OnInit {
+  userId: any;
   moodList: {moodId: string; date: string; currentMood: string; currentFeeling: string; activities: string; notes: string }[];
 
   constructor(
     private firestore: AngularFirestore,
     private router: Router,
     private modalController: ModalController
-    ) { }
+    ) {
+    this.userId = firebase.auth().currentUser.uid;
+  }
 
   ngOnInit() {
     // Define user authentication
-   firebase.auth().onAuthStateChanged((user) => {
-      this.firestore.collection('users/').doc(user.uid).collection('moodCheckIn/').snapshotChanges().subscribe(res=>{
+      this.firestore.collection('users/').doc(this.userId).collection('moodCheckIn/').snapshotChanges().subscribe(res=>{
         if(res){
           this.moodList = res.map(e=>{
             return{
@@ -36,7 +38,6 @@ export class JournalPage implements OnInit {
           })
         }
       })
-    });
   }
 
   async UpdateMood(id, date, currentMood, currentFeeling, activities, notes) {
@@ -56,8 +57,6 @@ export class JournalPage implements OnInit {
   }
 
   DeleteMood(id){
-    firebase.auth().onAuthStateChanged((user) => {
-      this.firestore.collection('users/').doc(user.uid).collection('moodCheckIn/').doc(id).delete()
-    });
+      this.firestore.collection('users/').doc(this.userId).collection('moodCheckIn/').doc(id).delete()
   }
 }

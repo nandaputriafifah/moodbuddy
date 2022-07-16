@@ -78,11 +78,12 @@
     <ion-col size="10" offset="1">
       <ion-button expand="block"
                   color="success"
-                  (click)="AddMood(addMood.date,
+                  (click)="AddMood(
+                  addMood.date,
                   addMood.currentMood,
                   addMood.currentFeeling,
                   addMood.activities,
-                  addMood.notes)">Add</ion-button>
+                  addMood.notes); SumMoodCount()">Add</ion-button>
     </ion-col>
   </ion-row>
 </ion-content>

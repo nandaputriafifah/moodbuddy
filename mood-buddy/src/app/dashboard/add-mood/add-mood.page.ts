@@ -10,11 +10,13 @@ import {Router} from "@angular/router";
   styleUrls: ['./add-mood.page.scss'],
 })
 export class AddMoodPage implements OnInit {
+  userId: any;
   date: string;
   maxDate: string;
   dateNumber: any;
   doc: any;
-  addMood: {date: string; currentMood: string; currentFeeling: string; activities: string; notes: string };
+  totalMoodCount: any;
+  addMood: {checkInDate: string, date: string; currentMood: string; currentFeeling: string; activities: string; notes: string };
 
   /** This is list of mood, feelings, activities that available for inputs**/
   // List mood
@@ -68,41 +70,46 @@ export class AddMoodPage implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.userId = firebase.auth().currentUser.uid;
     // Add [max] option in add-mood.page.html to disable input future date
     // Change format maxDate into yyyy-mm-dd ([max] option ONLY works in this date format)
     this.maxDate = new Date().toISOString().split('T')[0];
     console.log('THIS IS MAX DATE -->' + this.maxDate);
-    this.addMood = {date: '', currentMood: '', currentFeeling: '', activities: '', notes: '' }
+    this.addMood = {checkInDate: '', date: '', currentMood: '', currentFeeling: '', activities: '', notes: '' }
+
+    // Get value moodCount in firebase and assign it to totalMoodCount
+    this.firestore.collection('users/').doc(this.userId).valueChanges().subscribe(res=>{
+      this.totalMoodCount = res['moodCount']
+    })
+
     setTimeout(() => {
       // Get current date
       this.dateNumber = new Date().toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' });
     });
   }
 
-  // Function for add mood check-in to firebase
+  /** Function for add mood check-in to firebase */
   AddMood(date, currentMood, currentFeeling, activities, notes){
     let addMood = {}
+    // addMood['checkInDate'] = new Date().toISOString().split('T')[0]
     addMood['date'] = date
     addMood['currentMood'] = currentMood
     addMood['currentFeeling'] = currentFeeling
     addMood['activities'] = activities
     addMood['notes'] = notes
     console.log(addMood)
-    firebase.auth().onAuthStateChanged((user) => {
       // Create new collection named 'moodCheckIn'
       // Firestore will create id for everytime user added mood
-      this.firestore.collection('/users/').doc(user.uid).collection('moodCheckIn/').add(addMood).then(()=>{
-        this.addMood = {date: '', currentMood: '', currentFeeling: '', activities: '', notes: ''}
+    this.firestore.collection('/users/').doc(this.userId).collection('moodCheckIn/').add(addMood).then(()=>{
+        this.addMood = {checkInDate: '', date: '', currentMood: '', currentFeeling: '', activities: '', notes: ''}
         this.router.navigate(['/dashboard/tabs/journal']);
       })
-    });
   }
 
-  // AddMoodCount() {
-  //   firebase.auth().onAuthStateChanged((user) => {
-  //     this.firestore.collection('/users/').doc(user.uid).update({
-  //       moodCount: this.totalMoodCount +=
-  //     });
-  //   });
-  // }
+  /** Function for do sum everytime user add mood check-n*/
+  SumMoodCount() {
+    this.firestore.collection('/users/').doc(this.userId).update({
+      moodCount: this.totalMoodCount + 1
+    });
+  }
 }
