@@ -34,7 +34,11 @@ const routes: Routes = [
   {
     path: 'add-mood',
     loadChildren: () => import('./add-mood/add-mood.module').then( m => m.AddMoodPageModule)
+  },  {
+    path: 'statistic',
+    loadChildren: () => import('./statistic/statistic.module').then( m => m.StatisticPageModule)
   },
+
 ];
 
 @NgModule({

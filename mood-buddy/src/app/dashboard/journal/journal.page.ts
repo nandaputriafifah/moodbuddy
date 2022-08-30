@@ -4,8 +4,7 @@ import {AngularFirestore} from "@angular/fire/compat/firestore";
 import {Router} from "@angular/router";
 import {ModalController} from "@ionic/angular";
 import {UpdatemoodComponent} from "../../components/updatemood/updatemood.component";
-import {orderBy} from "@angular/fire/firestore";
-import {orderByChild} from "@angular/fire/database";
+import {collection, query} from "@angular/fire/firestore";
 
 @Component({
   selector: 'app-journal',
@@ -14,6 +13,10 @@ import {orderByChild} from "@angular/fire/database";
 })
 export class JournalPage implements OnInit {
   userId: any;
+  date: string;
+  dateNumber: any;
+  maxDate: string;
+  filterDate: any;
   moodList: {moodId: string; date: string; currentMood: string; currentFeeling: string; activities: string; notes: string }[];
 
   constructor(
@@ -25,8 +28,8 @@ export class JournalPage implements OnInit {
   }
 
   ngOnInit() {
-    // Define user authentication
-      this.firestore.collection('users/').doc(this.userId).collection('moodCheckIn/', ref => ref.orderBy('date', 'desc')).snapshotChanges().subscribe(res=>{
+    // Define user data
+      this.firestore.collection('users/').doc(this.userId).collection('moodCheckIn/', ref => ref.orderBy('date', 'asc')).snapshotChanges().subscribe(res=>{
         if(res){
           this.moodList = res.map(e=>{
             return{
@@ -40,6 +43,16 @@ export class JournalPage implements OnInit {
           })
         }
       })
+
+    // Add [max] option in add-mood.page.html to disable input future date
+    // Change format maxDate into yyyy-mm-dd ([max] option ONLY works in this date format)
+    // this.maxDate = new Date().toISOString().split('T')[0];
+    //   console.log(this.maxDate);
+
+    setTimeout(() => {
+      // Get current date
+      this.dateNumber = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    });
   }
 
   async UpdateMood(id, date, currentMood, currentFeeling, activities, notes) {
@@ -60,5 +73,38 @@ export class JournalPage implements OnInit {
 
   DeleteMood(id){
       this.firestore.collection('users/').doc(this.userId).collection('moodCheckIn/').doc(id).delete()
+  }
+
+  GoToStatisticPage() {
+    this.router.navigate(['/dashboard/statistic']);
+  }
+
+  ApplyDateFilter(selectedDate: any) {
+    // if (!selectedDate) {
+    //   console.log("Empty date")
+    //   return
+    // }
+
+    const selectedDateMonthNumber = selectedDate.split("-")[1].split("")[1];
+    const dateFormat = new Date();
+    dateFormat.setMonth(selectedDateMonthNumber - 1);
+
+    const selectedDateMonthName = dateFormat.toLocaleString('en-US', {
+      month: 'long',
+    })
+    console.log(selectedDateMonthName);
+
+    this.firestore.collection('users/').doc(this.userId).collection('moodCheckIn/').valueChanges().subscribe(res=>{
+      res.forEach((value) => {
+        this.filterDate = value.date.split(" ")[0];
+        console.log(this.filterDate);
+
+        if (this.filterDate == selectedDateMonthName) {
+          return
+        }
+        // const filteredDate = this.firestore.collection('users/').doc(this.userId).collection('moodCheckIn/', ref =>
+        //   ref.where('date', '==', selectedDateMonthName)).get();
+      });
+    });
   }
 }
