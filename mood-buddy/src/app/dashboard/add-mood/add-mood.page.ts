@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import firebase from "firebase/compat/app";
 import {Router} from "@angular/router";
+import {CalendarComponent} from "ionic2-calendar";
 
 
 @Component({
@@ -16,7 +17,19 @@ export class AddMoodPage implements OnInit {
   dateNumber: any;
   doc: any;
   totalMoodCount: any;
-  addMood: {checkInDate: string, date: string; currentMood: string; currentFeeling: string; activities: string; notes: string };
+  addMood: {date: string; currentMood: string; currentFeeling: string; activities: string; notes: string };
+
+  // Calendar
+  eventSource = [];
+  viewTitle: string;
+
+  calendar = {
+    mode: "month",
+    currentDate: new Date(),
+  };
+  selectedDate = new Date();
+
+  @ViewChild(CalendarComponent) myCal: CalendarComponent;
 
   /** This is list of mood, feelings, activities that available for inputs**/
   // List mood
@@ -75,7 +88,7 @@ export class AddMoodPage implements OnInit {
     // Change format maxDate into yyyy-mm-dd ([max] option ONLY works in this date format)
     this.maxDate = new Date().toISOString().split('T')[0];
     console.log('THIS IS MAX DATE -->' + this.maxDate);
-    this.addMood = {checkInDate: '', date: '', currentMood: '', currentFeeling: '', activities: '', notes: '' }
+    this.addMood = {date: '', currentMood: '', currentFeeling: '', activities: '', notes: '' }
 
     // Get value moodCount in firebase and assign it to totalMoodCount
     this.firestore.collection('users/').doc(this.userId).valueChanges().subscribe(res=>{
@@ -89,10 +102,24 @@ export class AddMoodPage implements OnInit {
   }
 
   /** Function for add mood check-in to firebase */
-  AddMood(date, currentMood, currentFeeling, activities, notes){
+  AddMood(currentMood, currentFeeling, activities, notes){
     let addMood = {}
+
+    // Calendar
+    const start = this.selectedDate;
+    const end = this.selectedDate;
+    end.setMinutes(end.getMinutes() + 60);
+
+    // event object created to include semi-random title
+    const event = {
+      title: "Event #" + start.getMinutes(),
+      startTime: start,
+      endTime: end,
+      allDay: false,
+    };
+
     // addMood['checkInDate'] = new Date().toISOString().split('T')[0]
-    addMood['date'] = date
+    addMood['date'] = start
     addMood['currentMood'] = currentMood
     addMood['currentFeeling'] = currentFeeling
     addMood['activities'] = activities
@@ -101,9 +128,11 @@ export class AddMoodPage implements OnInit {
       // Create new collection named 'moodCheckIn'
       // Firestore will create id for everytime user added mood
     this.firestore.collection('/users/').doc(this.userId).collection('moodCheckIn/').add(addMood).then(()=>{
-        this.addMood = {checkInDate: '', date: '', currentMood: '', currentFeeling: '', activities: '', notes: ''}
-        this.router.navigate(['/dashboard/tabs/journal']);
+      this.addMood = {date: '', currentMood: '', currentFeeling: '', activities: '', notes: ''}
+      this.router.navigate(['/dashboard/tabs/journal']);
       })
+
+    this.firestore.collection('/users/').doc(this.userId).collection('event/').add(event);
   }
 
   /** Function for do sum everytime user add mood check-n*/
@@ -111,5 +140,47 @@ export class AddMoodPage implements OnInit {
     this.firestore.collection('/users/').doc(this.userId).update({
       moodCount: this.totalMoodCount + 1
     });
+  }
+
+  // Calendar
+  // Change current month/week/day
+  next() {
+    this.myCal.slideNext();
+  }
+
+  back() {
+    this.myCal.slidePrev();
+  }
+
+  onEventSelected(event) {
+    console.log(
+      "Event selected:" +
+      event.startTime +
+      "-" +
+      event.endTime +
+      "," +
+      event.title
+    );
+  }
+
+  onTimeSelected(ev) {
+    console.log(
+      "Selected time: " +
+      ev.selectedTime +
+      ", hasEvents: " +
+      (ev.events !== undefined && ev.events.length !== 0) +
+      ", disabled: " +
+      ev.disabled
+    );
+    this.selectedDate = ev.selectedTime;
+  }
+
+  onViewTitleChanged(title) {
+    this.viewTitle = title;
+    console.log(title);
+  }
+
+  onCurrentDateChanged(event: Date) {
+    console.log("current date change: " + event);
   }
 }

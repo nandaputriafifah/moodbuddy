@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { AddMoodPageRoutingModule } from './add-mood-routing.module';
 
 import { AddMoodPage } from './add-mood.page';
+import {NgCalendarModule} from "ionic2-calendar";
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    AddMoodPageRoutingModule
+    AddMoodPageRoutingModule,
+    NgCalendarModule
   ],
   declarations: [AddMoodPage]
 })

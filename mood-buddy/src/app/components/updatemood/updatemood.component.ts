@@ -3,6 +3,7 @@ import {AngularFirestore} from "@angular/fire/compat/firestore";
 import {ModalController} from "@ionic/angular";
 import firebase from "firebase/compat/app";
 import {DatePipe} from "@angular/common";
+import {CalendarComponent} from "ionic2-calendar";
 
 @Component({
   selector: 'app-updatemood',
@@ -10,6 +11,7 @@ import {DatePipe} from "@angular/common";
   styleUrls: ['./updatemood.component.scss'],
 })
 export class UpdatemoodComponent implements OnInit {
+  @Input() eventId: string;
   @Input() id: string;
   @Input() date: string;
   @Input() currentMood: string;
@@ -20,6 +22,17 @@ export class UpdatemoodComponent implements OnInit {
   dateValue: string;
   maxDate: string;
 
+  //Calendar
+  viewTitle: string;
+  selectedDate = new Date();
+  eventSource: []
+
+  calendar = {
+    mode: "month",
+    currentDate: new Date(),
+  };
+
+  @ViewChild(CalendarComponent) myCal: CalendarComponent;
 
   /** This is list of mood, feelings, activities that available for inputs**/
   // List mood
@@ -77,17 +90,33 @@ export class UpdatemoodComponent implements OnInit {
     // Change format maxDate into yyyy-mm-dd ([max] option ONLY works in this date format)
     this.maxDate = new Date().toISOString().split('T')[0];
     console.log('THIS IS MAX DATE -->' + this.maxDate);
+    console.log(this.eventId);
   }
 
-  UpdateMood(date, currentMood, currentFeeling, activities, notes){
+  UpdateMood(currentMood, currentFeeling, activities, notes){
     let updateMood = {}
-    updateMood['date'] = date,
+
+    // Calendar
+    const start = this.selectedDate;
+    const end = this.selectedDate;
+    end.setMinutes(end.getMinutes() + 60);
+
+    // event object created to include semi-random title
+    const event = {
+      title: "Event #" + start.getMinutes(),
+      startTime: start,
+      endTime: end,
+      allDay: false,
+    };
+
+      updateMood['date'] = start,
       updateMood['currentMood'] = currentMood,
       updateMood['currentFeeling'] = currentFeeling,
       updateMood['activities'] = activities,
       updateMood['notes'] = notes,
       firebase.auth().onAuthStateChanged((user) => {
         this.firestore.collection('users/').doc(user.uid).collection('moodCheckIn/').doc(this.id).update(updateMood).then(()=>{
+          this.firestore.collection('/users/').doc(user.uid).collection('event/').doc(this.eventId).update(event);
           this.modalController.dismiss()
         })
       });
@@ -95,6 +124,48 @@ export class UpdatemoodComponent implements OnInit {
 
   CloseModal(){
     this.modalController.dismiss()
+  }
+
+  // Calendar
+  // Change current month/week/day
+  next() {
+    this.myCal.slideNext();
+  }
+
+  back() {
+    this.myCal.slidePrev();
+  }
+
+  onEventSelected(event) {
+    console.log(
+      "Event selected:" +
+      event.startTime +
+      "-" +
+      event.endTime +
+      "," +
+      event.title
+    );
+  }
+
+  onTimeSelected(ev) {
+    console.log(
+      "Selected time: " +
+      ev.selectedTime +
+      ", hasEvents: " +
+      (ev.events !== undefined && ev.events.length !== 0) +
+      ", disabled: " +
+      ev.disabled
+    );
+    this.selectedDate = ev.selectedTime;
+  }
+
+  onViewTitleChanged(title) {
+    this.viewTitle = title;
+    console.log(title);
+  }
+
+  onCurrentDateChanged(event: Date) {
+    console.log("current date change: " + event);
   }
 
 }
