@@ -93,7 +93,7 @@ export class UpdatemoodComponent implements OnInit {
     console.log(this.eventId);
   }
 
-  UpdateMood(currentMood, currentFeeling, activities, notes){
+  UpdateMood(date, currentMood, currentFeeling, activities, notes){
     let updateMood = {}
 
     // Calendar
@@ -103,13 +103,13 @@ export class UpdatemoodComponent implements OnInit {
 
     // event object created to include semi-random title
     const event = {
-      title: "Event #" + start.getMinutes(),
-      startTime: start,
-      endTime: end,
+      title: currentMood,
+      startTime: new Date(date),
+      endTime: new Date(date),
       allDay: false,
     };
 
-      updateMood['date'] = start,
+      updateMood['date'] = date,
       updateMood['currentMood'] = currentMood,
       updateMood['currentFeeling'] = currentFeeling,
       updateMood['activities'] = activities,
@@ -128,44 +128,44 @@ export class UpdatemoodComponent implements OnInit {
 
   // Calendar
   // Change current month/week/day
-  next() {
-    this.myCal.slideNext();
-  }
-
-  back() {
-    this.myCal.slidePrev();
-  }
-
-  onEventSelected(event) {
-    console.log(
-      "Event selected:" +
-      event.startTime +
-      "-" +
-      event.endTime +
-      "," +
-      event.title
-    );
-  }
-
-  onTimeSelected(ev) {
-    console.log(
-      "Selected time: " +
-      ev.selectedTime +
-      ", hasEvents: " +
-      (ev.events !== undefined && ev.events.length !== 0) +
-      ", disabled: " +
-      ev.disabled
-    );
-    this.selectedDate = ev.selectedTime;
-  }
-
-  onViewTitleChanged(title) {
-    this.viewTitle = title;
-    console.log(title);
-  }
-
-  onCurrentDateChanged(event: Date) {
-    console.log("current date change: " + event);
-  }
+  // next() {
+  //   this.myCal.slideNext();
+  // }
+  //
+  // back() {
+  //   this.myCal.slidePrev();
+  // }
+  //
+  // onEventSelected(event) {
+  //   console.log(
+  //     "Event selected:" +
+  //     event.startTime +
+  //     "-" +
+  //     event.endTime +
+  //     "," +
+  //     event.title
+  //   );
+  // }
+  //
+  // onTimeSelected(ev) {
+  //   console.log(
+  //     "Selected time: " +
+  //     ev.selectedTime +
+  //     ", hasEvents: " +
+  //     (ev.events !== undefined && ev.events.length !== 0) +
+  //     ", disabled: " +
+  //     ev.disabled
+  //   );
+  //   this.selectedDate = ev.selectedTime;
+  // }
+  //
+  // onViewTitleChanged(title) {
+  //   this.viewTitle = title;
+  //   console.log(title);
+  // }
+  //
+  // onCurrentDateChanged(event: Date) {
+  //   console.log("current date change: " + event);
+  // }
 
 }

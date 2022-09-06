@@ -8,58 +8,47 @@
 </ion-header>
 
 <ion-content>
-<!--  Calendar -->
-<!--  <calendar-->
-<!--    [calendarMode]="calendar.mode"-->
-<!--    [currentDate]="calendar.currentDate"-->
-<!--    (onTitleChanged)="onViewTitleChanged($event)"-->
-<!--    (onTimeSelected)="onTimeSelected($event)"-->
-<!--    lockSwipes="true"-->
-<!--  >-->
+<!--  &lt;!&ndash; Move back one screen of the slides &ndash;&gt;-->
+<!--  <ion-row>-->
+<!--    <ion-col size="2">-->
+<!--      <ion-button fill="clear" (click)="back()">-->
+<!--        <ion-icon name="arrow-back" slot="icon-only"></ion-icon>-->
+<!--      </ion-button>-->
+<!--    </ion-col>-->
+
+<!--    <ion-col size="8" class="ion-text-center">-->
+<!--      <h2>{{ viewTitle }}</h2>-->
+<!--    </ion-col>-->
+
+<!--    &lt;!&ndash; Move forward one screen of the slides &ndash;&gt;-->
+<!--    <ion-col size="2">-->
+<!--      <ion-button fill="clear" (click)="next()">-->
+<!--        <ion-icon name="arrow-forward" slot="icon-only"></ion-icon>-->
+<!--      </ion-button>-->
+<!--    </ion-col>-->
+<!--  </ion-row>-->
+
+<!--  <calendar [eventSource]="eventSource"-->
+<!--            [calendarMode]="calendar.mode"-->
+<!--            [currentDate]="calendar.currentDate"-->
+<!--            (onCurrentDateChanged)="onCurrentDateChanged($event)"-->
+<!--            (onEventSelected)="onEventSelected($event)"-->
+<!--            (onTitleChanged)="onViewTitleChanged($event)"-->
+<!--            (onTimeSelected)="onTimeSelected($event)"-->
+<!--            step="30">-->
 <!--  </calendar>-->
-
-  <!-- Move back one screen of the slides -->
-  <ion-row>
-    <ion-col size="2">
-      <ion-button fill="clear" (click)="back()">
-        <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-col>
-
-    <ion-col size="8" class="ion-text-center">
-      <h2>{{ viewTitle }}</h2>
-    </ion-col>
-
-    <!-- Move forward one screen of the slides -->
-    <ion-col size="2">
-      <ion-button fill="clear" (click)="next()">
-        <ion-icon name="arrow-forward" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-col>
-  </ion-row>
-
-  <calendar [eventSource]="eventSource"
-            [calendarMode]="calendar.mode"
-            [currentDate]="calendar.currentDate"
-            (onCurrentDateChanged)="onCurrentDateChanged($event)"
-            (onEventSelected)="onEventSelected($event)"
-            (onTitleChanged)="onViewTitleChanged($event)"
-            (onTimeSelected)="onTimeSelected($event)"
-            step="30"
-            [monthviewDisplayEventTemplate]="template">
-  </calendar>
-
-  <ng-template #template let-view="view" let-row="row" let-col="col">
-    <div [class.with-event]="view.dates[row*7+col].events.length">
-      {{view.dates[row*7+col].label}}
-      <div class="indicator-container">
-        <div class="event-indicator" *ngFor="let e of view.dates[row*7+col].events"></div>
-      </div>
-    </div>
-  </ng-template>
 
   <ion-row>
     <!-- Input Date -->
+    <ion-card>
+      <ion-item>
+        <ion-label><b>Date</b></ion-label>
+        <ion-datetime displayFormat="DD/MM/YYYY HH:mm"
+                      pickerFormat="MMM D HH:mm"
+                      [(ngModel)]="addMood.date"
+                      [max]="maxDate"></ion-datetime>
+      </ion-item>
+    </ion-card>
 <!--    <ion-card>-->
 <!--      <ion-input-->
 <!--        [(ngModel)]="addMood.date"-->
@@ -162,6 +151,7 @@
                   color="success"
                   [disabled]="!mood.valid || !feeling.valid || !activities.valid || !notes.valid"
                   (click)="AddMood(
+                  addMood.date,
                   addMood.currentMood,
                   addMood.currentFeeling,
                   addMood.activities,

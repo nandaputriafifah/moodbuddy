@@ -27,6 +27,7 @@ export class AddMoodPage implements OnInit {
     mode: "month",
     currentDate: new Date(),
   };
+
   selectedDate = new Date();
 
   @ViewChild(CalendarComponent) myCal: CalendarComponent;
@@ -83,11 +84,13 @@ export class AddMoodPage implements OnInit {
   ) {}
 
   ngOnInit() {
+    // Get current user id
     this.userId = firebase.auth().currentUser.uid;
     // Add [max] option in add-mood.page.html to disable input future date
     // Change format maxDate into yyyy-mm-dd ([max] option ONLY works in this date format)
     this.maxDate = new Date().toISOString().split('T')[0];
     console.log('THIS IS MAX DATE -->' + this.maxDate);
+
     this.addMood = {date: '', currentMood: '', currentFeeling: '', activities: '', notes: '' }
 
     // Get value moodCount in firebase and assign it to totalMoodCount
@@ -102,7 +105,7 @@ export class AddMoodPage implements OnInit {
   }
 
   /** Function for add mood check-in to firebase */
-  AddMood(currentMood, currentFeeling, activities, notes){
+  AddMood(date, currentMood, currentFeeling, activities, notes){
     let addMood = {}
 
     // Calendar
@@ -112,14 +115,13 @@ export class AddMoodPage implements OnInit {
 
     // event object created to include semi-random title
     const event = {
-      title: "Event #" + start.getMinutes(),
-      startTime: start,
-      endTime: end,
+      title: currentMood,
+      startTime: new Date(date),
+      endTime: new Date(date),
       allDay: false,
-    };
-
+    }
     // addMood['checkInDate'] = new Date().toISOString().split('T')[0]
-    addMood['date'] = start
+    addMood['date'] = date
     addMood['currentMood'] = currentMood
     addMood['currentFeeling'] = currentFeeling
     addMood['activities'] = activities
@@ -144,43 +146,43 @@ export class AddMoodPage implements OnInit {
 
   // Calendar
   // Change current month/week/day
-  next() {
-    this.myCal.slideNext();
-  }
-
-  back() {
-    this.myCal.slidePrev();
-  }
-
-  onEventSelected(event) {
-    console.log(
-      "Event selected:" +
-      event.startTime +
-      "-" +
-      event.endTime +
-      "," +
-      event.title
-    );
-  }
-
-  onTimeSelected(ev) {
-    console.log(
-      "Selected time: " +
-      ev.selectedTime +
-      ", hasEvents: " +
-      (ev.events !== undefined && ev.events.length !== 0) +
-      ", disabled: " +
-      ev.disabled
-    );
-    this.selectedDate = ev.selectedTime;
-  }
-
-  onViewTitleChanged(title) {
-    this.viewTitle = title;
-    console.log(title);
-  }
-
-  onCurrentDateChanged(event: Date) {
-    console.log("current date change: " + event);
-  }
+  // next() {
+  //   this.myCal.slideNext();
+  // }
+  //
+  // back() {
+  //   this.myCal.slidePrev();
+  // }
+  //
+  // onEventSelected(event) {
+  //   console.log(
+  //     "Event selected:" +
+  //     event.startTime +
+  //     "-" +
+  //     event.endTime +
+  //     "," +
+  //     event.title
+  //   );
+  // }
+  //
+  // onTimeSelected(ev) {
+  //   console.log(
+  //     "Selected time: " +
+  //     ev.selectedTime +
+  //     ", hasEvents: " +
+  //     (ev.events !== undefined && ev.events.length !== 0) +
+  //     ", disabled: " +
+  //     ev.disabled
+  //   );
+  //   this.selectedDate = ev.selectedTime;
+  // }
+  //
+  // onViewTitleChanged(title) {
+  //   this.viewTitle = title;
+  //   console.log(title);
+  // }
+  //
+  // onCurrentDateChanged(event: Date) {
+  //   console.log("current date change: " + event);
+  // }
 }

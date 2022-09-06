@@ -11,18 +11,18 @@
   <ion-button (click)="GoToStatisticPage()">Statistic</ion-button>
 
   <!-- Filter Date -->
-  <ion-input id="currDate"
-             [(ngModel)]="dateNumber"
-             value="{{date| date: 'MMMM YYY' }}"></ion-input>
-  <ion-popover trigger="currDate"
-               triggerAction="click">
-    <ng-template>
-      <ion-datetime presentation="month-year"
-                    [(ngModel)]="date"
-                    (ionChange)="ApplyDateFilter(date)">
-      </ion-datetime>
-    </ng-template>
-  </ion-popover>
+<!--  <ion-input id="currDate"-->
+<!--             [(ngModel)]="dateNumber"-->
+<!--             value="{{date| date: 'MMMM YYY' }}"></ion-input>-->
+<!--  <ion-popover trigger="currDate"-->
+<!--               triggerAction="click">-->
+<!--    <ng-template>-->
+<!--      <ion-datetime presentation="month-year"-->
+<!--                    [(ngModel)]="date"-->
+<!--                    (ionChange)="ApplyDateFilter(date)">-->
+<!--      </ion-datetime>-->
+<!--    </ng-template>-->
+<!--  </ion-popover>-->
 
 
 <!--  Calendar  -->
@@ -37,19 +37,6 @@
       <ion-label>Day</ion-label>
     </ion-segment-button>
   </ion-segment>
-
-  <ion-row>
-    <ion-col size="6">
-      <ion-button (click)="createRandomEvents()" expand="block" fill="outline">
-        Add random events
-      </ion-button>
-    </ion-col>
-    <ion-col size="6">
-      <ion-button (click)="removeEvents()" expand="block" fill="outline">
-        Remove all events
-      </ion-button>
-    </ion-col>
-  </ion-row>
 
   <ion-row>
     <!-- Move back one screen of the slides -->
@@ -70,6 +57,14 @@
       </ion-button>
     </ion-col>
   </ion-row>
+
+  <!--
+  eventSource: The array of events which will be displayed
+  calendarMode: The view mode
+  currentDate: The today date
+  onEventSelected: Called when we click on a day with event
+  onTitleChanged: Triggered when we change the view
+  start/step: Additional settings for the different views -->
 
   <calendar
     [eventSource]="eventSource"

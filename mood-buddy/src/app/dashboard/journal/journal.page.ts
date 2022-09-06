@@ -52,7 +52,7 @@ export class JournalPage implements OnInit {
   }
 
   ngOnInit() {
-    // Define user data
+    // Define user's moodCheckIn data in firebase
       this.firestore
         .collection('users/')
         .doc(this.userId)
@@ -73,7 +73,7 @@ export class JournalPage implements OnInit {
         }
       })
 
-    // Read event calendar in firebase
+    // Define user's event (calendar) data in firebase
     this.firestore
       .collection('users/')
       .doc(this.userId)
@@ -85,9 +85,8 @@ export class JournalPage implements OnInit {
           const event: any = snap.payload.doc.data();
           this.eventId = snap.payload.doc.id;
           event.id = snap.payload.doc.id;
-          event.startTime = event.startTime.toDate();
-          event.endTime = event.endTime.toDate();
-          console.log(event);
+          event.startTime = new Date(event.startTime.toDate());
+          event.endTime = new Date(event.endTime.toDate());
           this.eventSource.push(event);
         });
       });
@@ -121,81 +120,16 @@ export class JournalPage implements OnInit {
   // Calendar event was clicked
   async onEventSelected(event) {
     // Use Angular date pipe for conversion
-    let start = formatDate(event.startTime, 'medium', this.locale);
-    let end = formatDate(event.endTime, 'medium', this.locale);
+    // let start = formatDate(event.startTime, 'medium', this.locale);
+    // let end = formatDate(event.endTime, 'medium', this.locale);
 
     const alert = await this.alertCtrl.create({
       header: event.title,
       subHeader: event.desc,
-      message: 'From: ' + start + '<br><br>To: ' + end,
+      message: 'From: ',
       buttons: ['OK'],
     });
     alert.present();
-  }
-
-  createRandomEvents() {
-    var events = [];
-    for (var i = 0; i < 50; i += 1) {
-      var date = new Date();
-      var eventType = Math.floor(Math.random() * 2);
-      var startDay = Math.floor(Math.random() * 90) - 45;
-      var endDay = Math.floor(Math.random() * 2) + startDay;
-      var startTime;
-      var endTime;
-      if (eventType === 0) {
-        startTime = new Date(
-          Date.UTC(
-            date.getUTCFullYear(),
-            date.getUTCMonth(),
-            date.getUTCDate() + startDay
-          )
-        );
-        if (endDay === startDay) {
-          endDay += 1;
-        }
-        endTime = new Date(
-          Date.UTC(
-            date.getUTCFullYear(),
-            date.getUTCMonth(),
-            date.getUTCDate() + endDay
-          )
-        );
-        events.push({
-          title: 'All Day - ' + i,
-          startTime: startTime,
-          endTime: endTime,
-          allDay: true,
-        });
-      } else {
-        var startMinute = Math.floor(Math.random() * 24 * 60);
-        var endMinute = Math.floor(Math.random() * 180) + startMinute;
-        startTime = new Date(
-          date.getFullYear(),
-          date.getMonth(),
-          date.getDate() + startDay,
-          0,
-          date.getMinutes() + startMinute
-        );
-        endTime = new Date(
-          date.getFullYear(),
-          date.getMonth(),
-          date.getDate() + endDay,
-          0,
-          date.getMinutes() + endMinute
-        );
-        events.push({
-          title: 'Event - ' + i,
-          startTime: startTime,
-          endTime: endTime,
-          allDay: false,
-        });
-      }
-    }
-    this.eventSource = events;
-  }
-
-  removeEvents() {
-    this.eventSource = [];
   }
 
   async UpdateMood(eventId, id, date, currentMood, currentFeeling, activities, notes) {
@@ -225,32 +159,32 @@ export class JournalPage implements OnInit {
     this.router.navigate(['/dashboard/statistic']);
   }
 
-  ApplyDateFilter(selectedDate: any) {
-    // if (!selectedDate) {
-    //   console.log("Empty date")
-    //   return
-    // }
-
-    const selectedDateMonthNumber = selectedDate.split("-")[1].split("")[1];
-    const dateFormat = new Date();
-    dateFormat.setMonth(selectedDateMonthNumber - 1);
-
-    const selectedDateMonthName = dateFormat.toLocaleString('en-US', {
-      month: 'long',
-    })
-    console.log(selectedDateMonthName);
-
-    this.firestore.collection('users/').doc(this.userId).collection('moodCheckIn/').valueChanges().subscribe(res=>{
-      res.forEach((value) => {
-        this.filterDate = value.date.split(" ")[0];
-        console.log(this.filterDate);
-
-        if (this.filterDate == selectedDateMonthName) {
-          return
-        }
-        // const filteredDate = this.firestore.collection('users/').doc(this.userId).collection('moodCheckIn/', ref =>
-        //   ref.where('date', '==', selectedDateMonthName)).get();
-      });
-    });
-  }
+  // ApplyDateFilter(selectedDate: any) {
+  //   // if (!selectedDate) {
+  //   //   console.log("Empty date")
+  //   //   return
+  //   // }
+  //
+  //   const selectedDateMonthNumber = selectedDate.split("-")[1].split("")[1];
+  //   const dateFormat = new Date();
+  //   dateFormat.setMonth(selectedDateMonthNumber - 1);
+  //
+  //   const selectedDateMonthName = dateFormat.toLocaleString('en-US', {
+  //     month: 'long',
+  //   })
+  //   console.log(selectedDateMonthName);
+  //
+  //   this.firestore.collection('users/').doc(this.userId).collection('moodCheckIn/').valueChanges().subscribe(res=>{
+  //     res.forEach((value) => {
+  //       this.filterDate = value.date.split(" ")[0];
+  //       console.log(this.filterDate);
+  //
+  //       if (this.filterDate == selectedDateMonthName) {
+  //         return
+  //       }
+  //       // const filteredDate = this.firestore.collection('users/').doc(this.userId).collection('moodCheckIn/', ref =>
+  //       //   ref.where('date', '==', selectedDateMonthName)).get();
+  //     });
+  //   });
+  // }
 }
