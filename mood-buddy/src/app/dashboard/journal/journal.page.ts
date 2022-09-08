@@ -22,7 +22,6 @@ export class JournalPage implements OnInit {
 
   // Calendar
   eventSource = [];
-  eventId: any;
   viewTitle: string;
   event = {
     title: '',
@@ -83,7 +82,6 @@ export class JournalPage implements OnInit {
         this.eventSource = [];
         colSnap.forEach((snap) => {
           const event: any = snap.payload.doc.data();
-          this.eventId = snap.payload.doc.id;
           event.id = snap.payload.doc.id;
           event.startTime = new Date(event.startTime.toDate());
           event.endTime = new Date(event.endTime.toDate());
@@ -149,7 +147,7 @@ export class JournalPage implements OnInit {
     return await modal.present();
   }
 
-  DeleteMood(moodId, eventId){
+  DeleteMood(eventId, moodId){
     this.firestore.collection('users/').doc(this.userId).collection('moodCheckIn/').doc(moodId).delete();
     this.firestore.collection('users/').doc(this.userId).collection('event/').doc(eventId).delete();
     this.eventSource = [];
@@ -157,6 +155,10 @@ export class JournalPage implements OnInit {
 
   GoToStatisticPage() {
     this.router.navigate(['/dashboard/statistic']);
+  }
+
+  GoToTimelinePage() {
+    this.router.navigate(['/dashboard/timeline']);
   }
 
   // ApplyDateFilter(selectedDate: any) {

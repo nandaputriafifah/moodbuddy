@@ -38,6 +38,10 @@ const routes: Routes = [
     path: 'statistic',
     loadChildren: () => import('./statistic/statistic.module').then( m => m.StatisticPageModule)
   },
+  {
+    path: 'timeline',
+    loadChildren: () => import('./timeline/timeline.module').then( m => m.TimelinePageModule)
+  },
 
 ];
 

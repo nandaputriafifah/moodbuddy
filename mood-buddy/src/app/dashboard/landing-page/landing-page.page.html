@@ -1,9 +1,49 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>landing-page</ion-title>
+    <ion-buttons slot="start">
+      <ion-button fill="outline">
+        Level
+      </ion-button>
+    </ion-buttons>
+    <div class="ion-text-center">
+      <ion-title size="small">{{dayName}}</ion-title>
+      <ion-title size="small">{{currentDate | date: 'dd MMMM yyy'}}</ion-title>
+    </div>
+    <ion-buttons slot="end">
+      <ion-button color="danger" fill="outline">
+        Coins
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="9" size-lg>
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title class="ion-text-uppercase">Hello, {{displayName}}.</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-card-subtitle>
+              Buddy was waiting for you, let’s tell him how was your day!
+            </ion-card-subtitle>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
 
+      <ion-col size="auto" class="ion-justify-content-end">
+        <ion-card>
+          Badge
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="auto" *ngFor="let mood of Mood">
+        <ion-button style="font-size: 10px;">{{mood.moodName}}</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

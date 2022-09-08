@@ -1,0 +1,49 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Timeline</ion-title>
+    <ion-buttons>
+      <ion-back-button mode="md" defaultHref = "/dashboard/tabs/journal"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let mood of moodList">
+      <ion-card>
+        <!-- Date -->
+        <ion-item>
+          <ion-label>{{mood.date | date: 'MMM, dd yyy'}}</ion-label>
+        </ion-item>
+        <!-- Mood -->
+        <ion-item>
+          <ion-label>{{mood.currentMood}}</ion-label>
+        </ion-item>
+        <!-- Feeling -->
+        <ion-item lines="none">
+          <b><ion-label>What you felt:</ion-label></b>
+        </ion-item>
+        <ion-item>
+          <ion-label>{{mood.currentFeeling}}</ion-label>
+        </ion-item>
+        <!-- Activities -->
+        <ion-item lines="none">
+          <b><ion-label>Things that make you feel this way:</ion-label></b>
+        </ion-item>
+        <ion-item>
+          <ion-label>{{mood.activities}}</ion-label>
+        </ion-item>
+        <!-- Notes -->
+        <ion-item lines="none">
+          <b><ion-label>Notes:</ion-label></b>
+        </ion-item>
+        <ion-item>
+          <ion-label>{{mood.notes}}</ion-label>
+        </ion-item>
+<!--        <ion-button (click)="UpdateMood(eventId, mood.moodId, mood.date, mood.currentMood,-->
+<!--                      mood.currentFeeling, mood.activities, mood.notes)">Edit</ion-button>-->
+<!--        <ion-button size="small" color="danger" (click)="DeleteMood(eventId, mood.moodId)"><ion-icon name="trash-outline"></ion-icon></ion-button>-->
+      </ion-card>
+    </ion-item>
+  </ion-list>
+</ion-content>
