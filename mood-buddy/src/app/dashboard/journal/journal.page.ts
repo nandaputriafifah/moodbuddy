@@ -118,19 +118,19 @@ export class JournalPage implements OnInit {
   }
 
   // Calendar event was clicked
-  async onEventSelected(event) {
-    // Use Angular date pipe for conversion
-    // let start = formatDate(event.startTime, 'medium', this.locale);
-    // let end = formatDate(event.endTime, 'medium', this.locale);
-
-    const alert = await this.alertCtrl.create({
-      header: event.title,
-      subHeader: event.desc,
-      message: 'From: ',
-      buttons: ['OK'],
-    });
-    alert.present();
-  }
+  // async onEventSelected(event) {
+  //   // Use Angular date pipe for conversion
+  //   // let start = formatDate(event.startTime, 'medium', this.locale);
+  //   // let end = formatDate(event.endTime, 'medium', this.locale);
+  //
+  //   const alert = await this.alertCtrl.create({
+  //     header: event.title,
+  //     subHeader: event.desc,
+  //     message: 'From: ',
+  //     buttons: ['OK'],
+  //   });
+  //   alert.present();
+  // }
 
   async UpdateMood(eventId, id, date, currentMood, currentFeeling, activities, notes) {
     const modal = await this.modalController.create({

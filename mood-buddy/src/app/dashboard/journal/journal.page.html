@@ -3,13 +3,14 @@
     <ion-title>
       Mood Journal
     </ion-title>
+    <ion-buttons>
+      <!-- Button go to statistic menu -->
+      <ion-button (click)="GoToStatisticPage()">Statistic</ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <!-- Button go to statistic menu -->
-  <ion-button (click)="GoToStatisticPage()">Statistic</ion-button>
-
   <!-- Filter Date -->
 <!--  <ion-input id="currDate"-->
 <!--             [(ngModel)]="dateNumber"-->
@@ -70,17 +71,18 @@
     [eventSource]="eventSource"
     [calendarMode]="calendar.mode"
     [currentDate]="calendar.currentDate"
-    (onEventSelected)="onEventSelected($event)"
     (onTitleChanged)="onViewTitleChanged($event)"
     startHour="6"
     endHour="20"
     step="30"
     startingDayWeek="1"
-    [monthviewDisplayEventTemplate]="template"
+    [monthviewDisplayEventTemplate]="monthviewDisplayEventTemplate"
+    [monthviewEventDetailTemplate]="monthviewDefaultEventDetailTemplate"
   >
   </calendar>
 
-  <ng-template #template let-view="view" let-row="row" let-col="col">
+<!--  Display Event Template -->
+  <ng-template #monthviewDisplayEventTemplate let-view="view" let-row="row" let-col="col">
     <div [class.with-event]="view.dates[row*7+col].events.length">
       {{view.dates[row*7+col].label}}
       <div class="indicator-container">
@@ -89,42 +91,73 @@
     </div>
   </ng-template>
 
-  <ion-list>
-    <ion-item *ngFor="let mood of moodList">
-      <ion-card>
-        <!-- Date -->
-        <ion-item>
-          <ion-label>{{mood.date}}</ion-label>
-        </ion-item>
-        <!-- Mood -->
-        <ion-item>
-          <ion-label>{{mood.currentMood}}</ion-label>
-        </ion-item>
-        <!-- Feeling -->
-        <ion-item lines="none">
-          <b><ion-label>What you felt:</ion-label></b>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{mood.currentFeeling}}</ion-label>
-        </ion-item>
-        <!-- Activities -->
-        <ion-item lines="none">
-          <b><ion-label>Things that make you feel this way:</ion-label></b>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{mood.activities}}</ion-label>
-        </ion-item>
-        <!-- Notes -->
-        <ion-item lines="none">
-          <b><ion-label>Notes:</ion-label></b>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{mood.notes}}</ion-label>
-        </ion-item>
-        <ion-button (click)="UpdateMood(eventId, mood.moodId, mood.date, mood.currentMood,
-                    mood.currentFeeling, mood.activities, mood.notes)">Edit</ion-button>
-        <ion-button size="small" color="danger" (click)="DeleteMood(mood.moodId, eventId)"><ion-icon name="trash-outline"></ion-icon></ion-button>
-      </ion-card>
-    </ion-item>
-  </ion-list>
+<!--  Event Detail Template-->
+  <ng-template #monthviewDefaultEventDetailTemplate let-showEventDetail="showEventDetail" let-selectedDate="selectedDate" let-noEventsLabel="noEventsLabel">
+    <ion-list class="event-detail-container" has-bouncing="false" *ngIf="showEventDetail" overflow-scroll="false">
+      <ion-item *ngFor="let event of selectedDate?.events">
+        <span *ngIf="!event.allDay" class="monthview-eventdetail-timecolumn">
+                {{event.startTime | date: 'HH:mm'}}
+        </span>
+        <span class="event-detail">  |  {{event.title}}</span>
+        <ion-card>
+          <div *ngFor="let mood of moodList">
+            <ion-item *ngIf="(event.startTime | date: 'MMM, dd yyy | HH:mm') == (mood.date | date: 'MMM, dd yyy | HH:mm')">
+              <span> {{mood.currentFeeling}} | {{mood.activities}} | {{mood.notes}}</span>
+              <!-- Button Edit & Delete Mood-->
+              <ion-button (click)="UpdateMood(eventId, mood.moodId, mood.date, mood.currentMood,
+                               mood.currentFeeling, mood.activities, mood.notes)">Edit
+              </ion-button>
+              <ion-button size="small"
+                          color="danger"
+                          (click)="DeleteMood(mood.moodId, eventId)">
+                <ion-icon name="trash-outline"></ion-icon>
+              </ion-button>
+            </ion-item>
+          </div>
+        </ion-card>
+      </ion-item>
+      <ion-item *ngIf="selectedDate?.events.length==0">
+        <div class="no-events-label">{{noEventsLabel}}</div>
+      </ion-item>
+    </ion-list>
+  </ng-template>
+
+<!--  <ion-list>-->
+<!--    <ion-item *ngFor="let mood of moodList">-->
+<!--      <ion-card>-->
+<!--        &lt;!&ndash; Date &ndash;&gt;-->
+<!--        <ion-item>-->
+<!--          <ion-label>{{mood.date}}</ion-label>-->
+<!--        </ion-item>-->
+<!--        &lt;!&ndash; Mood &ndash;&gt;-->
+<!--        <ion-item>-->
+<!--          <ion-label>{{mood.currentMood}}</ion-label>-->
+<!--        </ion-item>-->
+<!--        &lt;!&ndash; Feeling &ndash;&gt;-->
+<!--        <ion-item lines="none">-->
+<!--          <b><ion-label>What you felt:</ion-label></b>-->
+<!--        </ion-item>-->
+<!--        <ion-item>-->
+<!--          <ion-label>{{mood.currentFeeling}}</ion-label>-->
+<!--        </ion-item>-->
+<!--        &lt;!&ndash; Activities &ndash;&gt;-->
+<!--        <ion-item lines="none">-->
+<!--          <b><ion-label>Things that make you feel this way:</ion-label></b>-->
+<!--        </ion-item>-->
+<!--        <ion-item>-->
+<!--          <ion-label>{{mood.activities}}</ion-label>-->
+<!--        </ion-item>-->
+<!--        &lt;!&ndash; Notes &ndash;&gt;-->
+<!--        <ion-item lines="none">-->
+<!--          <b><ion-label>Notes:</ion-label></b>-->
+<!--        </ion-item>-->
+<!--        <ion-item>-->
+<!--          <ion-label>{{mood.notes}}</ion-label>-->
+<!--        </ion-item>-->
+<!--        <ion-button (click)="UpdateMood(eventId, mood.moodId, mood.date, mood.currentMood,-->
+<!--                    mood.currentFeeling, mood.activities, mood.notes)">Edit</ion-button>-->
+<!--        <ion-button size="small" color="danger" (click)="DeleteMood(mood.moodId, eventId)"><ion-icon name="trash-outline"></ion-icon></ion-button>-->
+<!--      </ion-card>-->
+<!--    </ion-item>-->
+<!--  </ion-list>-->
 </ion-content>
