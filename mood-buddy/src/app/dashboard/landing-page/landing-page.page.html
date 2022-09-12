@@ -42,8 +42,17 @@
 
     <ion-row>
       <ion-col size="auto" *ngFor="let mood of Mood">
-        <ion-button style="font-size: 10px;">{{mood.moodName}}</ion-button>
+        <ion-button style="font-size: 10px;"
+                    (click)="GoToAddMoodPage()">{{mood.moodName}}</ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>
+
+  <div *ngFor="let skin of skinsList">
+    <img *ngIf="skinItem == skin.skin_id" src="{{skin.skin_img}}">
+  </div>
+
+  <div *ngFor="let house of housesList">
+    <img *ngIf="houseItem == house.house_id" src="{{house.house_img}}">
+  </div>
 </ion-content>

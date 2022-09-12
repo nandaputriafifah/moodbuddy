@@ -1,10 +1,11 @@
 import {Injectable, NgZone} from '@angular/core';
-import {AngularFirestore, AngularFirestoreDocument} from "@angular/fire/compat/firestore";
+import {AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument} from "@angular/fire/compat/firestore";
 import {AngularFireAuth} from "@angular/fire/compat/auth";
 import {Router} from "@angular/router";
 import {User} from "./user";
 import firebase from "firebase/compat/app";
 import auth = firebase.auth;
+import {Gamification} from "./gamification";
 
 @Injectable({
   providedIn: 'root'
@@ -62,6 +63,7 @@ export class AuthenticationService {
     return firebase.auth().currentUser.sendEmailVerification()
     // return this.ngFireAuth.auth.currentUser.sendEmailVerification()
       .then(() => {
+        this.SetUserGamification();
         this.router.navigate(['verify-email']);
       })
   }
@@ -107,6 +109,7 @@ export class AuthenticationService {
         // This condition prohibit database to overwrite value 'moodCount' in SetUserData whenever user log in with Google.
         if (result.user.metadata.creationTime == result.user.metadata.lastSignInTime) {
           this.SetUserData(result.user);
+          this.SetUserGamification();
         }
         console.log(result.user.metadata);
         console.log(`Creation Time: ${result.user.metadata.creationTime}`);
@@ -132,6 +135,63 @@ export class AuthenticationService {
     return userRef.set(userData, {
       merge: true,
     });
+  }
+
+  // Add user's gamification data in firebase
+  SetUserGamification(){
+    // Get current user id
+    this.userId = firebase.auth().currentUser.uid;
+    const userGamificationRef: AngularFirestoreDocument<any> = this.afStore
+      .collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('gameData')
+
+    const userGamification: Gamification = {
+      levels: 1,
+      points: 0,
+      coins: 50,
+      badges: {
+        badge_id: '',
+        // badge_name: '',
+        // badge_reward: 0,
+      },
+      items: {
+        houses: {
+          house_id: 'h1_cardbox',
+          // house_level: 1,
+          // house_name: 'Card Box',
+          // house_price: 0,
+          // house_apply: true,
+          // house_buy: true
+        },
+        skins: {
+          skin_id: 's1_orange',
+          // skin_level: 1,
+          // skin_name: 'Orange',
+          // skin_price: 0,
+          // skin_apply: true,
+          // skin_buy: true
+        },
+        accessories: {
+          acc_id: '',
+          // acc_level: 0,
+          // acc_name: '',
+          // acc_price: 0,
+          // acc_apply: false,
+          // acc_buy: false
+        },
+        toys: {
+          toy_id: '',
+          // toy_level: 0,
+          // toy_name: '',
+          // toy_price: 0,
+          // toy_apply: false,
+          // toy_buy: false
+        }
+      }
+    };
+    return userGamificationRef.set(userGamification);
   }
 
   // Sign-out
