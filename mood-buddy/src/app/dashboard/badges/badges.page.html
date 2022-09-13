@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Badges</ion-title>
+    <ion-buttons>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list *ngFor="let badge of badgesList">
+    <ion-card>
+      <ion-row>
+        <ion-col><img src="{{badge.badge_img}}"></ion-col>
+        <ion-col>
+          <ion-list>
+            <ion-item>{{badge.badge_name}}</ion-item>
+            <ion-item>{{badge.badge_desc}}</ion-item>
+            <ion-item>{{badge.badge_count}}</ion-item>
+          </ion-list>
+        </ion-col>
+        <ion-col>
+          <ion-button>{{badge.badge_reward}}</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-card>
+  </ion-list>
+
+</ion-content>

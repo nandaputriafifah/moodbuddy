@@ -11,6 +11,17 @@ import firebase from "firebase/compat/app";
 })
 export class ShopPage implements OnInit {
   userId: any;
+  displayName: string;
+
+  skinItem: string;
+  houseItem: string;
+  coins: number;
+  levels: number;
+  points: number;
+
+  currentDate: any;
+  dayName: any;
+
   accList:
     { acc_id: string;
       acc_name: string;
@@ -55,6 +66,25 @@ export class ShopPage implements OnInit {
   }
 
   ngOnInit() {
+    //Get user gamification in gameData
+    this.firestore.collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('gameData')
+      .valueChanges().subscribe((res) => {
+      this.skinItem = res['items']['skins']['skin_id'];
+      this.houseItem = res['items']['houses']['house_id'];
+      this.coins = res['coins'];
+      this.levels = res['levels'];
+      this.points = res['points'];
+      console.log(`
+      Skin: ${this.skinItem}
+      House: ${this.houseItem}
+      Coins: ${this.coins}
+      Level: ${this.levels}
+      Point: ${this.points}`);
+    });
+
     // Define accessories data in firebase
     this.firestore
       .collection('gamification/')
@@ -142,6 +172,17 @@ export class ShopPage implements OnInit {
           })
         }
       })
+
+    setTimeout(() => {
+      // Get current date
+      this.currentDate = new Date();
+      // Get current day name
+      this.dayName = new Date().toLocaleDateString('en-US', {weekday: "long"});
+    });
+  }
+
+  GoToBadgesPage() {
+    this.router.navigate(['/dashboard/badges']);
   }
 
 }

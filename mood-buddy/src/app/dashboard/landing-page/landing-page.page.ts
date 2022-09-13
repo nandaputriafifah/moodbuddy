@@ -11,9 +11,13 @@ import {Router} from "@angular/router";
 export class LandingPagePage implements OnInit {
   userId: any;
   displayName: string;
+
   skinItem: string;
   houseItem: string;
-  moodName: any;
+  coins: number;
+  levels: number;
+  points: number;
+
   currentDate: any;
   dayName: any;
 
@@ -59,24 +63,23 @@ export class LandingPagePage implements OnInit {
       this.displayName = res['displayName'].split(' ')[0]
     });
 
-    //Get user's skin character in gameData
+    //Get user gamification in gameData
     this.firestore.collection('/users/')
       .doc(this.userId)
       .collection('userGamification/')
       .doc('gameData')
       .valueChanges().subscribe((res) => {
-        this.skinItem = res['items']['skins']['skin_id'];
-      console.log(this.skinItem);
-    });
-
-    //Get user's house in gameData
-    this.firestore.collection('/users/')
-      .doc(this.userId)
-      .collection('userGamification/')
-      .doc('gameData')
-      .valueChanges().subscribe((res) => {
+      this.skinItem = res['items']['skins']['skin_id'];
       this.houseItem = res['items']['houses']['house_id'];
-      console.log(this.houseItem);
+      this.coins = res['coins'];
+      this.levels = res['levels'];
+      this.points = res['points'];
+      console.log(`
+      Skin: ${this.skinItem}
+      House: ${this.houseItem}
+      Coins: ${this.coins}
+      Level: ${this.levels}
+      Point: ${this.points}`);
     });
 
     // Define Skins data in firebase
@@ -123,7 +126,6 @@ export class LandingPagePage implements OnInit {
         }
       })
 
-
     setTimeout(() => {
       // Get current date
       this.currentDate = new Date();
@@ -134,5 +136,9 @@ export class LandingPagePage implements OnInit {
 
   GoToAddMoodPage(){
     this.router.navigate(['/dashboard/add-mood']);
+  }
+
+  GoToBadgesPage() {
+    this.router.navigate(['/dashboard/badges']);
   }
 }

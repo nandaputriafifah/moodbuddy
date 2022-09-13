@@ -2,7 +2,7 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-button fill="outline">
-        Level
+        Lv. {{levels}}
       </ion-button>
     </ion-buttons>
     <div class="ion-text-center">
@@ -11,7 +11,7 @@
     </div>
     <ion-buttons slot="end">
       <ion-button color="danger" fill="outline">
-        Coins
+        {{coins}}
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -34,9 +34,9 @@
       </ion-col>
 
       <ion-col size="auto" class="ion-justify-content-end">
-        <ion-card>
+        <ion-button (click)="GoToBadgesPage()">
           Badge
-        </ion-card>
+        </ion-button>
       </ion-col>
     </ion-row>
 

@@ -1,10 +1,46 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>SHOP</ion-title>
+    <ion-buttons slot="start">
+      <ion-button fill="outline">
+        Lv. {{levels}}
+      </ion-button>
+    </ion-buttons>
+    <div class="ion-text-center">
+      <ion-title size="small">{{dayName}}</ion-title>
+      <ion-title size="small">{{currentDate | date: 'dd MMMM yyy'}}</ion-title>
+    </div>
+    <ion-buttons slot="end">
+      <ion-button color="danger" fill="outline">
+        {{coins}}
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="9" size-lg>
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title class="ion-text-uppercase">Pet Shop</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-card-subtitle>
+              Get the things that might Buddy likes!
+            </ion-card-subtitle>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="auto" class="ion-justify-content-end">
+        <ion-button (click)="GoToBadgesPage()">
+          Badge
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
 <ion-grid>
   <ion-row>
     <ion-card>
@@ -19,7 +55,7 @@
         <ion-list>
           <img src="{{skin.skin_img}}">
           <ion-item>{{skin.skin_name}}</ion-item>
-          <ion-item>{{skin.skin_price}}</ion-item>
+          <ion-item><ion-button>{{skin.skin_price}}</ion-button></ion-item>
         </ion-list>
       </ion-card>
     </ion-col>
@@ -38,7 +74,7 @@
         <ion-list>
           <img src="{{house.house_img}}">
           <ion-item>{{house.house_name}}</ion-item>
-          <ion-item>{{house.house_price}}</ion-item>
+          <ion-item><ion-button>{{house.house_price}}</ion-button></ion-item>
         </ion-list>
       </ion-card>
     </ion-col>
@@ -55,8 +91,9 @@
     <ion-col *ngFor="let acc of accList">
       <ion-card>
         <ion-list>
+          <img src="{{acc.acc_img}}">
           <ion-item>{{acc.acc_name}}</ion-item>
-          <ion-item>{{acc.acc_price}}</ion-item>
+          <ion-item><ion-button>{{acc.acc_price}}</ion-button></ion-item>
         </ion-list>
       </ion-card>
     </ion-col>
@@ -73,8 +110,9 @@
     <ion-col *ngFor="let toy of toysList">
       <ion-card>
         <ion-list>
+          <img src="{{toy.toy_img}}">
           <ion-item>{{toy.toy_name}}</ion-item>
-          <ion-item>{{toy.toy_price}}</ion-item>
+          <ion-item><ion-button>{{toy.toy_price}}</ion-button></ion-item>
         </ion-list>
       </ion-card>
     </ion-col>

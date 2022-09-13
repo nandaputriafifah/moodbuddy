@@ -42,6 +42,10 @@ const routes: Routes = [
     path: 'timeline',
     loadChildren: () => import('./timeline/timeline.module').then( m => m.TimelinePageModule)
   },
+  {
+    path: 'badges',
+    loadChildren: () => import('./badges/badges.module').then( m => m.BadgesPageModule)
+  },
 
 ];
 
