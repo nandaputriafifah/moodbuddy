@@ -14,6 +14,7 @@ export class BadgesPage implements OnInit {
     { badge_id: string;
       badge_name: string;
       badge_reward: number;
+      badge_exp: number;
       badge_img: string;
       badge_desc: string;
       badge_claim: boolean;
@@ -40,6 +41,7 @@ export class BadgesPage implements OnInit {
               badge_name: e.payload.doc.data()['badge_name'],
               badge_desc: e.payload.doc.data()['badge_desc'],
               badge_reward: e.payload.doc.data()['badge_reward'],
+              badge_exp: e.payload.doc.data()['badge_exp'],
               badge_img: e.payload.doc.data()['badge_img'],
               badge_claim: e.payload.doc.data()['badge_claim'],
               badge_count: e.payload.doc.data()['badge_count']

@@ -18,7 +18,19 @@ export class JournalPage implements OnInit {
   dateNumber: any;
   maxDate: string;
   filterDate: any;
-  moodList: {moodId: string; date: string; currentMood: string; currentFeeling: string; activities: string; notes: string }[];
+
+  tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+  currDate = (new Date(Date.now() - this.tzoffset)).toISOString().slice(0, -1);
+  totalCounts: number = 0;
+
+  moodList: {
+    moodId: string;
+    currentDate: string;
+    date: string;
+    currentMood: string;
+    currentFeeling: string;
+    activities: string;
+    notes: string }[];
 
   // Calendar
   eventSource = [];
@@ -62,6 +74,7 @@ export class JournalPage implements OnInit {
           this.moodList = res.map(e=>{
             return{
               moodId: e.payload.doc.id,
+              currentDate: e.payload.doc.data()['currentDate'],
               date: e.payload.doc.data()['date'],
               currentMood: e.payload.doc.data()['currentMood'],
               currentFeeling: e.payload.doc.data()['currentFeeling'],
@@ -137,6 +150,7 @@ export class JournalPage implements OnInit {
       componentProps: {
         'eventId': eventId,
         'id': id,
+        'currentDate': this.currDate,
         'date': date,
         'currentMood': currentMood,
         'currentFeeling': currentFeeling,

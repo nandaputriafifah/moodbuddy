@@ -19,7 +19,8 @@ export class UpdatemoodComponent implements OnInit {
   @Input() activities: string;
   @Input() notes: string;
 
-  dateValue: string;
+  tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+  currDate = (new Date(Date.now() - this.tzoffset)).toISOString().slice(0, -1);
   maxDate: string;
 
   //Calendar
@@ -87,9 +88,8 @@ export class UpdatemoodComponent implements OnInit {
 
   ngOnInit() {
     // Add [max] option in updatemood.component.html to disable input future date
-    // Change format maxDate into yyyy-mm-dd ([max] option ONLY works in this date format)
-    this.maxDate = new Date().toISOString().split('T')[0];
-    console.log('THIS IS MAX DATE -->' + this.maxDate);
+    // maxDate is current date
+    this.maxDate = this.currDate;
     console.log(this.eventId);
   }
 
@@ -109,6 +109,7 @@ export class UpdatemoodComponent implements OnInit {
       allDay: false,
     };
 
+      updateMood['currentDate'] = this.currDate,
       updateMood['date'] = date,
       updateMood['currentMood'] = currentMood,
       updateMood['currentFeeling'] = currentFeeling,
@@ -125,47 +126,4 @@ export class UpdatemoodComponent implements OnInit {
   CloseModal(){
     this.modalController.dismiss()
   }
-
-  // Calendar
-  // Change current month/week/day
-  // next() {
-  //   this.myCal.slideNext();
-  // }
-  //
-  // back() {
-  //   this.myCal.slidePrev();
-  // }
-  //
-  // onEventSelected(event) {
-  //   console.log(
-  //     "Event selected:" +
-  //     event.startTime +
-  //     "-" +
-  //     event.endTime +
-  //     "," +
-  //     event.title
-  //   );
-  // }
-  //
-  // onTimeSelected(ev) {
-  //   console.log(
-  //     "Selected time: " +
-  //     ev.selectedTime +
-  //     ", hasEvents: " +
-  //     (ev.events !== undefined && ev.events.length !== 0) +
-  //     ", disabled: " +
-  //     ev.disabled
-  //   );
-  //   this.selectedDate = ev.selectedTime;
-  // }
-  //
-  // onViewTitleChanged(title) {
-  //   this.viewTitle = title;
-  //   console.log(title);
-  // }
-  //
-  // onCurrentDateChanged(event: Date) {
-  //   console.log("current date change: " + event);
-  // }
-
 }

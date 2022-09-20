@@ -49,8 +49,8 @@
       </ion-card-header>
     </ion-card>
   </ion-row>
-  <ion-row>
-    <ion-col *ngFor="let skin of skinsList">
+  <ion-row *ngFor="let skin of skinsList">
+    <ion-col *ngIf="skin.skin_price > 0">
       <ion-card>
         <ion-list>
           <img src="{{skin.skin_img}}">
@@ -68,8 +68,8 @@
       </ion-card-header>
     </ion-card>
   </ion-row>
-  <ion-row>
-    <ion-col *ngFor="let house of housesList">
+  <ion-row *ngFor="let house of housesList">
+    <ion-col *ngIf="house.house_price > 0">
       <ion-card>
         <ion-list>
           <img src="{{house.house_img}}">

@@ -15,6 +15,7 @@
 <!--        <ion-icon name="arrow-back" slot="icon-only"></ion-icon>-->
 <!--      </ion-button>-->
 <!--    </ion-col>-->
+<!--    </ion-col>-->
 
 <!--    <ion-col size="8" class="ion-text-center">-->
 <!--      <h2>{{ viewTitle }}</h2>-->
@@ -46,6 +47,7 @@
         <ion-datetime displayFormat="DD/MM/YYYY HH:mm"
                       pickerFormat="MMM D HH:mm"
                       [(ngModel)]="addMood.date"
+                      locale="en-US"
                       [max]="maxDate"></ion-datetime>
       </ion-item>
     </ion-card>
@@ -155,7 +157,7 @@
                   addMood.currentMood,
                   addMood.currentFeeling,
                   addMood.activities,
-                  addMood.notes); SumMoodCount()">Add</ion-button>
+                  addMood.notes)">Add</ion-button>
     </ion-col>
   </ion-row>
 </ion-content>

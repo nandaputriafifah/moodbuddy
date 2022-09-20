@@ -27,6 +27,7 @@ export class ShopPage implements OnInit {
       acc_name: string;
       acc_price: number;
       acc_level: number;
+      acc_exp: number;
       acc_img: string;
       acc_buy: boolean;
       acc_apply: boolean; }[];
@@ -36,6 +37,7 @@ export class ShopPage implements OnInit {
       house_name: string;
       house_price: number;
       house_level: number;
+      house_exp: number;
       house_img: string;
       house_buy: boolean;
       house_apply: boolean; }[];
@@ -45,6 +47,7 @@ export class ShopPage implements OnInit {
       skin_name: string;
       skin_price: number;
       skin_level: number;
+      skin_exp: number;
       skin_img: string;
       skin_buy: boolean;
       skin_apply: boolean; }[];
@@ -54,6 +57,7 @@ export class ShopPage implements OnInit {
       toy_name: string;
       toy_price: number;
       toy_level: number;
+      toy_exp: number;
       toy_img: string;
       toy_buy: boolean;
       toy_apply: boolean; }[];
@@ -99,6 +103,7 @@ export class ShopPage implements OnInit {
               acc_name: e.payload.doc.data()['acc_name'],
               acc_price: e.payload.doc.data()['acc_price'],
               acc_level: e.payload.doc.data()['acc_level'],
+              acc_exp: e.payload.doc.data()['acc_exp'],
               acc_img: e.payload.doc.data()['acc_img'],
               acc_buy: e.payload.doc.data()['acc_buy'],
               acc_apply: e.payload.doc.data()['acc_apply']
@@ -121,6 +126,7 @@ export class ShopPage implements OnInit {
               house_name: e.payload.doc.data()['house_name'],
               house_price: e.payload.doc.data()['house_price'],
               house_level: e.payload.doc.data()['house_level'],
+              house_exp: e.payload.doc.data()['house_exp'],
               house_img: e.payload.doc.data()['house_img'],
               house_buy: e.payload.doc.data()['house_buy'],
               house_apply: e.payload.doc.data()['house_apply']
@@ -143,6 +149,7 @@ export class ShopPage implements OnInit {
               skin_name: e.payload.doc.data()['skin_name'],
               skin_price: e.payload.doc.data()['skin_price'],
               skin_level: e.payload.doc.data()['skin_level'],
+              skin_exp: e.payload.doc.data()['skin_exp'],
               skin_img: e.payload.doc.data()['skin_img'],
               skin_buy: e.payload.doc.data()['skin_buy'],
               skin_apply: e.payload.doc.data()['skin_apply']
@@ -165,6 +172,7 @@ export class ShopPage implements OnInit {
               toy_name: e.payload.doc.data()['toy_name'],
               toy_price: e.payload.doc.data()['toy_price'],
               toy_level: e.payload.doc.data()['toy_level'],
+              toy_exp: e.payload.doc.data()['toy_exp'],
               toy_img: e.payload.doc.data()['toy_img'],
               toy_buy: e.payload.doc.data()['toy_buy'],
               toy_apply: e.payload.doc.data()['toy_apply']

@@ -19,6 +19,7 @@ export class LandingPagePage implements OnInit {
   points: number;
 
   currentDate: any;
+  currDate = new Date().toISOString()
   dayName: any;
 
   // List Mood
@@ -68,12 +69,12 @@ export class LandingPagePage implements OnInit {
       .doc(this.userId)
       .collection('userGamification/')
       .doc('gameData')
-      .valueChanges().subscribe((res) => {
-      this.skinItem = res['items']['skins']['skin_id'];
-      this.houseItem = res['items']['houses']['house_id'];
-      this.coins = res['coins'];
-      this.levels = res['levels'];
-      this.points = res['points'];
+      .snapshotChanges().subscribe((res) => {
+      this.skinItem = res.payload.data()['items']['skins']['skin_id'];
+      this.houseItem = res.payload.data()['items']['houses']['house_id'];
+      this.coins = res.payload.data()['coins'];
+      this.levels = res.payload.data()['levels'];
+      this.points = res.payload.data()['points'];
       console.log(`
       Skin: ${this.skinItem}
       House: ${this.houseItem}

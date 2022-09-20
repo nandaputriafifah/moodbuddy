@@ -12,12 +12,27 @@ import {CalendarComponent} from "ionic2-calendar";
 })
 export class AddMoodPage implements OnInit {
   userId: any;
-  date: string;
   maxDate: string;
-  dateNumber: any;
+
+  tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+  currDate = (new Date(Date.now() - this.tzoffset)).toISOString().slice(0, -1);
   doc: any;
-  totalMoodCount: any;
-  addMood: {date: string; currentMood: string; currentFeeling: string; activities: string; notes: string };
+
+  moodCountLength: any;
+  totalMoodCount: number = 0;
+  totalCounts = [];
+
+  addedPoint = [];
+  previousPoint = [];
+  addedCoin = [];
+  previousCoin = [];
+
+  // points = 0;
+  // coins = 0;
+  // totalPoints: any;
+  // totalCoins: any;
+
+  addMood: {currentDate: string; date: string; currentMood: string; currentFeeling: string; activities: string; notes: string };
 
   // Calendar
   eventSource = [];
@@ -86,22 +101,29 @@ export class AddMoodPage implements OnInit {
   ngOnInit() {
     // Get current user id
     this.userId = firebase.auth().currentUser.uid;
-    // Add [max] option in add-mood.page.html to disable input future date
-    // Change format maxDate into yyyy-mm-dd ([max] option ONLY works in this date format)
-    this.maxDate = new Date().toISOString().split('T')[0];
-    console.log('THIS IS MAX DATE -->' + this.maxDate);
 
-    this.addMood = {date: '', currentMood: '', currentFeeling: '', activities: '', notes: '' }
+    // Add [max] option in add-mood.page.html to disable input future date
+    // maxDate is current date
+    this.maxDate = this.currDate;
+
+    this.addMood = {currentDate: '', date: '', currentMood: '', currentFeeling: '', activities: '', notes: '' }
 
     // Get value moodCount in firebase and assign it to totalMoodCount
     this.firestore.collection('users/').doc(this.userId).valueChanges().subscribe(res=>{
       this.totalMoodCount = res['moodCount']
     })
 
-    setTimeout(() => {
-      // Get current date
-      this.dateNumber = new Date().toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' });
-    });
+    // Set mood check-in count
+    // This is for counting whenever user do check-in
+    // Also important for calculation to indicate the limit of getting points & coins
+    // this.firestore
+    //   .collection('/users/')
+    //   .doc(this.userId)
+    //   .collection('checkInCounts/')
+    //   .doc(this.currDate.split('T')[0])
+    //   .set({
+    //     count: 0
+    //   });
   }
 
   /** Function for add mood check-in to firebase */
@@ -120,69 +142,129 @@ export class AddMoodPage implements OnInit {
       endTime: new Date(date),
       allDay: false,
     }
-    // addMood['checkInDate'] = new Date().toISOString().split('T')[0]
+
+    addMood['currentDate'] = this.currDate
     addMood['date'] = date
     addMood['currentMood'] = currentMood
     addMood['currentFeeling'] = currentFeeling
     addMood['activities'] = activities
     addMood['notes'] = notes
-    console.log(addMood)
+
       // Create new collection named 'moodCheckIn'
       // Firestore will create id for everytime user added mood
     this.firestore.collection('/users/').doc(this.userId).collection('moodCheckIn/').add(addMood).then(()=>{
-      this.addMood = {date: '', currentMood: '', currentFeeling: '', activities: '', notes: ''}
+      this.addMood = {currentDate: '', date: '', currentMood: '', currentFeeling: '', activities: '', notes: ''}
       this.router.navigate(['/dashboard/tabs/journal']);
       })
 
     this.firestore.collection('/users/').doc(this.userId).collection('event/').add(event);
+
+    this.previousPoint = [];
+    this.previousCoin = [];
+
+    // Get value points & coins in gameData
+    this.firestore.collection('users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('gameData')
+      .snapshotChanges().subscribe(res =>{
+      this.previousPoint.push(res.payload.data()['points']);
+      this.previousCoin.push(res.payload.data()['coins']);
+      return [this.previousPoint, this.previousCoin];
+      // this.totalPoints = res['points']
+      // this.totalCoins = res['coins']
+      // return this.totalPoints;
+    })
+
+    console.log(this.previousPoint);
+    console.log(this.previousCoin);
+
+    // Whenever user input the same date as current date, count will be added
+    // Also important for calculation to indicate the limit of getting points & coins
+    this.firestore
+      .collection('users/')
+      .doc(this.userId)
+      .collection('moodCheckIn/')
+      .snapshotChanges()
+      .subscribe(res=>{
+        this.totalCounts = [];
+        this.addedPoint = [];
+        res.forEach((val) => {
+          this.moodCountLength = val.payload.doc.data()['date'].split('T')[0];
+          if (this.moodCountLength == this.currDate.split('T')[0]) {
+            // Push into arrays to get the length of the same date as current date
+            this.totalCounts.push(this.moodCountLength);
+            console.log(this.totalCounts);
+          }
+
+          // Points & coins will be added,
+          // if the current date as same as the date input, AND total counts <= 2
+          /** LENGTH MASIH ERROR**/
+          if (this.currDate.split('T')[0] == date.split('T')[0] && this.totalCounts.length <= 2){
+            this.SumMoodCount();
+          }
+        })
+        console.log('LENGTH: ' + this.totalCounts.length);
+      })
+
+
+    // Get value of count in checkInCounts
+    // this.firestore
+    //   .collection('/users/')
+    //   .doc(this.userId)
+    //   .collection('checkInCounts/')
+    //   .doc(this.currDate.split('T')[0])
+    //   .snapshotChanges().subscribe(res => {
+    //   this.totalCounts = res.payload.data()['count'];
+    // });
+
+    // Everytime user input the same date as current date, count will be added
+    // this.firestore
+    //   .collection('/users/')
+    //   .doc(this.userId)
+    //   .collection('moodCheckIn/')
+    //   .snapshotChanges().subscribe(res=>{
+    //   res.forEach((val) => {
+    //     // console.log(val['date'].split('T')[0]);
+    //     if (val.payload.doc.data()['date'].split('T')[0] == this.currDate.split('T')[0]){
+    //       this.firestore
+    //         .collection('/users/')
+    //         .doc(this.userId)
+    //         .collection('checkInCounts/')
+    //         .doc(this.currDate.split('T')[0])
+    //         .update({
+    //           count: this.totalCounts++
+    //         })
+    //       console.log('TOTAL COUNTS: ' + this.totalCounts);
+    //     }
+    //   });
+    // })
   }
 
-  /** Function for do sum everytime user add mood check-n*/
   SumMoodCount() {
-    this.firestore.collection('/users/').doc(this.userId).update({
-      moodCount: this.totalMoodCount + 1
-    });
+    this.addedPoint.push(25);
+    this.addedCoin.push(500);
+
+    let calcuPoint = this.addedPoint.reduce((accum, a) => accum + a, 0)
+    let calcuCoin= this.addedCoin.reduce((accum, a) => accum + a, 0)
+
+    console.log('ADDED POINT: ' + this.addedPoint);
+    console.log('CALCULATED POINT: ' + calcuPoint);
+    console.log('ADDED COIN: ' + this.addedCoin);
+    console.log('CALCULATED COIN: ' + calcuCoin);
+
+    this.firestore
+      .collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('gameData')
+      .update({
+        points: this.previousPoint[0] + calcuPoint,
+        coins: this.previousCoin[0] + calcuCoin,
+      });
+
+    this.addedPoint = [];
+    this.addedCoin = [];
   }
 
-  // Calendar
-  // Change current month/week/day
-  // next() {
-  //   this.myCal.slideNext();
-  // }
-  //
-  // back() {
-  //   this.myCal.slidePrev();
-  // }
-  //
-  // onEventSelected(event) {
-  //   console.log(
-  //     "Event selected:" +
-  //     event.startTime +
-  //     "-" +
-  //     event.endTime +
-  //     "," +
-  //     event.title
-  //   );
-  // }
-  //
-  // onTimeSelected(ev) {
-  //   console.log(
-  //     "Selected time: " +
-  //     ev.selectedTime +
-  //     ", hasEvents: " +
-  //     (ev.events !== undefined && ev.events.length !== 0) +
-  //     ", disabled: " +
-  //     ev.disabled
-  //   );
-  //   this.selectedDate = ev.selectedTime;
-  // }
-  //
-  // onViewTitleChanged(title) {
-  //   this.viewTitle = title;
-  //   console.log(title);
-  // }
-  //
-  // onCurrentDateChanged(event: Date) {
-  //   console.log("current date change: " + event);
-  // }
 }
