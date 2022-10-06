@@ -196,14 +196,13 @@ export class AddMoodPage implements OnInit {
             this.totalCounts.push(this.moodCountLength);
             console.log(this.totalCounts);
           }
-
-          // Points & coins will be added,
-          // if the current date as same as the date input, AND total counts <= 2
-          /** LENGTH MASIH ERROR**/
-          if (this.currDate.split('T')[0] == date.split('T')[0] && this.totalCounts.length <= 2){
-            this.SumMoodCount();
-          }
         })
+        // Points & coins will be added,
+        // if the current date as same as the date input, AND total counts <= 2
+        /** LENGTH MASIH BUG KALAU CHECK-IN DIHAPUS**/
+        if (this.currDate.split('T')[0] == date.split('T')[0] && this.totalCounts.length <= 2){
+          this.SumMoodCount();
+        }
         console.log('LENGTH: ' + this.totalCounts.length);
       })
 

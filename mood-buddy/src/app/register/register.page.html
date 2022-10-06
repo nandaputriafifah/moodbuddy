@@ -1,34 +1,67 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref= "/home"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Register User</ion-title>
-  </ion-toolbar>
-</ion-header>
 <ion-content>
-
-  <form>
-    <ion-item lines="full">
-      <ion-label position="floating">Name</ion-label>
-      <ion-input type="text" #name required></ion-input>
-    </ion-item>
-    <ion-item lines="full">
-      <ion-label position="floating">Email</ion-label>
-      <ion-input type="text" #email required></ion-input>
-    </ion-item>
-    <ion-item lines="full">
-      <ion-label position="floating">Password</ion-label>
-      <ion-input type="password" #password required></ion-input>
-    </ion-item>
-<!--    <ion-item lines="full">-->
-<!--      <ion-label position="floating">Confirm Password</ion-label>-->
-<!--      <ion-input type="password" required></ion-input>-->
-<!--    </ion-item>-->
+  <ion-grid>
     <ion-row>
-      <ion-col>
-        <ion-button type="submit" (click)="signUp(email, password, name)" expand="block">Register</ion-button>
-      </ion-col>
+      <img src="assets/logo/logo-white.png">
     </ion-row>
-  </form>
+    <div class="center-content">
+      <ion-row>
+        <ion-col>
+          <h1>Let's create your <br> account!</h1>
+        </ion-col>
+      </ion-row>
+      <form>
+        <ion-item class="box" lines="none">
+          <ion-input type="text"
+                     placeholder="Name"
+                     #name
+                     required="true"></ion-input>
+        </ion-item>
+<!--        <ion-item lines="none" *ngIf="!name.value && name.ionBlur">-->
+<!--          <ion-note color="danger">Please input valid name.</ion-note>-->
+<!--        </ion-item>-->
+        <br>
+        <ion-item class="box" lines="none">
+          <ion-input type="email"
+                     placeholder="Email"
+                     #email
+                     required="true"></ion-input>
+        </ion-item>
+<!--        <ion-item lines="none" *ngIf="!email.value">-->
+<!--          <ion-note color="danger">Please input valid email.</ion-note>-->
+<!--        </ion-item>-->
+        <br>
+        <ion-item class="box" lines="none">
+          <ion-input type="password"
+                     placeholder="Password"
+                     #password
+                     required="true"></ion-input>
+        </ion-item>
+        <br>
+        <ion-item class="box" lines="none">
+          <ion-input type="password"
+                     placeholder="Confirm password"
+                     #confirmpassword
+                     required="true"></ion-input>
+        </ion-item>
+        <ion-item lines="none" *ngIf="confirmpassword.ionFocus && confirmpassword.value != password.value">
+          <p color="danger">Password didn't match.</p>
+        </ion-item>
+        <!--    <ion-item lines="full">-->
+        <!--      <ion-label position="floating">Confirm Password</ion-label>-->
+        <!--      <ion-input type="password" required></ion-input>-->
+        <!--    </ion-item>-->
+        <ion-row>
+          <ion-col>
+            <ion-button type="submit"
+                        expand="block"
+                        [disabled]="!name.value || !email.value || !password.value || !confirmpassword.value"
+                        (click)="signUp(email, password, name)">Register</ion-button>
+          </ion-col>
+        </ion-row>
+      </form>
+      <ion-row>
+        <ion-text>Already have an account? <b><a [routerLink]="['/login']">Login</a></b></ion-text>
+      </ion-row>
+    </div>
+  </ion-grid>
 </ion-content>

@@ -1,0 +1,50 @@
+.center-content {
+  margin-top: 25%;
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+.box {
+  border-color: white;
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 10px;
+}
+
+img {
+  display: block;
+  margin-top: 15%;
+  margin-left: auto;
+  margin-right: auto;
+  width: 45%;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: bolder;
+}
+
+span {
+  font-size: 14px;
+  font-weight: lighter;
+}
+
+ion-content {
+  --background: url("../../assets/background/home-page.svg") no-repeat center/cover fixed;
+}
+
+ion-button {
+  --background: #B7ABFB;
+  --border-radius: 10px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: 5%;
+}
+
+ion-text {
+  font-size: 12px;
+  text-align: center;
+  margin-top: 1%;
+  margin-left: auto;
+  margin-right: auto;
+}

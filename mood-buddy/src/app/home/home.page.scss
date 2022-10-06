@@ -25,3 +25,39 @@
 #container a {
   text-decoration: none;
 }
+
+.center-content {
+  margin-top: 50%;
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+img {
+  display: block;
+  margin-top: 15%;
+  margin-left: auto;
+  margin-right: auto;
+  width: 45%;
+}
+
+h1 {
+  font-size: 27px;
+  font-weight: bolder;
+}
+
+span {
+  font-size: 14px;
+  font-weight: lighter;
+}
+
+ion-content {
+  --background: url("../../assets/background/home-page.svg") no-repeat center/cover fixed;
+}
+
+ion-button {
+  --background: #B7ABFB;
+  --border-radius: 10px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: 5%;
+}

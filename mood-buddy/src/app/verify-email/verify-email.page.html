@@ -1,25 +1,26 @@
-<ion-header>
-  <ion-toolbar>
-<!--    <ion-buttons slot="start">-->
-<!--      <ion-back-button defaultHref = "/login"></ion-back-button>-->
-<!--    </ion-buttons>-->
-    <ion-title>Verify Email</ion-title>
-  </ion-toolbar>
-</ion-header>
 <ion-content>
   <ion-grid>
     <ion-row>
-      <h2>Verify your email</h2>
-      <p>
-        Please check your email and click on the link to verify your email address.
-      </p>
-      <ion-button type="submit"
-                  (click)="authService.SendVerificationMail()"
-                  expand="block">Resend Verification Email
-      </ion-button>
-      <ion-button [routerLink]="['/login']"
-                  expand="block"
-                  color="danger">Sign In</ion-button>
+      <img src="assets/logo/logo-white.png">
     </ion-row>
+    <div class="center-content">
+      <ion-row>
+        <h1>Verify your email</h1>
+        <span>
+        Please check your email and click on the link to verify your email address.
+      </span>
+      </ion-row>
+      <ion-row>
+        <ion-col class="ion-align-self-center">
+          <ion-button type="submit"
+                      (click)="authService.SendVerificationMail()"
+                      color="danger"
+                      expand="block">Resend Verification Email
+          </ion-button>
+          <ion-button [routerLink]="['/login']"
+                      expand="block">Login</ion-button>
+        </ion-col>
+      </ion-row>
+    </div>
   </ion-grid>
 </ion-content>

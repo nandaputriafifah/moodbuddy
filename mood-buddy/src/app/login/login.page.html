@@ -1,49 +1,59 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref = "/home"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Sign in User</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content>
-  <ion-item lines="full">
-    <ion-label position="floating">Email</ion-label>
-    <ion-input type="text" #email required></ion-input>
-  </ion-item>
-  <ion-item lines="full">
-    <ion-label position="floating">Password</ion-label>
-    <ion-input type="password" #password required></ion-input>
-  </ion-item>
-  <ion-row>
-    <ion-col>
-      <ion-button type="submit" (click)="logIn(email, password)" expand="block"
-      >Login</ion-button
-      >
-    </ion-col>
-  </ion-row>
-  <ion-row>
-    <ion-col>
-      <ion-button
-        expand="block"
-        color="warning"
-        [routerLink]="['/reset-password']"
-      >
-        Password Reset
-      </ion-button>
-    </ion-col>
-  </ion-row>
-  <ion-row>
-    <ion-col>
-      <ion-button
-        type="submit"
-        color="danger"
-        (click)="authService.GoogleAuth()"
-        expand="block"
-      >
-        Login with Google
-      </ion-button>
-    </ion-col>
-  </ion-row>
+<!--  <ion-buttons slot="start">-->
+<!--    <ion-back-button defaultHref = "/home"></ion-back-button>-->
+<!--  </ion-buttons>-->
+  <ion-grid>
+    <ion-row>
+      <img src="assets/logo/logo-white.png">
+    </ion-row>
+    <div class="center-content">
+      <ion-row>
+        <ion-col>
+          <h1>Welcome</h1>
+          <span>Let's meet your mood buddy!</span>
+        </ion-col>
+      </ion-row>
+      <br>
+      <ion-item class="box" lines="none">
+        <ion-input type="email"
+                   placeholder="Email"
+                   #email required></ion-input>
+      </ion-item>
+<!--      <ion-item lines="none" *ngIf="!email.">-->
+<!--        <ion-note color="danger">Please select your mood</ion-note>-->
+<!--      </ion-item>-->
+      <br>
+      <ion-item class="box" lines="none">
+        <ion-input type="password"
+                   placeholder="Password"
+                   #password required></ion-input>
+      </ion-item>
+      <ion-row>
+        <ion-col class="ion-align-self-center">
+          <ion-button
+            type="submit"
+            expand="block"
+            [disabled]="!email.value || !password.value"
+            (click)="logIn(email, password)">
+            Login</ion-button>
+<!--          <ion-button-->
+<!--            expand="block"-->
+<!--            color="warning"-->
+<!--            [routerLink]="['/reset-password']">-->
+<!--            Password Reset-->
+<!--          </ion-button>-->
+          <ion-button
+            type="submit"
+            color="danger"
+            (click)="authService.GoogleAuth()"
+            expand="block">
+            Login with Google
+          </ion-button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-text>Don't have an account? <b><a [routerLink]="['/register']">Register Now!</a></b></ion-text>
+      </ion-row>
+    </div>
+  </ion-grid>
 </ion-content>
