@@ -25,6 +25,32 @@
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
 
+:root {
+  --ion-color-rose: #B7ABFB;
+  --ion-color-rose-rgb: 183,171,251;
+  --ion-color-rose-contrast: white;
+  --ion-color-rose-contrast-rgb: 0,0,0;
+  --ion-color-rose-shade: #a196dd;
+  --ion-color-rose-tint: #beb3fb;
+}
+
+.ion-color-rose {
+  --ion-color-base: var(--ion-color-rose);
+  --ion-color-base-rgb: var(--ion-color-rose-rgb);
+  --ion-color-contrast: var(--ion-color-rose-contrast);
+  --ion-color-contrast-rgb: var(--ion-color-rose-contrast-rgb);
+  --ion-color-shade: var(--ion-color-rose-shade);
+  --ion-color-tint: var(--ion-color-rose-tint);
+}
+
+ion-datetime {
+  --background: white;
+  --background-rgb: 255, 241, 242;
+
+  border-radius: 16px;
+  box-shadow: rgba(var(--ion-color-rose-rgb), 0.3) 0px 10px 15px -3px;
+}
+
 // Calendar modal
 .cal-modal {
   --height: 80%;

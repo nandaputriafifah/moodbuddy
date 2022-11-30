@@ -90,52 +90,133 @@
     <div [class.with-event]="view.dates[row*7+col].events.length">
       {{view.dates[row*7+col].label}}
       <div class="indicator-container">
-        <div class="event-indicator" *ngFor="let e of view.dates[row*7+col].events"></div>
+        <div class="event-indicator {{e.title}}" *ngFor="let e of view.dates[row*7+col].events">
+<!--          <ion-button (click)="cek(e.title)"></ion-button>-->
+        </div>
       </div>
     </div>
   </ng-template>
 
 <!--  Event Detail Template-->
   <ng-template #monthviewDefaultEventDetailTemplate let-showEventDetail="showEventDetail" let-selectedDate="selectedDate" let-noEventsLabel="noEventsLabel">
-    <ion-list class="event-detail-container" has-bouncing="false" *ngIf="showEventDetail" overflow-scroll="false">
-        <ion-item *ngFor="let event of selectedDate?.events">
-          <ion-list>
-            <ion-item class="event-detail">
-              <h1><b>{{event.title}}</b></h1>
-            </ion-item>
-            <ion-item class="monthview-eventdetail-timecolumn"
-                      *ngIf="!event.allDay">{{event.startTime | date: 'HH:mm'}}
-            </ion-item>
-          </ion-list>
-          <ion-card>
-            <div *ngFor="let mood of moodList">
-              <ion-item *ngIf="(event.startTime | date: 'MMM, dd yyy | HH:mm') == (mood.date | date: 'MMM, dd yyy | HH:mm')">
-                <ion-list>
-                  <ion-item>What you felt:</ion-item>
-                  <ion-item><b>{{mood.currentFeeling}}</b></ion-item>
-                  <ion-item>Things that made you felt this way:</ion-item>
-                  <ion-item><b>{{mood.activities}}</b></ion-item>
-                  <ion-item>Notes:</ion-item>
-                  <ion-item><b>{{mood.notes}}</b></ion-item>
-                  <ion-item>
-                    <!-- Button Edit & Delete Mood-->
-                    <ion-button (click)="UpdateMood(event.id, mood.moodId, mood.date, mood.currentMood,
-                               mood.currentFeeling, mood.activities, mood.notes)">Edit
-                    </ion-button>
-                    <ion-button size="small"
-                                color="danger"
-                                (click)="DeleteMood(event.id, mood.moodId)">
-                      <ion-icon name="trash-outline"></ion-icon>
-                    </ion-button>
-                  </ion-item>
-                </ion-list>
-              </ion-item>
+    <div class="event-detail-container" has-bouncing="false" overflow-scroll="false">
+      <ion-card class="card-journal" *ngFor="let event of selectedDate?.events">
+        <ion-row>
+          <ion-col size="3">
+            <div class="container-image event-detail">
+              <img class="img-mood-icon" src="assets/mood-icon/{{event.title}}.png">
+              <ion-text class=" text-time monthview-eventdetail-timecolumn"
+                        *ngIf="!event.allDay">{{event.startTime | date: 'HH:mm'}}</ion-text>
             </div>
-          </ion-card>
-        </ion-item>
-      <ion-item *ngIf="selectedDate?.events.length==0">
-        <div class="no-events-label">There's no mood record!</div>
-      </ion-item>
-    </ion-list>
+          </ion-col>
+          <ion-col size="9">
+            <div *ngFor="let mood of moodList">
+              <div *ngIf="(event.startTime | date: 'MMM, dd yyy | HH:mm') == (mood.date | date: 'MMM, dd yyy | HH:mm')">
+                <ion-text class="text-mood">{{mood.currentMood}}</ion-text>
+                <br>
+                <ion-text class="text-label">What you felt:</ion-text>
+                <br>
+                <ion-row>
+                  <ion-col size="auto" *ngFor="let feeling of mood.currentFeeling">
+                    <ion-card class="card-feelings">{{feeling}}</ion-card>
+                  </ion-col>
+                </ion-row>
+                <ion-text class="text-label">Things that made you felt this way:</ion-text>
+                <br>
+                <ion-row>
+                  <ion-col size="3" *ngFor="let activity of mood.activities">
+                    <div class="text-activity">
+                      <img class="img-activity-icon" src="assets/activities-icon/{{activity}}.png">
+                      <br>
+                      <ion-text>{{activity}}</ion-text>
+                    </div>
+                  </ion-col>
+                </ion-row>
+                <ion-text style="font-size: 15px; font-weight: bold;">Notes:</ion-text>
+                <br>
+                <ion-text lines="none">{{mood.notes}}</ion-text>
+                <br>
+                <!-- Button Edit & Delete Mood-->
+                <ion-button size="small"
+                            (click)="UpdateMood(event.id, mood.moodId, mood.date, mood.currentMood,
+                                      mood.currentFeeling, mood.activities, mood.notes)">
+                  <ion-icon name="create-outline"></ion-icon>
+                </ion-button>
+                <ion-button size="small"
+                            color="danger"
+                            (click)="DeleteMood(event.id, mood.moodId)">
+                  <ion-icon name="trash-outline"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-card>
+    </div>
+    <!--        </ion-card>-->
+    <ion-item lines="none" *ngIf="selectedDate?.events.length==0">
+      <div class="no-events-label">There's no mood record!</div>
+    </ion-item>
+<!--    <ion-card>-->
+<!--      <ion-list class="event-detail-container" has-bouncing="false" *ngIf="showEventDetail" overflow-scroll="false">-->
+<!--        <ion-item *ngFor="let event of selectedDate?.events">-->
+<!--          <ion-list>-->
+<!--            <ion-item class="event-detail">-->
+<!--              &lt;!&ndash;              <h1><b>{{event.title}}</b></h1>&ndash;&gt;-->
+<!--              <img src="assets/mood-icon/{{event.title}}.png">-->
+<!--            </ion-item>-->
+<!--            <ion-item class="monthview-eventdetail-timecolumn"-->
+<!--                      *ngIf="!event.allDay">{{event.startTime | date: 'HH:mm'}}-->
+<!--            </ion-item>-->
+<!--          </ion-list>-->
+<!--          <ion-card>-->
+<!--            <div *ngFor="let mood of moodList">-->
+<!--              <ion-item *ngIf="(event.startTime | date: 'MMM, dd yyy | HH:mm') == (mood.date | date: 'MMM, dd yyy | HH:mm')">-->
+<!--                <ion-list>-->
+<!--                  <ion-item>{{mood.currentMood}}</ion-item>-->
+<!--                  <ion-item>What you felt:</ion-item>-->
+<!--                  <ion-item><b>{{mood.currentFeeling}}</b></ion-item>-->
+<!--                  <ion-item>Things that made you felt this way:</ion-item>-->
+<!--                  <ion-item><b>{{mood.activities}}</b></ion-item>-->
+<!--                  <ion-item>Notes:</ion-item>-->
+<!--                  <ion-item><b>{{mood.notes}}</b></ion-item>-->
+<!--                  <ion-item>-->
+<!--                    &lt;!&ndash; Button Edit & Delete Mood&ndash;&gt;-->
+<!--                    <ion-button (click)="UpdateMood(event.id, mood.moodId, mood.date, mood.currentMood,-->
+<!--                               mood.currentFeeling, mood.activities, mood.notes)">Edit-->
+<!--                    </ion-button>-->
+<!--                    <ion-button size="small"-->
+<!--                                color="danger"-->
+<!--                                (click)="DeleteMood(event.id, mood.moodId)">-->
+<!--                      <ion-icon name="trash-outline"></ion-icon>-->
+<!--                    </ion-button>-->
+<!--                  </ion-item>-->
+<!--                </ion-list>-->
+<!--              </ion-item>-->
+<!--            </div>-->
+<!--          </ion-card>-->
+<!--        </ion-item>-->
+<!--        <ion-item *ngIf="selectedDate?.events.length==0">-->
+<!--          <div class="no-events-label">There's no mood record!</div>-->
+<!--        </ion-item>-->
+<!--      </ion-list>-->
+<!--    </ion-card>-->
+
+
+<!--    <ion-item-sliding>-->
+<!--        <ion-card class="card-journal">-->
+
+<!--      <ion-item-options side="start">-->
+<!--        <ion-item-option>-->
+<!--          <ion-icon name="create-outline"></ion-icon>-->
+<!--        </ion-item-option>-->
+<!--      </ion-item-options>-->
+<!--      <ion-item-options side="end">-->
+<!--        <ion-item-option color="danger">-->
+<!--          <ion-icon name="trash-outline"></ion-icon>-->
+<!--        </ion-item-option>-->
+<!--      </ion-item-options>-->
+<!--    </ion-item-sliding>-->
   </ng-template>
+  <div style="padding-bottom: 500px;"></div>
 </ion-content>

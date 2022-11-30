@@ -1,9 +1,229 @@
-:host ::ng-deep {
-  .monthview-container {
-    height: auto !important;
-  }
+ion-toolbar {
+  --background: transparent;
+  height: 50px;
+}
 
-  .event-detail-container {
-    display: none;
-  }
+ion-card {
+  --background: #B7ABFB;
+  color: white;
+  width: 90%;
+  right: 0;
+  left: 0;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 20px;
+}
+
+ion-radio {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+.card-date {
+  width: 90%;
+  right: 0;
+  left: 0;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 20px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-left: auto;
+  margin-right: auto;
+  position: fixed;
+  top: 17px;
+  right: 0;
+  left: 0;
+  justify-content: center;
+}
+
+.icon-close {
+  width: 35px;
+  height: 35px;
+  position: fixed;
+  right: 0;
+}
+
+.label-input {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/** Current Mood **/
+.mood-selector {
+  text-align: center;
+  margin-left: -12px;
+  padding: 0;
+}
+
+.mood-selector input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+// Mood image
+.Unhappy {
+  background-image: url("../../../assets/mood-icon/Unhappy.png");
+}
+
+.Sad {
+  background-image: url("../../../assets/mood-icon/Sad.png");
+}
+
+.Neutral {
+  background-image: url("../../../assets/mood-icon/Neutral.png");
+}
+
+.Good {
+  background-image: url("../../../assets/mood-icon/Good.png");
+}
+
+.Happy {
+  background-image: url("../../../assets/mood-icon/Happy.png");
+}
+
+.mood-selector input:active+.drinkcard-cc {
+  opacity: .9;
+}
+
+.mood-selector input:checked+.drinkcard-cc {
+  -webkit-filter: none;
+  -moz-filter: none;
+  filter: none;
+}
+
+.drinkcard-cc {
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 62px;
+  height: 62px;
+  -webkit-transition: all 100ms ease-in;
+  -moz-transition: all 100ms ease-in;
+  transition: all 100ms ease-in;
+  -webkit-filter: brightness(1.8) grayscale(1) opacity(.7);
+  -moz-filter: brightness(1.8) grayscale(1) opacity(.7);
+  filter: brightness(1.8) grayscale(1) opacity(.7);
+}
+
+.drinkcard-cc:hover {
+  -webkit-filter: brightness(1.2) grayscale(.5) opacity(.9);
+  -moz-filter: brightness(1.2) grayscale(.5) opacity(.9);
+  filter: brightness(1.2) grayscale(.5) opacity(.9);
+}
+
+.label-mood {
+  margin: 7px;
+  font-size: 12px;
+}
+
+/** Current Feelings **/
+div label input {
+  margin-right: 100px;
+}
+
+.cat{
+  margin: 4px;
+  background-color: #DEDDE1;
+  border-radius: 10px;
+  overflow: hidden;
+  float: left;
+}
+
+.cat label {
+  float: left; line-height: 3.0em;
+  width: 9.5em; height: 3.0em;
+}
+
+.cat label span {
+  text-align: center;
+  padding: 3px 0;
+  display: block;
+}
+
+.cat label input {
+  position: absolute;
+  display: none;
+  color: #fff !important;
+}
+
+// selects all of the text within the input element and changes the color of the text
+.cat label input + span{color: #fff;}
+
+
+// This will declare how a selected input will look giving generic properties
+.cat input:checked + span {
+  color: #ffffff;
+}
+
+// This following statements selects each category individually that contains an input element that is a checkbox and is checked (or selected) and changes the background color of the span element.
+.Joy input:checked + span{background-color: #756F97;}
+.Sadness input:checked + span{background-color: #756F97;}
+.Acceptance input:checked + span{background-color: #756F97;}
+.Disgust input:checked + span{background-color: #756F97;}
+.Fear input:checked + span{background-color: #756F97;}
+.Anger input:checked + span{background-color: #756F97;}
+.Surprised input:checked + span{background-color: #756F97;}
+.Anticipation input:checked + span{background-color: #756F97;}
+
+/** Activities **/
+input[type="checkbox"][id^="activities"] {
+  display: none;
+}
+
+.label-activity {
+  padding: 5px;
+  display: inline-block;
+  position: relative;
+  text-align: center;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.label-activity::before {
+  background-color: white;
+  color: white;
+  content: " ";
+  display: block;
+  border-radius: 50%;
+  position: absolute;
+  top: -2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+  line-height: 18px;
+  transition-duration: 0.4s;
+  transform: scale(0);
+}
+
+.label-activity .img-activity {
+  height: 60px;
+  width: 60px;
+  transition-duration: 0.2s;
+  transform-origin: 50% 50%;
+}
+
+:checked+.label-activity {
+  border-color: #ddd;
+}
+
+:checked+.label-activity::before {
+  content: "✓";
+  background-color: grey;
+  transform: scale(1);
+}
+
+:checked+.label-activity .img-activity {
+  transform: scale(0.9);
 }

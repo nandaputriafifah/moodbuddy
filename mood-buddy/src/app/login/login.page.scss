@@ -1,16 +1,3 @@
-.center-content {
-  margin-top: 8%;
-  margin-left: 10%;
-  margin-right: 10%;
-}
-
-.box {
-  border-color: white;
-  border-width: 2px;
-  border-style: solid;
-  border-radius: 10px;
-}
-
 img {
   display: block;
   margin-top: 15%;
@@ -22,11 +9,13 @@ img {
 h1 {
   font-size: 27px;
   font-weight: bolder;
+  color: white;
 }
 
 span {
   font-size: 14px;
   font-weight: lighter;
+  color: white;
 }
 
 a {
@@ -64,4 +53,22 @@ ion-text {
   margin-top: 1%;
   margin-left: auto;
   margin-right: auto;
+  color: white;
+}
+
+ion-input {
+  color: white;
+}
+
+.center-content {
+  margin-top: 8%;
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+.box {
+  border-color: white;
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 10px;
 }

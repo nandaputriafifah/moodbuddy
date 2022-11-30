@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {AngularFirestore} from "@angular/fire/compat/firestore";
 import {Router} from "@angular/router";
-import {ModalController} from "@ionic/angular";
+import {LoadingController, ModalController} from "@ionic/angular";
 import firebase from "firebase/compat/app";
+import {GamificationService} from "../../shared/gamification.service";
 
 @Component({
   selector: 'app-shop',
@@ -19,6 +20,16 @@ export class ShopPage implements OnInit {
   levels: number;
   points: number;
 
+  skinAppliedId: string;
+  skinOwnedId: string;
+  skinOwnedName: string;
+  skinBuy: boolean;
+  skinId: string;
+
+  houseAppliedId: string;
+  houseOwnedId: string;
+  houseOwnedName: string;
+
   currentDate: any;
   dayName: any;
 
@@ -28,9 +39,7 @@ export class ShopPage implements OnInit {
       acc_price: number;
       acc_level: number;
       acc_exp: number;
-      acc_img: string;
-      acc_buy: boolean;
-      acc_apply: boolean; }[];
+      acc_img: string; }[];
 
   housesList:
     { house_id: string;
@@ -39,8 +48,12 @@ export class ShopPage implements OnInit {
       house_level: number;
       house_exp: number;
       house_img: string;
-      house_buy: boolean;
-      house_apply: boolean; }[];
+      users:
+        {
+          house_apply: boolean;
+          house_buy: boolean;
+        }
+    }[];
 
   skinsList:
     { skin_id: string;
@@ -49,8 +62,12 @@ export class ShopPage implements OnInit {
       skin_level: number;
       skin_exp: number;
       skin_img: string;
-      skin_buy: boolean;
-      skin_apply: boolean; }[];
+      users:
+        {
+          skin_apply: boolean;
+          skin_buy: boolean;
+        }
+    }[];
 
   toysList:
     { toy_id: string;
@@ -58,14 +75,15 @@ export class ShopPage implements OnInit {
       toy_price: number;
       toy_level: number;
       toy_exp: number;
-      toy_img: string;
-      toy_buy: boolean;
-      toy_apply: boolean; }[];
+      toy_img: string; }[];
 
   constructor(
     private firestore: AngularFirestore,
     private router: Router,
-    private modalController: ModalController) {
+    private modalController: ModalController,
+    private loadingCtrl: LoadingController,
+    private gamificationService: GamificationService
+  ) {
     this.userId = firebase.auth().currentUser.uid;
   }
 
@@ -75,15 +93,12 @@ export class ShopPage implements OnInit {
       .doc(this.userId)
       .collection('userGamification/')
       .doc('gameData')
-      .valueChanges().subscribe((res) => {
-      this.skinItem = res['items']['skins']['skin_id'];
-      this.houseItem = res['items']['houses']['house_id'];
-      this.coins = res['coins'];
-      this.levels = res['levels'];
-      this.points = res['points'];
+      .snapshotChanges()
+      .subscribe((res) => {
+      this.coins = res.payload.data()['coins'];
+      this.levels = res.payload.data()['levels'];
+      this.points = res.payload.data()['points'];
       console.log(`
-      Skin: ${this.skinItem}
-      House: ${this.houseItem}
       Coins: ${this.coins}
       Level: ${this.levels}
       Point: ${this.points}`);
@@ -105,8 +120,6 @@ export class ShopPage implements OnInit {
               acc_level: e.payload.doc.data()['acc_level'],
               acc_exp: e.payload.doc.data()['acc_exp'],
               acc_img: e.payload.doc.data()['acc_img'],
-              acc_buy: e.payload.doc.data()['acc_buy'],
-              acc_apply: e.payload.doc.data()['acc_apply']
             }
           })
         }
@@ -128,8 +141,10 @@ export class ShopPage implements OnInit {
               house_level: e.payload.doc.data()['house_level'],
               house_exp: e.payload.doc.data()['house_exp'],
               house_img: e.payload.doc.data()['house_img'],
-              house_buy: e.payload.doc.data()['house_buy'],
-              house_apply: e.payload.doc.data()['house_apply']
+              users: {
+                house_apply: e.payload.doc.data()['users'][this.userId]['house_apply'],
+                house_buy: e.payload.doc.data()['users'][this.userId]['house_buy']
+              }
             }
           })
         }
@@ -144,6 +159,9 @@ export class ShopPage implements OnInit {
       .subscribe(res=>{
         if(res){
           this.skinsList = res.map(e=>{
+            console.log('SKIN APPLY =======');
+            // console.log(e.payload.doc.data()['users'][this.userId]['skin_apply']);
+            // console.log(e.payload.doc.data()['users'][this.userId]['skin_apply']);
             return{
               skin_id: e.payload.doc.id,
               skin_name: e.payload.doc.data()['skin_name'],
@@ -151,8 +169,10 @@ export class ShopPage implements OnInit {
               skin_level: e.payload.doc.data()['skin_level'],
               skin_exp: e.payload.doc.data()['skin_exp'],
               skin_img: e.payload.doc.data()['skin_img'],
-              skin_buy: e.payload.doc.data()['skin_buy'],
-              skin_apply: e.payload.doc.data()['skin_apply']
+              users: {
+                skin_apply: e.payload.doc.data()['users'][this.userId]['skin_apply'],
+                skin_buy: e.payload.doc.data()['users'][this.userId]['skin_buy']
+              }
             }
           })
         }
@@ -174,8 +194,6 @@ export class ShopPage implements OnInit {
               toy_level: e.payload.doc.data()['toy_level'],
               toy_exp: e.payload.doc.data()['toy_exp'],
               toy_img: e.payload.doc.data()['toy_img'],
-              toy_buy: e.payload.doc.data()['toy_buy'],
-              toy_apply: e.payload.doc.data()['toy_apply']
             }
           })
         }
@@ -189,8 +207,335 @@ export class ShopPage implements OnInit {
     });
   }
 
+  ionViewDidEnter() {
+    this.gamificationService.UserLevelUp();
+    console.log('ionViewDidEnter');
+  }
+
+  async showLoading() {
+    const loading = await this.loadingCtrl.create({
+      message: 'Dismissing after 3 seconds...',
+      duration: 3000,
+    });
+
+    loading.present();
+  }
+
   GoToBadgesPage() {
     this.router.navigate(['/dashboard/badges']);
   }
 
+  BuySkin(skinId, skinName, skinPrice) {
+    console.log('Coin: '+ this.coins);
+    console.log('Skin Price: '+ skinPrice);
+
+    if (this.coins >= skinPrice) {
+      this.firestore
+        .collection('gamification/')
+        .doc('items/')
+        .collection('items_skins/')
+        .doc(skinId)
+        .update({
+          users:
+            {
+              [this.userId]:
+                {
+                  skin_apply: false,
+                  skin_buy: true
+                }
+            }
+        })
+
+      this.firestore.collection('/users/')
+        .doc(this.userId)
+        .collection('userGamification/')
+        .doc('ownedItems/')
+        .collection('skins')
+        .doc(skinId)
+        .set({
+          skin_name: skinName,
+          skin_apply: false,
+          skin_buy: true
+        });
+
+      // let remainingCoins;
+      // remainingCoins = this.coins - skinPrice;
+
+      this.firestore.collection('/users/')
+        .doc(this.userId)
+        .collection('userGamification/')
+        .doc('gameData')
+        .update({
+          coins: this.coins - skinPrice
+        });
+    }
+  }
+
+  ApplySkin(skinId) {
+    this.firestore.collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('appliedItems')
+      .snapshotChanges()
+      .subscribe( res => {
+        this.skinAppliedId = res.payload.data()['skins'][0]['skin_id'];
+        console.log(this.skinAppliedId);
+
+        this.firestore
+          .collection('gamification/')
+          .doc('items/')
+          .collection('items_skins/')
+          .doc(this.skinAppliedId)
+          .update({
+            users:
+              {
+                [this.userId]:
+                  {
+                    skin_apply: true,
+                    skin_buy: true
+                  }
+              }
+          })
+      });
+
+    console.log('2' + this.skinAppliedId);
+    this.firestore.collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('ownedItems/')
+      .collection('skins')
+      .get()
+      .subscribe(res => {
+        res.forEach((snap) => {
+          this.skinOwnedId = snap.id;
+          this.skinOwnedName = snap.data()['skin_name'];
+          console.log('Skin Owned ID' + this.skinOwnedId);
+          console.log('Skin Owned NAME' + this.skinOwnedName);
+
+          if (this.skinOwnedId !== skinId) {
+            this.firestore
+              .collection('gamification/')
+              .doc('items/')
+              .collection('items_skins/')
+              .doc(this.skinOwnedId)
+              .update({
+                users:
+                  {
+                    [this.userId]:
+                      {
+                        skin_apply: false,
+                        skin_buy: true
+                      }
+                  }
+              })
+
+            this.firestore.collection('/users/')
+              .doc(this.userId)
+              .collection('userGamification/')
+              .doc('ownedItems/')
+              .collection('skins')
+              .doc(this.skinOwnedId)
+              .set({
+                skin_name: this.skinOwnedName,
+                skin_apply: false,
+                skin_buy: true
+              });
+          }
+        });
+      });
+
+    this.firestore
+      .collection('gamification/')
+      .doc('items/')
+      .collection('items_skins/')
+      .doc(skinId)
+      .update({
+        users:
+          {
+            [this.userId]:
+              {
+                skin_apply: true,
+                skin_buy: true
+              }
+          }
+      })
+
+    this.firestore.collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('appliedItems')
+      .update({
+        skins: [
+          { skin_id: skinId,
+            skin_apply: true,
+            skin_buy: true,
+          }
+        ]
+      });
+
+    this.firestore.collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('ownedItems/')
+      .collection('skins')
+      .doc(skinId)
+      .update({
+        skin_apply: true
+      });
+  }
+
+  BuyHouse (houseId, houseName, housePrice) {
+    console.log('Coin: '+ this.coins);
+    console.log('House Price: '+ housePrice);
+
+    if (this.coins >= housePrice) {
+      this.firestore
+        .collection('gamification/')
+        .doc('items/')
+        .collection('items_houses/')
+        .doc(houseId)
+        .update({
+          users:
+            {
+              [this.userId]:
+                {
+                  house_apply: false,
+                  house_buy: true
+                }
+            }
+        })
+
+      this.firestore.collection('/users/')
+        .doc(this.userId)
+        .collection('userGamification/')
+        .doc('ownedItems/')
+        .collection('houses')
+        .doc(houseId)
+        .set({
+          house_name: houseName,
+          house_apply: false,
+          house_buy: true
+        });
+
+      this.firestore.collection('/users/')
+        .doc(this.userId)
+        .collection('userGamification/')
+        .doc('gameData')
+        .update({
+          coins: this.coins - housePrice
+        });
+    }
+  }
+
+  ApplyHouse (houseId) {
+    this.firestore.collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('appliedItems')
+      .snapshotChanges()
+      .subscribe( res => {
+        this.houseAppliedId = res.payload.data()['houses'][0]['house_id'];
+        console.log(this.houseAppliedId);
+
+        this.firestore
+          .collection('gamification/')
+          .doc('items/')
+          .collection('items_houses/')
+          .doc(this.houseAppliedId)
+          .update({
+            users:
+              {
+                [this.userId]:
+                  {
+                    house_apply: true,
+                    house_buy: true
+                  }
+              }
+          })
+      });
+
+    this.firestore.collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('ownedItems/')
+      .collection('houses')
+      .get()
+      .subscribe(res => {
+        res.forEach((snap) => {
+          this.houseOwnedId = snap.id;
+          this.houseOwnedName = snap.data()['house_name'];
+          console.log('House Owned ID' + this.houseOwnedId);
+          console.log('House Owned NAME' + this.houseOwnedName);
+
+          if (this.houseOwnedId !== houseId) {
+            this.firestore
+              .collection('gamification/')
+              .doc('items/')
+              .collection('items_houses/')
+              .doc(this.houseOwnedId)
+              .update({
+                users:
+                  {
+                    [this.userId]:
+                      {
+                        house_apply: false,
+                        house_buy: true
+                      }
+                  }
+              })
+
+            this.firestore.collection('/users/')
+              .doc(this.userId)
+              .collection('userGamification/')
+              .doc('ownedItems/')
+              .collection('houses')
+              .doc(this.houseOwnedId)
+              .set({
+                house_name: this.houseOwnedName,
+                house_apply: false,
+                house_buy: true
+              });
+          }
+        });
+      });
+
+    this.firestore
+      .collection('gamification/')
+      .doc('items/')
+      .collection('items_houses/')
+      .doc(houseId)
+      .update({
+        users:
+          {
+            [this.userId]:
+              {
+                house_apply: true,
+                house_buy: true
+              }
+          }
+      })
+
+    this.firestore.collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('appliedItems')
+      .update({
+        houses: [
+          { house_id: houseId,
+            house_apply: true,
+            house_buy: true,
+          }
+        ]
+      });
+
+    this.firestore.collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('ownedItems/')
+      .collection('houses')
+      .doc(houseId)
+      .update({
+        house_apply: true
+      });
+  }
 }

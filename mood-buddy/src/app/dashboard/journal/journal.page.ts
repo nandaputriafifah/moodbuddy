@@ -6,6 +6,7 @@ import {AlertController, ModalController} from "@ionic/angular";
 import {UpdatemoodComponent} from "../../components/updatemood/updatemood.component";
 import {CalendarComponent} from "ionic2-calendar";
 import {formatDate} from "@angular/common";
+import {GamificationService} from "../../shared/gamification.service";
 
 @Component({
   selector: 'app-journal',
@@ -57,6 +58,7 @@ export class JournalPage implements OnInit {
     private router: Router,
     private modalController: ModalController,
     private alertCtrl: AlertController,
+    // public gamificationService: GamificationService,
     @Inject(LOCALE_ID) private locale: string,
     ) {
     this.userId = firebase.auth().currentUser.uid;
@@ -126,6 +128,15 @@ export class JournalPage implements OnInit {
   // Selected date reange and hence title changed
   onViewTitleChanged(title) {
     this.viewTitle = title;
+  }
+
+  cek(e) {
+    // let array = [];
+    // for (let i = 0; i < e.length; i++) {
+    //   array.push(e[i].title);
+    // }
+    // console.log(array);
+    console.log(e);
   }
 
   // Calendar event was clicked

@@ -23,6 +23,7 @@
     "@firebase/app-compat": "^0.1.27",
     "@firebase/auth-compat": "^0.2.16",
     "@ionic/angular": "^6.1.9",
+    "@ionic/storage": "^3.0.6",
     "firebase": "^9.8.3",
     "ionic2-calendar": "^0.6.9",
     "rxjs": "~6.6.0",

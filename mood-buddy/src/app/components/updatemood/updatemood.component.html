@@ -1,10 +1,7 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>edit-mood</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content>
+  <ion-toolbar>
+    <ion-title class="title ion-text-center">Edit Mood Check-In</ion-title>
+  </ion-toolbar>
 <!-- Calendar -->
   <!-- Move back one screen of the slides -->
 <!--  <ion-row>-->
@@ -40,15 +37,15 @@
 
   <ion-row>
     <!-- Input Date -->
-    <ion-card>
-      <ion-item>
-        <ion-label><b>Date</b></ion-label>
-        <ion-datetime displayFormat="DD/MM/YYYY HH:mm"
-                      pickerFormat="MMM D HH:mm"
-                      [(ngModel)]="date"
-                      [max]="maxDate"></ion-datetime>
-      </ion-item>
-    </ion-card>
+    <div class="card-date">
+      <ion-datetime [(ngModel)]="date"
+                    [max]="maxDate"
+                    displayFormat="DD/MM/YYYY HH:mm"
+                    pickerFormat="MMM D HH:mm"
+                    locale="en-US"
+                    color="rose"></ion-datetime>
+    </div>
+  </ion-row>
 <!--    <ion-card>-->
 <!--      <ion-input-->
 <!--        [(ngModel)]="date"-->
@@ -72,55 +69,126 @@
 <!--      </ion-popover>-->
 <!--    </ion-card>-->
 
+  <ion-row>
     <!-- Current Mood -->
     <ion-card>
-      <ion-label>How's your feeling?</ion-label>
+      <ion-label class="label-input">How's your feeling?</ion-label>
       <br>
-      <ion-radio-group [(ngModel)]="currentMood" >
-        <ion-item *ngFor="let mood of Mood">
-          <ion-label>{{mood.moodName}}</ion-label>
-          <ion-radio value="{{mood.moodName}}"></ion-radio>
-        </ion-item>
-      </ion-radio-group>
+      <ion-row>
+        <ion-col *ngFor="let moods of Mood">
+          <div class="mood-selector">
+            <input [(ngModel)]="currentMood"
+                   id="{{moods.moodName}}"
+                   type="radio"
+                   name="mood"
+                   value="{{moods.moodName}}" />
+            <label class="drinkcard-cc {{moods.moodName}}" for="{{moods.moodName}}"></label>
+            <ion-text class="label-mood">{{moods.moodName}}</ion-text>
+          </div>
+        </ion-col>
+      </ion-row>
     </ion-card>
+
+<!--    <ion-card>-->
+<!--      <ion-label>How's your feeling?</ion-label>-->
+<!--      <br>-->
+<!--      <ion-radio-group [(ngModel)]="currentMood" >-->
+<!--        <ion-item *ngFor="let mood of Mood">-->
+<!--          <ion-label>{{mood.moodName}}</ion-label>-->
+<!--          <ion-radio value="{{mood.moodName}}"></ion-radio>-->
+<!--        </ion-item>-->
+<!--      </ion-radio-group>-->
+<!--    </ion-card>-->
 
     <!-- Current Feeling -->
     <ion-card>
-      <ion-label>Which words can describe your feelings?</ion-label>
+      <ion-label class="label-input">Which words can describe your feelings?</ion-label>
       <br>
-      <ion-select multiple="true" [(ngModel)]="currentFeeling">
-        <ion-item *ngFor="let feelings of Feelings">
-          <ion-select-option value="{{feelings.feelingName}}">{{feelings.feelingName}}</ion-select-option>
-        </ion-item>
-      </ion-select>
+      <ion-row>
+        <ion-col *ngFor="let feelings of Feelings">
+          <div class="cat {{feelings.feelingName}}">
+            <label>
+              <input [(ngModel)]="feelings.isChecked"
+                     type="checkbox"
+                     multiple="true"
+                     value="{{feelings.feelingName}}"
+                     required>
+              <span>{{feelings.feelingName}}</span>
+            </label>
+          </div>
+        </ion-col>
+      </ion-row>
     </ion-card>
+
+<!--    <ion-card>-->
+<!--      <ion-label>Which words can describe your feelings?</ion-label>-->
+<!--      <br>-->
+<!--      <ion-select multiple="true" [(ngModel)]="currentFeeling">-->
+<!--        <ion-item *ngFor="let feelings of Feelings">-->
+<!--          <ion-select-option value="{{feelings.feelingName}}">{{feelings.feelingName}}</ion-select-option>-->
+<!--        </ion-item>-->
+<!--      </ion-select>-->
+<!--    </ion-card>-->
 
     <!-- Activities -->
     <ion-card>
-      <ion-label>What’s going on, what’s making you feel this way?</ion-label>
+      <ion-label class="label-input">What’s going on, what’s making you feel this way?</ion-label>
       <br>
-      <ion-select multiple="true" [(ngModel)]="activities">
-        <ion-item *ngFor="let activities of Activities">
-          <ion-select-option value="{{activities.activityName}}">{{activities.activityName}}</ion-select-option>
-        </ion-item>
-      </ion-select>
+      <ion-row style="padding-top: 10px">
+        <ion-col size="3" *ngFor="let activities of Activities">
+          <input [(ngModel)]="activities.isChecked"
+                 type="checkbox"
+                 class="input-activity"
+                 multiple="true"
+                 value="{{activities.activityName}}"
+                 id="activities{{activities.activitiesID}}"
+                 required>
+          <label class="label-activity" for="activities{{activities.activitiesID}}">
+            <img class="img-activity" src="{{activities.activityImg}}">
+            <span>{{activities.activityName}}</span>
+          </label>
+        </ion-col>
+      </ion-row>
     </ion-card>
 
+<!--    <ion-card>-->
+<!--      <ion-label>What’s going on, what’s making you feel this way?</ion-label>-->
+<!--      <br>-->
+<!--      <ion-select multiple="true" [(ngModel)]="activities">-->
+<!--        <ion-item *ngFor="let activities of Activities">-->
+<!--          <ion-select-option value="{{activities.activityName}}">{{activities.activityName}}</ion-select-option>-->
+<!--        </ion-item>-->
+<!--      </ion-select>-->
+<!--    </ion-card>-->
+
     <!-- Notes -->
-    <ion-col size="12">
-      <ion-item>
-        <ion-input [(ngModel)]="notes" placeholder="Notes"></ion-input>
-      </ion-item>
-    </ion-col>
+    <ion-card>
+      <ion-label class="label-input">Let’s write a note about your feelings</ion-label>
+      <ion-textarea
+        [(ngModel)]="notes"
+        placeholder="Start writing..."
+        type="text"
+        required></ion-textarea>
+    </ion-card>
 
-    <!-- Close Button   -->
-    <ion-button expand="block" color="danger" (click)="CloseModal()">Cancel</ion-button>
+<!--    <ion-col size="12">-->
+<!--      <ion-item>-->
+<!--        <ion-input [(ngModel)]="notes" placeholder="Notes"></ion-input>-->
+<!--      </ion-item>-->
+<!--    </ion-col>-->
 
-    <!--Submit Button -->
-    <ion-button expand="block"
-                color="success"
-                (click)="UpdateMood(
-                date, currentMood, currentFeeling, activities, notes)">Update</ion-button>
-  </ion-row>
+      <!--Submit Button -->
+      <ion-col size="6">
+        <ion-button color="success"
+                    expand="block"
+                    (click)="UpdateMood(date, currentMood, currentFeeling, activities, notes)">Update</ion-button>
+      </ion-col>
 
+      <!-- Close Button -->
+      <ion-col size="6">
+        <ion-button color="danger"
+                    expand="block"
+                    (click)="CloseModal()">Cancel</ion-button>
+      </ion-col>
+    </ion-row>
 </ion-content>

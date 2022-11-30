@@ -1,125 +1,133 @@
-<ion-header>
+<ion-content>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button fill="outline">
-        Lv. {{levels}}
-      </ion-button>
+      <ion-card class="card-level">
+        <ion-text style="font-size: 10px;">Lv </ion-text>
+        <ion-text style="font-size: 28px;">{{levels}}</ion-text>
+      </ion-card>
     </ion-buttons>
-    <div class="ion-text-center">
+    <!--      <ion-progress-bar mode="determinate">{{points}}</ion-progress-bar>-->
+    <ion-card class="ion-text-center card-date">
       <ion-title size="small">{{dayName}}</ion-title>
       <ion-title size="small">{{currentDate | date: 'dd MMMM yyy'}}</ion-title>
-    </div>
+    </ion-card>
     <ion-buttons slot="end">
-      <ion-button color="danger" fill="outline">
-        {{coins}}
-      </ion-button>
+      <ion-card class="card-coin">
+        <img src="assets/icon/coin.svg" class="img-coin">
+        <ion-text class="text-coin">{{coins}}</ion-text>
+      </ion-card>
     </ion-buttons>
   </ion-toolbar>
-</ion-header>
 
-<ion-content>
-  <ion-grid>
-    <ion-row>
-      <ion-col size="9" size-lg>
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title class="ion-text-uppercase">Pet Shop</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <ion-card-subtitle>
-              Get the things that might Buddy likes!
-            </ion-card-subtitle>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-
-      <ion-col size="auto" class="ion-justify-content-end">
-        <ion-button (click)="GoToBadgesPage()">
-          Badge
-        </ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <ion-row style="padding-top: 110px">
+    <ion-card class="card-greeting">
+      <ion-card-title class="ion-text-capitalize card-title">Pet Shop</ion-card-title>
+      <ion-card-subtitle>
+        Get the things that might Buddy likes!
+      </ion-card-subtitle>
+    </ion-card>
+  </ion-row>
 
 <ion-grid>
   <ion-row>
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Skin</ion-card-title>
-      </ion-card-header>
+    <ion-card class="card-shop-title">
+      <ion-card-title class="text-shop-title">Skins</ion-card-title>
     </ion-card>
   </ion-row>
-  <ion-row *ngFor="let skin of skinsList">
-    <ion-col *ngIf="skin.skin_price > 0">
-      <ion-card>
-        <ion-list>
-          <img src="{{skin.skin_img}}">
-          <ion-item>{{skin.skin_name}}</ion-item>
-          <ion-item>Level {{skin.skin_level}}</ion-item>
-          <ion-item><ion-button>{{skin.skin_price}}</ion-button></ion-item>
-        </ion-list>
-      </ion-card>
+  <ion-row>
+    <ion-col *ngFor="let skin of skinsList" size="4">
+        <ion-card class="card-shop-img">
+          <img src="{{skin.skin_img}}" class="img-shop">
+        </ion-card>
+        <ion-text class="card-shop-text">{{skin.skin_name}}</ion-text>
+      <ion-button *ngIf="skin.skin_price > 0 && skin.users.skin_apply == false && skin.users.skin_buy == false"
+                  (click)="BuySkin(skin.skin_id,skin.skin_name,skin.skin_price)"
+                  class="button-shop">
+        <img src="assets/icon/coin.svg" class="img-shop-coin">
+        <ion-text>{{skin.skin_price}}</ion-text>
+      </ion-button>
+
+      <ion-button *ngIf=" skin.users.skin_apply == false && skin.users.skin_buy== true"
+                  (click)="ApplySkin(skin.skin_id)"
+                  class="button-shop-apply">
+        <ion-text>Apply</ion-text>
+      </ion-button>
+
+      <ion-button *ngIf=" skin.users.skin_apply == true && skin.users.skin_buy == true"
+                  [disabled]=" skin.users.skin_apply == true && skin.users.skin_buy == true"
+                  class="button-shop">
+        <ion-text>Applied</ion-text>
+      </ion-button>
     </ion-col>
   </ion-row>
 
   <ion-row>
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>House</ion-card-title>
-      </ion-card-header>
+    <ion-card class="card-shop-title">
+      <ion-card-title class="text-shop-title">Houses</ion-card-title>
     </ion-card>
   </ion-row>
-  <ion-row *ngFor="let house of housesList">
-    <ion-col *ngIf="house.house_price > 0">
-      <ion-card>
-        <ion-list>
-          <img src="{{house.house_img}}">
-          <ion-item>{{house.house_name}}</ion-item>
-          <ion-item>Level {{house.house_level}}</ion-item>
-          <ion-item><ion-button>{{house.house_price}}</ion-button></ion-item>
-        </ion-list>
+  <ion-row>
+    <ion-col *ngFor="let house of housesList" size="4">
+      <ion-card class="card-shop-img">
+        <img src="{{house.house_img}}" class="img-shop">
       </ion-card>
+      <ion-text class="card-shop-text">{{house.house_name}}</ion-text>
+      <ion-button *ngIf="house.house_price > 0 && house.users.house_apply == false && house.users.house_buy == false"
+                  (click)="BuyHouse(house.house_id,house.house_name,house.house_price)"
+                  class="button-shop">
+        <img src="assets/icon/coin.svg" class="img-shop-coin">
+        <ion-text>{{house.house_price}}</ion-text>
+      </ion-button>
+
+      <ion-button *ngIf="house.users.house_apply == false && house.users.house_buy== true"
+                  (click)="ApplyHouse(house.house_id)"
+                  class="button-shop-apply">
+        <ion-text>Apply</ion-text>
+      </ion-button>
+
+      <ion-button *ngIf="house.users.house_apply == true && house.users.house_buy == true"
+                  [disabled]="house.users.house_apply == true && house.users.house_buy == true"
+                  class="button-shop">
+        <ion-text>Applied</ion-text>
+      </ion-button>
+
     </ion-col>
   </ion-row>
 
   <ion-row>
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Accessories</ion-card-title>
-      </ion-card-header>
+    <ion-card class="card-shop-title">
+      <ion-card-title class="text-shop-title">Accessories</ion-card-title>
     </ion-card>
   </ion-row>
   <ion-row>
-    <ion-col *ngFor="let acc of accList">
-      <ion-card>
-        <ion-list>
-          <img src="{{acc.acc_img}}">
-          <ion-item>{{acc.acc_name}}</ion-item>
-          <ion-item>Level {{acc.acc_level}}</ion-item>
-          <ion-item><ion-button>{{acc.acc_price}}</ion-button></ion-item>
-        </ion-list>
+    <ion-col *ngFor="let acc of accList" size="4">
+      <ion-card class="card-shop-img">
+        <img src="{{acc.acc_img}}" class="img-shop">
       </ion-card>
+      <ion-text class="card-shop-text">{{acc.acc_name}}</ion-text>
+      <ion-button class="button-shop">
+        <img src="assets/icon/coin.svg" class="img-shop-coin">
+        <ion-text>{{acc.acc_price}}</ion-text>
+      </ion-button>
     </ion-col>
   </ion-row>
 
   <ion-row>
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Toy</ion-card-title>
-      </ion-card-header>
+    <ion-card class="card-shop-title">
+      <ion-card-title class="text-shop-title">Toys</ion-card-title>
     </ion-card>
   </ion-row>
   <ion-row>
-    <ion-col *ngFor="let toy of toysList">
-      <ion-card>
-        <ion-list>
-          <img src="{{toy.toy_img}}">
-          <ion-item>{{toy.toy_name}}</ion-item>
-          <ion-item>Level {{toy.toy_level}}</ion-item>
-          <ion-item><ion-button>{{toy.toy_price}}</ion-button></ion-item>
-        </ion-list>
+    <ion-col *ngFor="let toy of toysList" size="4">
+      <ion-card class="card-shop-img">
+        <img src="{{toy.toy_img}}" class="img-shop">
       </ion-card>
+      <ion-text class="card-shop-text">{{toy.toy_name}}</ion-text>
+      <ion-button class="button-shop">
+        <img src="assets/icon/coin.svg" class="img-shop-coin">
+        <ion-text>{{toy.toy_price}}</ion-text>
+      </ion-button>
     </ion-col>
   </ion-row>
-</ion-grid>
+</ion-grid> <br><br><br>
 </ion-content>

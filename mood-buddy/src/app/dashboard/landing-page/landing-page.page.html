@@ -1,59 +1,93 @@
-<ion-header>
+<ion-content>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button fill="outline">
-        Lv. {{levels}}
-      </ion-button>
-      <ion-title size="small">{{points}}</ion-title>
+      <ion-card class="card-level">
+        <ion-text style="font-size: 10px;">Lv </ion-text>
+        <ion-text style="font-size: 28px;">{{levels}}</ion-text>
+      </ion-card>
     </ion-buttons>
-    <div class="ion-text-center">
+    <!--      <ion-progress-bar mode="determinate">{{points}}</ion-progress-bar>-->
+    <ion-card class="ion-text-center card-date">
       <ion-title size="small">{{dayName}}</ion-title>
       <ion-title size="small">{{currentDate | date: 'dd MMMM yyy'}}</ion-title>
-    </div>
+    </ion-card>
     <ion-buttons slot="end">
-      <ion-button color="danger" fill="outline">
-        {{coins}}
-      </ion-button>
+      <ion-card class="card-coin">
+        <img src="assets/icon/coin.svg" class="img-coin">
+        <ion-text class="text-coin">{{coins}}</ion-text>
+      </ion-card>
     </ion-buttons>
   </ion-toolbar>
-</ion-header>
 
-<ion-content>
-  <ion-grid>
-    <ion-row>
-      <ion-col size="9" size-lg>
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title class="ion-text-uppercase">Hello, {{displayName}}.</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <ion-card-subtitle>
-              Buddy was waiting for you, let’s tell him how was your day!
-            </ion-card-subtitle>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
+  <ion-row>
+    <ion-card class="card-greeting">
+      <ion-card-title class="ion-text-capitalize">Hello, {{displayName}}!</ion-card-title>
+      <ion-card-subtitle>
+        Buddy wants to know, how was your day?
+      </ion-card-subtitle>
+    </ion-card>
 
-      <ion-col size="auto" class="ion-justify-content-end">
-        <ion-button (click)="GoToBadgesPage()">
-          Badge
-        </ion-button>
-      </ion-col>
-    </ion-row>
+    <ion-card class="card-badge" (click)="GoToBadgesPage()">
+      <img src="assets/icon/badge.png" class="img-badge">
+      <ion-text class="text-badge">Badge</ion-text>
+    </ion-card>
+  </ion-row>
 
-    <ion-row>
-      <ion-col size="auto" *ngFor="let mood of Mood">
-        <ion-button style="font-size: 10px;"
-                    (click)="GoToAddMoodPage()">{{mood.moodName}}</ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <ion-col size="auto" *ngFor="let mood of Mood">
+    <img src="{{mood.moodImg}}" class="img-mood-card" (click)="GoToAddMoodPage()">
+  </ion-col>
+  <ion-col size="auto" *ngFor="let mood of Mood">
+    <ion-text class="text-mood-card">{{mood.moodName}}</ion-text>
+  </ion-col>
 
-  <div *ngFor="let skin of skinsList">
-    <img *ngIf="skinItem == skin.skin_id" src="{{skin.skin_img}}">
-  </div>
+  <ion-col>
+    <div *ngFor="let skin of skinsList">
+      <img *ngIf="skinItem == skin.skin_id"
+           src="{{skin.skin_img}}"
+           class="img-buddy">
+    </div>
 
-  <div *ngFor="let house of housesList">
-    <img *ngIf="houseItem == house.house_id" src="{{house.house_img}}">
-  </div>
+    <div *ngFor="let house of housesList">
+      <img *ngIf="houseItem == house.house_id"
+           src="{{house.house_img}}"
+           class="img-house">
+    </div>
+  </ion-col>
+<!--  <ion-grid>-->
+<!--    <ion-row>-->
+<!--      <ion-col size="9" size-lg>-->
+<!--        <ion-card>-->
+<!--          <ion-card-header>-->
+<!--            <ion-card-title class="ion-text-uppercase">Hello, {{displayName}}.</ion-card-title>-->
+<!--          </ion-card-header>-->
+<!--          <ion-card-content>-->
+<!--            <ion-card-subtitle>-->
+<!--              Buddy was waiting for you, let’s tell him how was your day!-->
+<!--            </ion-card-subtitle>-->
+<!--          </ion-card-content>-->
+<!--        </ion-card>-->
+<!--      </ion-col>-->
+
+<!--      <ion-col size="auto" class="ion-justify-content-end">-->
+<!--        <ion-button (click)="GoToBadgesPage()">-->
+<!--          Badge-->
+<!--        </ion-button>-->
+<!--      </ion-col>-->
+<!--    </ion-row>-->
+
+<!--    <ion-row>-->
+<!--      <ion-col size="auto" *ngFor="let mood of Mood">-->
+<!--        <ion-button style="font-size: 10px;"-->
+<!--                    (click)="GoToAddMoodPage()">{{mood.moodName}}</ion-button>-->
+<!--      </ion-col>-->
+<!--    </ion-row>-->
+<!--  </ion-grid>-->
+
+<!--  <div *ngFor="let skin of skinsList">-->
+<!--    <img *ngIf="skinItem == skin.skin_id" src="{{skin.skin_img}}">-->
+<!--  </div>-->
+
+<!--  <div *ngFor="let house of housesList">-->
+<!--    <img *ngIf="houseItem == house.house_id" src="{{house.house_img}}">-->
+<!--  </div>-->
 </ion-content>

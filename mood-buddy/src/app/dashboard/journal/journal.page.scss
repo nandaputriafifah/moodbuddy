@@ -1,14 +1,37 @@
 .indicator-container {
-  padding-left: 0.5rem;
-  padding-bottom: 0.4rem;
+  //padding-right: 0.5rem;
+  //padding-bottom: 0.4rem;
+  margin: 5px;
 }
 
 .event-indicator {
-  background: var(--ion-color-success);
-  width: 5px;
-  height: 5px;
-  border-radius: 5px;
+  //background: purple;
+  width: 10px;
+  height: 10px;
+  margin-left: 10px;
+  //padding-right: 20px;
+  border-radius: 2px;
   display: table-cell;
+}
+
+.Unhappy {
+  background: #FFAEC0;
+}
+
+.Sad {
+  background: #FFAB73;
+}
+
+.Neutral {
+  background: #FFD384;
+}
+
+.Good {
+  background: #FDFF97;
+}
+
+.Happy {
+  background: greenyellow;
 }
 
 :host ::ng-deep {
@@ -17,11 +40,79 @@
   }
 
   .monthview-selected {
-    background-color: var(--ion-color-success) !important;
+    background-color: #ECE9FF !important;
+    //border-radius: 20px;
+    color: black;
   }
 }
 
+
 .with-event {
-  background-color: var(--ion-color-primary);
-  border-radius: 15px;
+  //background-color: #CCC3FF;
+  //border-radius: 15px;
+  color: black;
+}
+
+.card-journal{
+  --background: #B7ABFB;
+  padding: 5px;
+  color: white;
+  border-radius: 10px;
+}
+
+.button-journal {
+  margin-left: 220px;
+}
+
+.container-image {
+  text-align: center;
+}
+
+.img-mood-icon {
+  //width: 75px;
+  //height: 75px;
+  align-self: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.text-mood {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.text-time {
+  font-size: 12px;
+  font-weight: lighter;
+  text-align: center;
+}
+
+.text-label {
+  font-size: 12px;
+  font-weight: lighter;
+  opacity: 0.8;
+}
+
+.card-feelings {
+  --background: #CCC3FF;
+  margin: 0;
+  text-align: center;
+  font-size: 12px;
+  padding: 5px;
+  margin-left: -2px;
+  color: white;
+  width: 90px;
+  height: 25px;
+  border-radius: 10px;
+}
+
+.img-activity-icon {
+  width: 50px;
+  height: 50px;
+  padding: 5px;
+}
+
+.text-activity {
+  font-size: 10px;
+  text-align: center;
 }

@@ -1,0 +1,162 @@
+ion-content {
+  --background: url("../../../../src/assets/background/landing-page.svg") no-repeat center/cover fixed;
+}
+
+ion-toolbar {
+  --background: transparent;
+  --min-height:100px!important;
+}
+
+ion-title {
+  font-weight: bold;
+  font-size: 12px;
+}
+
+ion-text {
+  color: white;
+}
+
+ion-card-title {
+  color: white;
+  font-weight: bolder;
+  font-size: 22px;
+}
+
+ion-card-subtitle {
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.card-level {
+  background: #B7ABFB;
+  color: white;
+  border-radius: 50%;
+  height: 70px;
+  width: 70px;
+  margin-top: 2px;
+  left: 7px;
+  float: left;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 25px;
+  text-align: center;
+  font-weight: bold;
+  position: fixed;
+}
+
+.card-date {
+  background: #B7ABFB;
+  color: white;
+  border-radius: 10px;
+  padding: 5px;
+  width: 175px;
+  margin-left: auto;
+  margin-right: auto;
+  position: fixed;
+  top: 23px;
+  right: 0;
+  left: 0;
+  float: top;
+  display: block;
+  justify-content: center;
+}
+
+.card-coin {
+  background: #B7ABFB;
+  color: white;
+  border-radius: 10px;
+  height: 40px;
+  width: 80px;
+  padding-top: 13px;
+  padding-right: 5px;
+  position: fixed;
+  float: right;
+  display: block;
+  top: -25px;
+  right: -15px;
+}
+
+.text-coin {
+  text-align: right;
+  font-weight: bolder;
+}
+
+.img-coin {
+  margin-left: 5px;
+  margin-top: -5px;
+  width: 30px;
+  height: 100%;
+  float: left;
+  //position: fixed;
+}
+
+.card-greeting {
+  background: #B7ABFB;
+  color: white;
+  border-radius: 10px;
+  padding: 15px;
+  width: 300px;
+  height: 80px;
+  margin-left: 0;
+  float: left;
+  position: static;
+}
+
+.card-badge {
+  background: #B7ABFB;
+  color: white;
+  border-radius: 10px;
+  right: -20px;
+  width: 52px;
+  height: 55px;
+  float: right;
+  position: relative;
+}
+
+.img-badge {
+  width: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 7px;
+  padding-top: 2px;
+}
+
+.text-badge {
+  font-size: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 10px;
+}
+
+.img-mood-card {
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 2px;
+  position: center;
+  padding-top: 14px;
+}
+
+.text-mood-card {
+  margin: 14px;
+  font-weight: bold;
+  font-size: 12px;
+  text-shadow: -2px 2px 7px grey;
+}
+
+.img-buddy {
+  margin-top: 285px;
+  width: 182px;
+  height: 182px;
+  float: left;
+  position: fixed;
+}
+
+.img-house {
+  width: 230px;
+  height: 230px;
+  margin-top: 230px;
+  right: -10px;
+  float: right;
+  position: fixed;
+}

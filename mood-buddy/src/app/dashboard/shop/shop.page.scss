@@ -1,0 +1,166 @@
+ion-content {
+  --background: url("../../../../src/assets/background/landing-page.svg") no-repeat center/cover fixed;
+}
+
+ion-toolbar {
+  --background: white;
+  --min-height:100px!important;
+  position: fixed;
+}
+
+ion-title {
+  font-weight: bold;
+  font-size: 12px;
+}
+
+ion-card-subtitle {
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.card-title {
+  color: white;
+  font-weight: bolder;
+  font-size: 22px;
+}
+
+.card-level {
+  background: #B7ABFB;
+  color: white;
+  border-radius: 50%;
+  height: 70px;
+  width: 70px;
+  margin-top: 5px;
+  left: 7px;
+  float: left;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 25px;
+  text-align: center;
+  font-weight: bold;
+  position: fixed;
+}
+
+.card-date {
+  background: #B7ABFB;
+  color: white;
+  border-radius: 10px;
+  padding: 5px;
+  width: 175px;
+  margin-left: auto;
+  margin-right: auto;
+  position: fixed;
+  top: 23px;
+  right: 0;
+  left: 0;
+  float: top;
+  display: block;
+  justify-content: center;
+}
+
+.card-coin {
+  background: #B7ABFB;
+  color: white;
+  border-radius: 10px;
+  height: 40px;
+  width: 80px;
+  padding-top: 13px;
+  padding-right: 5px;
+  position: fixed;
+  float: right;
+  display: block;
+  top: -25px;
+  right: -15px;
+}
+
+.text-coin {
+  text-align: right;
+  font-weight: bolder;
+}
+
+.img-coin {
+  margin-left: 5px;
+  margin-top: -5px;
+  width: 30px;
+  height: 100%;
+  float: left;
+  //position: fixed;
+}
+
+.card-greeting {
+  background: #B7ABFB;
+  color: white;
+  border-radius: 10px;
+  padding: 15px;
+  width: 300px;
+  height: 80px;
+  margin-left: 0;
+  float: left;
+  position: static;
+}
+
+
+.card-shop-title {
+  background: #B7ABFB;
+  color: white;
+  border-radius: 10px;
+  padding: 10px;
+  width: 150px;
+  height: 40px;
+  margin-left: -5px;
+  float: left;
+  position: static;
+}
+
+.text-shop-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+}
+
+.card-shop-img {
+  background: white;
+  border-radius: 10px;
+  width: 110px;
+  height: 110px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.img-shop {
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+.card-shop-text {
+  color: #313030;
+  justify-content: center;
+  font-weight: bold;
+  margin-left: 10px;
+  font-size: 12px;
+}
+
+.button-shop {
+  --background: #64CBB0;
+  color: white;
+  border-radius: 10px;
+  width: 117px;
+  height: 30px;
+}
+
+.button-shop-apply {
+  --background: red;
+  color: white;
+  border-radius: 10px;
+  width: 117px;
+  height: 30px;
+}
+
+.img-shop-coin {
+  width: 30px;
+  height: 30px;
+  padding-right: 5px;
+}

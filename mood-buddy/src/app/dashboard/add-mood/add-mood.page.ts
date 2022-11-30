@@ -3,6 +3,8 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import firebase from "firebase/compat/app";
 import {Router} from "@angular/router";
 import {CalendarComponent} from "ionic2-calendar";
+import {AuthenticationService} from "../../shared/authentication.service";
+import {GamificationService} from "../../shared/gamification.service";
 
 
 @Component({
@@ -22,17 +24,39 @@ export class AddMoodPage implements OnInit {
   totalMoodCount: number = 0;
   totalCounts = [];
 
+  coins: number;
+  levels: number;
+  points: number;
+
+  totalCheckIn: number = 0;
+  checkIn = [];
+
   addedPoint = [];
   previousPoint = [];
   addedCoin = [];
   previousCoin = [];
+  counterFlag = [];
+  counter: boolean;
+
+  checkInCounter: number = 0;
+  checkInFlag: boolean = false;
+  nampung = [];
+  calcuNampung: number;
+
+  checkedFeelings:any;
+  checkedActivity:any;
 
   // points = 0;
   // coins = 0;
   // totalPoints: any;
   // totalCoins: any;
 
-  addMood: {currentDate: string; date: string; currentMood: string; currentFeeling: string; activities: string; notes: string };
+  addMood: {currentDate: string;
+    date: string;
+    currentMood: string;
+    currentFeeling: string;
+    activities: string;
+    notes: string;};
 
   // Calendar
   eventSource = [];
@@ -59,43 +83,44 @@ export class AddMoodPage implements OnInit {
 
   // List feelings
   Feelings: any = [
-    {feelingID: 1, feelingName: "Joy"},
-    {feelingID: 2, feelingName: "Sadness"},
-    {feelingID: 3, feelingName: "Acceptance"},
-    {feelingID: 4, feelingName: "Disgust"},
-    {feelingID: 5, feelingName: "Fear"},
-    {feelingID: 6, feelingName: "Anger"},
-    {feelingID: 7, feelingName: "Surprised"},
-    {feelingID: 8, feelingName: "Anticipation"}
-  ]
+    {feelingID: 1, feelingName: 'Joy', isChecked: false},
+    {feelingID: 2, feelingName: 'Sadness', isChecked: false},
+    {feelingID: 3, feelingName: 'Acceptance', isChecked: false},
+    {feelingID: 4, feelingName: 'Disgust', isChecked: false},
+    {feelingID: 5, feelingName: 'Fear', isChecked: false},
+    {feelingID: 6, feelingName: 'Anger', isChecked: false},
+    {feelingID: 7, feelingName: 'Surprised', isChecked: false},
+    {feelingID: 8, feelingName: 'Anticipation', isChecked: false}
+  ];
 
   // List activities
   Activities: any = [
-    {activitiesID: 1, activityName: "Work"},
-    {activitiesID: 2, activityName: "Friends"},
-    {activitiesID: 3, activityName: "Family"},
-    {activitiesID: 4, activityName: "Love"},
-    {activitiesID: 5, activityName: "Study"},
-    {activitiesID: 6, activityName: "Travel"},
-    {activitiesID: 7, activityName: "Shopping"},
-    {activitiesID: 8, activityName: "Cleaning"},
-    {activitiesID: 9, activityName: "Health"},
-    {activitiesID: 10, activityName: "Pets"},
-    {activitiesID: 11, activityName: "Gym"},
-    {activitiesID: 12, activityName: "Movies"},
-    {activitiesID: 13, activityName: "Music"},
-    {activitiesID: 14, activityName: "Gaming"},
-    {activitiesID: 15, activityName: "Party"},
-    {activitiesID: 16, activityName: "Reading"},
-    {activitiesID: 17, activityName: "Eating"},
-    {activitiesID: 18, activityName: "Self-care"},
-    {activitiesID: 19, activityName: "Time Alone"},
-    {activitiesID: 20, activityName: "Helping Others"}
-  ]
+    {activitiesID: 1, activityName: 'Work', activityImg: 'assets/activities-icon/Work.png', isChecked: false},
+    {activitiesID: 2, activityName: 'Friends', activityImg: 'assets/activities-icon/Friends.png', isChecked: false},
+    {activitiesID: 3, activityName: 'Family', activityImg: 'assets/activities-icon/Family.png',isChecked: false},
+    {activitiesID: 4, activityName: 'Love', activityImg: 'assets/activities-icon/Love.png',isChecked: false},
+    {activitiesID: 5, activityName: 'Study', activityImg: 'assets/activities-icon/Study.png',isChecked: false},
+    {activitiesID: 6, activityName: 'Travel', activityImg: 'assets/activities-icon/Travel.png',isChecked: false},
+    {activitiesID: 7, activityName: 'Shopping', activityImg: 'assets/activities-icon/Shopping.png',isChecked: false},
+    {activitiesID: 8, activityName: 'Cleaning', activityImg: 'assets/activities-icon/Cleaning.png',isChecked: false},
+    {activitiesID: 9, activityName: 'Health', activityImg: 'assets/activities-icon/Health.png',isChecked: false},
+    {activitiesID: 10, activityName: 'Pets', activityImg: 'assets/activities-icon/Pets.png',isChecked: false},
+    {activitiesID: 11, activityName: 'Gym', activityImg: 'assets/activities-icon/Gym.png',isChecked: false},
+    {activitiesID: 12, activityName: 'Movies', activityImg: 'assets/activities-icon/Movies.png',isChecked: false},
+    {activitiesID: 13, activityName: 'Music', activityImg: 'assets/activities-icon/Music.png',isChecked: false},
+    {activitiesID: 14, activityName: 'Gaming', activityImg: 'assets/activities-icon/Gaming.png',isChecked: false},
+    {activitiesID: 15, activityName: 'Party', activityImg: 'assets/activities-icon/Party.png',isChecked: false},
+    {activitiesID: 16, activityName: 'Reading', activityImg: 'assets/activities-icon/Reading.png',isChecked: false},
+    {activitiesID: 17, activityName: 'Eating', activityImg: 'assets/activities-icon/Eating.png',isChecked: false},
+    {activitiesID: 18, activityName: 'Self-care',activityImg: 'assets/activities-icon/Self-care.png', isChecked: false},
+    {activitiesID: 19, activityName: 'Time Alone', activityImg: 'assets/activities-icon/Time Alone.png',isChecked: false},
+    {activitiesID: 20, activityName: 'Helping Others', activityImg: 'assets/activities-icon/Helping Others.png',isChecked: false}
+  ];
 
   constructor(
     private firestore: AngularFirestore,
-    private router: Router
+    private router: Router,
+    // private gamificationService: GamificationService
   ) {}
 
   ngOnInit() {
@@ -126,9 +151,16 @@ export class AddMoodPage implements OnInit {
     //   });
   }
 
+  // ionViewDidLeave() {
+  //   this.gamificationService.UserLevelUp();
+  //   console.log('ionViewDidLeave');
+  // }
+
   /** Function for add mood check-in to firebase */
-  AddMood(date, currentMood, currentFeeling, activities, notes){
-    let addMood = {}
+  AddMood(date, currentMood, notes){
+    let addMood = {};
+    let arrayFeelings = [];
+    let arrayActivities = [];
 
     // Calendar
     const start = this.selectedDate;
@@ -143,12 +175,32 @@ export class AddMoodPage implements OnInit {
       allDay: false,
     }
 
-    addMood['currentDate'] = this.currDate
-    addMood['date'] = date
-    addMood['currentMood'] = currentMood
-    addMood['currentFeeling'] = currentFeeling
-    addMood['activities'] = activities
-    addMood['notes'] = notes
+    this.checkedFeelings =  this.Feelings.filter(value => {
+      return value.isChecked;
+    });
+
+    this.checkedActivity =  this.Activities.filter(value => {
+      return value.isChecked;
+    });
+
+    for (let i = 0; i < this.checkedFeelings.length; i++) {
+      arrayFeelings.push(this.checkedFeelings[i].feelingName);
+      console.log(arrayFeelings);
+    }
+
+    for (let i = 0; i < this.checkedActivity.length; i++) {
+      arrayActivities.push(this.checkedActivity[i].activityName);
+      console.log(arrayActivities);
+    }
+
+    addMood['currentDate'] = this.currDate;
+    addMood['date'] = date;
+    addMood['currentMood'] = currentMood;
+    addMood['currentFeeling'] = arrayFeelings;
+    addMood['activities'] = arrayActivities;
+    addMood['notes'] = notes;
+
+    console.log(addMood);
 
       // Create new collection named 'moodCheckIn'
       // Firestore will create id for everytime user added mood
@@ -158,6 +210,16 @@ export class AddMoodPage implements OnInit {
       })
 
     this.firestore.collection('/users/').doc(this.userId).collection('event/').add(event);
+
+    // this.firestore
+    //   .collection('/users/')
+    //   .doc(this.userId)
+    //   .collection('userCheckInCounter/')
+    //   .doc(this.currDate.split('T')[0])
+    //   .set({
+    //     counter: this.checkInCounter,
+    //     counterFlag: this.checkInFlag
+    //   });
 
     this.previousPoint = [];
     this.previousCoin = [];
@@ -189,6 +251,7 @@ export class AddMoodPage implements OnInit {
       .subscribe(res=>{
         this.totalCounts = [];
         this.addedPoint = [];
+        // this.checkIn = [];
         res.forEach((val) => {
           this.moodCountLength = val.payload.doc.data()['date'].split('T')[0];
           if (this.moodCountLength == this.currDate.split('T')[0]) {
@@ -196,13 +259,36 @@ export class AddMoodPage implements OnInit {
             this.totalCounts.push(this.moodCountLength);
             console.log(this.totalCounts);
           }
+          // console.log(`Total CheckIn Before: ${this.checkIn.length}`);
+          // if (this.currDate.split('T')[0] == date.split('T')[0] && this.checkIn.length < 1) {
+          //   // this.totalCheckIn = this.totalCheckIn + testing;
+          //   this.totalCheckIn++;
+          //   this.checkIn.push(1);
+          //   // this.totalCheckIn = this.checkIn.reduce((accum, a) => accum + a, 0);
+          //   // console.log(this.checkIn);
+          //   console.log('Total CheckIn: ' + this.totalCheckIn);
+          //   console.log(`Total CheckIn After: ${this.checkIn}` + this.checkIn.length);
+          //   this.SumMoodCount();
+          // }
         })
         // Points & coins will be added,
         // if the current date as same as the date input, AND total counts <= 2
+
+        // let testing = 1;
+
         /** LENGTH MASIH BUG KALAU CHECK-IN DIHAPUS**/
         if (this.currDate.split('T')[0] == date.split('T')[0] && this.totalCounts.length <= 2){
+          const test = [];
+          test.push(this.totalCounts.length);
+          let total = test.reduce((accum, a) => accum + a, 0);
+          console.log('Test Counts Length: ');
+          console.log(test);
+
+          console.log('Total Counts Length: ');
+          console.log(total);
           this.SumMoodCount();
         }
+
         console.log('LENGTH: ' + this.totalCounts.length);
       })
 
@@ -241,29 +327,122 @@ export class AddMoodPage implements OnInit {
   }
 
   SumMoodCount() {
-    this.addedPoint.push(25);
-    this.addedCoin.push(500);
+    // Get value of count in checkInCounts
+    // this.firestore
+    //   .collection('/users/')
+    //   .doc(this.userId)
+    //   .collection('userCheckInCounter/')
+    //   .doc(this.currDate.split('T')[0])
+    //   .snapshotChanges().subscribe(res => {
+    //     console.log(res.payload.data());
+    //     this.checkInCounter = res.payload.data()['counter'];
+    //     this.checkInFlag = res.payload.data()['counterFlag'];
+    // });
 
-    let calcuPoint = this.addedPoint.reduce((accum, a) => accum + a, 0)
-    let calcuCoin= this.addedCoin.reduce((accum, a) => accum + a, 0)
+    // console.log('NAMPUNG:');
+    // console.log(this.nampung);
 
-    console.log('ADDED POINT: ' + this.addedPoint);
-    console.log('CALCULATED POINT: ' + calcuPoint);
-    console.log('ADDED COIN: ' + this.addedCoin);
-    console.log('CALCULATED COIN: ' + calcuCoin);
+    // if (this.calcuNampung <= 2 && this.checkInFlag == false) {
+    //   this.nampung.push(1);
+    //   this.calcuNampung = this.nampung.reduce((accum, a) => accum + a, 0);
+    //   console.log('CALCU NAMPUNG = ' + this.calcuNampung);
 
-    this.firestore
-      .collection('/users/')
-      .doc(this.userId)
-      .collection('userGamification/')
-      .doc('gameData')
-      .update({
-        points: this.previousPoint[0] + calcuPoint,
-        coins: this.previousCoin[0] + calcuCoin,
-      });
+      // this.counter = false;
+      // console.log('COUNTER 1 = ' + this.counter);
 
-    this.addedPoint = [];
-    this.addedCoin = [];
-  }
+      // if (this.counterFlag.length <= 2) {
+      // console.log('DO SUM MOOD COUNT');
+      // this.counterFlag = [];
+      // this.counterFlag.push(1);
+      // console.log(this.counterFlag);
+      //
+      // let calcuCounterFlag = this.counterFlag.reduce((accum, a) => accum + a, 0);
 
+
+      //
+      // this.firestore.collection('users/')
+      //   .doc(this.userId)
+      //   .collection('counterFlag/')
+      //   .doc(`${this.counterFlag}`)
+      //   .snapshotChanges().subscribe(res =>{
+      //   this.previousPoint.push(res.payload.data()['points']);
+      //   this.previousCoin.push(res.payload.data()['coins']);
+      //   return [this.previousPoint, this.previousCoin];
+      //   // this.totalPoints = res['points']
+      //   // this.totalCoins = res['coins']
+      //   // return this.totalPoints;
+      // })
+
+      // let calcuCounterFlag =+ 1;
+      // console.log('calcuCounterFlag: ' + calcuCounterFlag);
+      this.addedPoint.push(25);
+      this.addedCoin.push(500);
+
+      let calcuPoint = this.addedPoint.reduce((accum, a) => accum + a, 0);
+      let calcuCoin = this.addedCoin.reduce((accum, a) => accum + a, 0);
+
+      console.log('ADDED POINT: ' + this.addedPoint);
+      console.log('CALCULATED POINT: ' + calcuPoint);
+      console.log('ADDED COIN: ' + this.addedCoin);
+      console.log('CALCULATED COIN: ' + calcuCoin);
+
+      console.log('PREVIOUS COIN:');
+      console.log(this.previousCoin);
+
+      this.firestore
+        .collection('/users/')
+        .doc(this.userId)
+        .collection('userGamification/')
+        .doc('gameData')
+        .update({
+          points: this.previousPoint[0] + calcuPoint,
+          coins: this.previousCoin[0] + calcuCoin,
+        });
+
+      this.addedPoint = [];
+      this.addedCoin = [];
+
+      // this.firestore
+      //   .collection('/users/')
+      //   .doc(this.userId)
+      //   .collection('userCheckInCounter/')
+      //   .doc(this.currDate.split('T')[0])
+      //   .set({
+      //     counter: this.calcuNampung,
+      //     counterFlag: this.checkInFlag
+      //   });
+      //
+      // console.log(this.nampung);
+      // console.log('NAMPUNG = ' + this.calcuNampung);
+      // console.log('COUNTER = ' + this.checkInCounter);
+      // console.log('Counter Flag= ' + this.counterFlag.length);
+
+      // this.nampung = [];
+    // }
+
+    //
+    // if (this.calcuNampung == 2){
+    //   this.checkInFlag = true;
+    //
+    //   this.firestore
+    //     .collection('/users/')
+    //     .doc(this.userId)
+    //     .collection('userCheckInCounter/')
+    //     .doc(this.currDate.split('T')[0])
+    //     .set({
+    //       counter: this.calcuNampung,
+    //       counterFlag: this.checkInFlag
+    //     });
+    //
+    //
+    //   // this.counter = true;
+    //   // console.log('COUNTER = TRUE');
+    // }
+
+    }
+    // if (this.counterFlag.length > 2){
+    //     this.counter = true;
+    //     console.log('COUNTER = TRUE');
+    // }
+  // }
 }

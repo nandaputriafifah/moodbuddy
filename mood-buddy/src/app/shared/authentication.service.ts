@@ -6,6 +6,8 @@ import {User} from "./user";
 import firebase from "firebase/compat/app";
 import auth = firebase.auth;
 import {Gamification} from "./gamification";
+import {CheckIn} from "./check-in";
+import {Items} from "./items";
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +15,12 @@ import {Gamification} from "./gamification";
 export class AuthenticationService {
   userData: any;
   userId: any;
+
+  skinId: any;
+  houseId: any;
+
+  tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+  currDate = (new Date(Date.now() - this.tzoffset)).toISOString().slice(0, -1);
 
   constructor(
     public afStore: AngularFirestore,
@@ -64,6 +72,11 @@ export class AuthenticationService {
     // return this.ngFireAuth.auth.currentUser.sendEmailVerification()
       .then(() => {
         this.SetUserGamification();
+        this.SetUserOwnedItems();
+        this.SetUserAppliedItems();
+        this.SetSkinGamification();
+        this.SetHouseGamification();
+        this.SetUserMoodCheckInCounter();
         this.router.navigate(['verify-email']);
       })
   }
@@ -110,6 +123,11 @@ export class AuthenticationService {
         if (result.user.metadata.creationTime == result.user.metadata.lastSignInTime) {
           this.SetUserData(result.user);
           this.SetUserGamification();
+          this.SetUserOwnedItems();
+          this.SetUserAppliedItems();
+          this.SetSkinGamification();
+          this.SetHouseGamification();
+          this.SetUserMoodCheckInCounter();
         }
         console.log(result.user.metadata);
         console.log(`Creation Time: ${result.user.metadata.creationTime}`);
@@ -141,6 +159,7 @@ export class AuthenticationService {
   SetUserGamification(){
     // Get current user id
     this.userId = firebase.auth().currentUser.uid;
+
     const userGamificationRef: AngularFirestoreDocument<any> = this.afStore
       .collection('/users/')
       .doc(this.userId)
@@ -155,43 +174,200 @@ export class AuthenticationService {
         badge_id: '',
         // badge_name: '',
         // badge_reward: 0,
-      },
-      items: {
-        houses: {
-          house_id: 'h1_cardbox',
-          // house_level: 1,
-          // house_name: 'Card Box',
-          // house_price: 0,
-          // house_apply: true,
-          // house_buy: true
-        },
-        skins: {
-          skin_id: 's1_orange',
-          // skin_level: 1,
-          // skin_name: 'Orange',
-          // skin_price: 0,
-          // skin_apply: true,
-          // skin_buy: true
-        },
-        accessories: {
-          acc_id: '',
-          // acc_level: 0,
-          // acc_name: '',
-          // acc_price: 0,
-          // acc_apply: false,
-          // acc_buy: false
-        },
-        toys: {
-          toy_id: '',
-          // toy_level: 0,
-          // toy_name: '',
-          // toy_price: 0,
-          // toy_apply: false,
-          // toy_buy: false
-        }
       }
     };
     return userGamificationRef.set(userGamification);
+  }
+
+  SetSkinsItems() {
+    // Get current user id
+    this.userId = firebase.auth().currentUser.uid;
+
+    const userOwnedItemsRef: AngularFirestoreDocument<any> = this.afStore
+      .collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('ownedItems/')
+      .collection('skins')
+      .doc('s1_orange')
+
+    return userOwnedItemsRef.set({
+      skin_name: 'Orange',
+      skin_apply: true,
+      skin_buy: true
+    });
+  }
+
+  SetHousesItems() {
+    // Get current user id
+    this.userId = firebase.auth().currentUser.uid;
+
+    const userOwnedItemsRef: AngularFirestoreDocument<any> = this.afStore
+      .collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('ownedItems/')
+      .collection('houses')
+      .doc('h1_cardbox')
+
+    return userOwnedItemsRef.set({
+      house_name: 'Card Box',
+      house_apply: true,
+      house_buy: true
+    });
+  }
+
+  SetUserOwnedItems() {
+   this.SetSkinsItems();
+   this.SetHousesItems();
+  }
+
+  SetSkinGamification() {
+    // Get current user id
+    this.userId = firebase.auth().currentUser.uid;
+
+    this.afStore
+      .collection('gamification/')
+      .doc('items/')
+      .collection('items_skins/')
+      .get()
+      .subscribe((res) => {
+        res.forEach((snap) => {
+          this.skinId = snap.id;
+
+          const setSkinGamificationRef: AngularFirestoreDocument<any> = this.afStore
+            .collection('gamification/')
+            .doc('items/')
+            .collection('items_skins/')
+            .doc(this.skinId)
+
+          if (this.skinId == 's1_orange') {
+            return setSkinGamificationRef.set({
+              users:
+                {
+                  [this.userId]:
+                    {
+                      skin_apply: true,
+                      skin_buy: true
+                    }
+                }
+            }, {merge: true});
+          }
+
+          return setSkinGamificationRef.set({
+            users:
+              {
+                [this.userId]:
+                  {
+                    skin_apply: false,
+                    skin_buy: false
+                  }
+              }
+          }, {merge: true});
+        });
+      });
+  }
+
+  SetHouseGamification() {
+    // Get current user id
+    this.userId = firebase.auth().currentUser.uid;
+
+    this.afStore
+      .collection('gamification/')
+      .doc('items/')
+      .collection('items_houses/')
+      .get()
+      .subscribe((res) => {
+        res.forEach((snap) => {
+          this.houseId = snap.id;
+
+          const setHouseGamificationRef: AngularFirestoreDocument<any> = this.afStore
+            .collection('gamification/')
+            .doc('items/')
+            .collection('items_houses/')
+            .doc(this.houseId)
+
+          if (this.houseId == 'h1_cardbox') {
+            return setHouseGamificationRef.set({
+              users:
+                {
+                  [this.userId]:
+                    {
+                      house_apply: true,
+                      house_buy: true
+                    }
+                }
+            }, {merge: true});
+          }
+
+          return setHouseGamificationRef.set({
+            users:
+              {
+                [this.userId]:
+                  {
+                    house_apply: false,
+                    house_buy: false
+                  }
+              }
+          }, {merge: true});
+        });
+      });
+  }
+
+  SetUserAppliedItems(){
+    // Get current user id
+    this.userId = firebase.auth().currentUser.uid;
+
+    const userAppliedItemsRef: AngularFirestoreDocument<any> = this.afStore
+      .collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('appliedItems')
+
+    const userAppliedItems: Items = {
+      houses: [
+        { house_id: 'h1_cardbox',
+          house_apply: true,
+          house_buy: true,
+        }
+      ],
+      skins: [
+        { skin_id: 's1_orange',
+          skin_apply: true,
+          skin_buy: true,
+        }
+      ],
+      accessories: [
+        { acc_id: '',
+          acc_apply: false,
+          acc_buy: false,
+        }
+      ],
+      toys: [
+        { toy_id: '',
+          toy_apply: false,
+          toy_buy: false,
+        }
+      ],
+    };
+    return userAppliedItemsRef.set(userAppliedItems);
+  }
+
+  SetUserMoodCheckInCounter(){
+    // Get current user id
+    this.userId = firebase.auth().currentUser.uid;
+    const userMoodCheckInCounterRef: AngularFirestoreDocument<any> = this.afStore
+      .collection('/users/')
+      .doc(this.userId)
+      .collection('userCheckInCounter/')
+      .doc(this.currDate.split('T')[0])
+
+    const userCheckInCounter: CheckIn = {
+      // date: this.currDate,
+      counter: 0,
+      counterFlag: false
+    };
+    return userMoodCheckInCounterRef.set(userCheckInCounter);
   }
 
   // Sign-out

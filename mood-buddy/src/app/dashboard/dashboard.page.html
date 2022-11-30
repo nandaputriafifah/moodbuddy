@@ -1,26 +1,29 @@
 <!--  This is for display tabs button    -->
 <ion-content>
   <ion-tabs>
-    <ion-tab-bar slot="bottom">
+    <!--  Tabs Add Mood    -->
+    <!--  When click add mood button on tabs, directly go to add mood page -->
+    <ion-fab vertical="bottom" horizontal="center" translucent="true">
+      <ion-fab-button type="submit">
+        <ion-icon name="add-circle" (click)="goToAddMoodPage()"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+
+    <ion-tab-bar slot="bottom" class="ion-no-border">
       <!--  Tabs Landing Page    -->
       <ion-tab-button tab="landing-page">
         <ion-icon name="home"></ion-icon>
       </ion-tab-button>
 
       <!--  Tabs Journal    -->
-      <ion-tab-button tab="journal">
+      <ion-tab-button tab="journal" class="journals">
         <ion-icon name="book"></ion-icon>
       </ion-tab-button>
 
-      <!--  Tabs Add Mood    -->
-      <!--  When click add mood button on tabs, directly
-          go to add mood page -->
-      <ion-tab-button type="submit" (click)="goToAddMoodPage()">
-        <ion-icon name="add-circle"></ion-icon>
-      </ion-tab-button>
+      <svg height="50" viewBox="0 0 100 50" width="100" xmlns="http://www.w3.org/2000/svg"><path d="M100 0v50H0V0c.543 27.153 22.72 49 50 49S99.457 27.153 99.99 0h.01z" fill="red" fill-rule="evenodd"></path></svg>
 
       <!--  Tabs Shop    -->
-      <ion-tab-button tab="shop">
+      <ion-tab-button tab="shop" class="shops">
         <ion-icon name="storefront"></ion-icon>
       </ion-tab-button>
 
