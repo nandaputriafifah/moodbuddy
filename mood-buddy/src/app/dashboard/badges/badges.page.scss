@@ -1,0 +1,81 @@
+ion-toolbar {
+  --background: transparent;
+  height: 50px;
+}
+
+ion-card {
+  --background: #B7ABFB;
+  color: white;
+  width: 90%;
+  height: 125px;
+  right: 0;
+  left: 0;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+ion-button {
+  border-radius: 10px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-left: auto;
+  margin-right: auto;
+  position: fixed;
+  top: 17px;
+  right: 0;
+  left: 0;
+  justify-content: center;
+}
+
+.img-badges {
+  width: 60px;
+  height: 60px;
+}
+
+.text-badges-name {
+  font-weight: bold;
+  font-size: 17px;
+}
+
+.text-badges-desc {
+  font-size: 12px;
+}
+
+.button-reward {
+  color: white;
+  --background: #64CBB0;
+  width: 65px;
+  height: 52px;
+}
+
+.text-button {
+  color: white;
+  font-size: 12px;
+  margin-left: auto;
+  margin-right: auto;
+  right: 0;
+  left: 0;
+  justify-content: center;
+}
+
+.text-reward {
+  font-size: 12px;
+}
+
+.text-reward-plus {
+  font-size: 13.5px;
+}
+
+.img-coin-reward {
+  width: 17px;
+  height: 17px;
+  padding-top: 6px;
+  padding-right: 5px;
+}
+
+

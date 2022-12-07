@@ -15,6 +15,14 @@ export class LandingPagePage implements OnInit {
 
   skinItem: string;
   houseItem: string;
+  collarItem: string;
+  glassesItem: string;
+  bowsItem: string;
+  hatsItem: string;
+  toysLeftItem: string;
+  toysMiddleItem: string;
+  toysRightItem: string;
+
   coins: number;
   levels: number;
   points: number;
@@ -48,6 +56,22 @@ export class LandingPagePage implements OnInit {
       house_level: number;
       house_img: string; }[];
 
+  // List Accessories
+  accessoriesList:
+    { acc_id: string;
+      acc_name: string;
+      acc_price: number;
+      acc_level: number;
+      acc_img: string; }[];
+
+  // List Toys
+  toysList:
+    { toy_id: string;
+      toy_name: string;
+      toy_price: number;
+      toy_level: number;
+      toy_img: string; }[];
+
   constructor(
     private firestore: AngularFirestore,
     private router: Router,
@@ -69,10 +93,24 @@ export class LandingPagePage implements OnInit {
       .snapshotChanges().subscribe((res) => {
       this.skinItem = res.payload.data()['skins'][0].skin_id;
       this.houseItem = res.payload.data()['houses'][0].house_id;
+      this.collarItem = res.payload.data()['accessories']['collar'].acc_id;
+      this.glassesItem = res.payload.data()['accessories']['glasses'].acc_id;
+      this.hatsItem = res.payload.data()['accessories']['pandora'].acc_id;
+      this.bowsItem = res.payload.data()['accessories']['bow'].acc_id;
+      this.toysLeftItem = res.payload.data()['toys']['left'].toy_id;
+      this.toysMiddleItem = res.payload.data()['toys']['middle'].toy_id;
+      this.toysRightItem = res.payload.data()['toys']['right'].toy_id;
 
       console.log(`
       Skin: ${this.skinItem}
-      House: ${this.houseItem}`);
+      House: ${this.houseItem}
+      Collar: ${this.collarItem}
+      Glasses: ${this.glassesItem}
+      Hats: ${this.hatsItem}
+      Bows: ${this.bowsItem}
+      Toys Left: ${this.toysLeftItem}
+      Toys Middle: ${this.toysMiddleItem}
+      Toys Right: ${this.toysRightItem}`);
     });
 
     //Get user gamification in gameData
@@ -80,11 +118,11 @@ export class LandingPagePage implements OnInit {
       .doc(this.userId)
       .collection('userGamification/')
       .doc('gameData')
-      .snapshotChanges()
+      .valueChanges()
       .subscribe((res) => {
-        this.coins = res.payload.data()['coins'];
-        this.levels = res.payload.data()['levels'];
-        this.points = res.payload.data()['points'];
+        this.coins = res['coins'];
+        this.levels = res['levels'];
+        this.points = res['points'];
 
         console.log(`
           Coins: ${this.coins}
@@ -127,6 +165,46 @@ export class LandingPagePage implements OnInit {
               house_price: e.payload.doc.data()['house_price'],
               house_level: e.payload.doc.data()['house_level'],
               house_img: e.payload.doc.data()['house_img']
+            }
+          })
+        }
+      })
+
+    // Define Accessories data in firebase
+    this.firestore
+      .collection('gamification/')
+      .doc('items/')
+      .collection('items_acc/')
+      .snapshotChanges()
+      .subscribe(res=>{
+        if(res){
+          this.accessoriesList = res.map(e=>{
+            return{
+              acc_id: e.payload.doc.id,
+              acc_name: e.payload.doc.data()['acc_name'],
+              acc_price: e.payload.doc.data()['acc_price'],
+              acc_level: e.payload.doc.data()['acc_level'],
+              acc_img: e.payload.doc.data()['acc_img']
+            }
+          })
+        }
+      })
+
+    // Define Toys data in firebase
+    this.firestore
+      .collection('gamification/')
+      .doc('items/')
+      .collection('items_toys/')
+      .snapshotChanges()
+      .subscribe(res=>{
+        if(res){
+          this.toysList = res.map(e=>{
+            return{
+              toy_id: e.payload.doc.id,
+              toy_name: e.payload.doc.data()['toy_name'],
+              toy_price: e.payload.doc.data()['toy_price'],
+              toy_level: e.payload.doc.data()['toy_level'],
+              toy_img: e.payload.doc.data()['toy_img']
             }
           })
         }

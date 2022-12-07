@@ -10,6 +10,11 @@ import firebase from "firebase/compat/app";
 export class BadgesPage implements OnInit {
   userId: any;
 
+  skinsOwned: any = [];
+  housesOwned: any = [];
+  toysOwned: any = [];
+  accessoriesOwned: any = [];
+
   badgesList:
     { badge_id: string;
       badge_name: string;
@@ -31,7 +36,7 @@ export class BadgesPage implements OnInit {
     this.firestore
       .collection('gamification/')
       .doc('badges/')
-      .collection('badges_list/')
+      .collection('badges_list/', ref => ref.orderBy('badge_count', 'asc'))
       .snapshotChanges()
       .subscribe(res=>{
         if(res){
@@ -49,6 +54,63 @@ export class BadgesPage implements OnInit {
           })
         }
       })
-  }
 
+    // Get owned skins
+    this.firestore.collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('ownedItems/')
+      .collection('skins')
+      .get()
+      .subscribe(res => {
+        res.forEach((snap) => {
+          this.skinsOwned.push(snap.id);
+          console.log(this.skinsOwned);
+        });
+      });
+
+    // Get owned houses
+    this.firestore.collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('ownedItems/')
+      .collection('houses')
+      .get()
+      .subscribe(res => {
+        res.forEach((snap) => {
+          this.housesOwned.push(snap.id);
+          console.log(this.housesOwned);
+        });
+      });
+
+    // Get owned accessories
+    this.firestore.collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('ownedItems/')
+      .collection('accessories')
+      .get()
+      .subscribe(res => {
+        res.forEach((snap) => {
+          this.accessoriesOwned.push(snap.id);
+          console.log(this.accessoriesOwned);
+        });
+      });
+
+    // Get owned toys
+    this.firestore.collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('ownedItems/')
+      .collection('toys')
+      .get()
+      .subscribe(res => {
+        res.forEach((snap) => {
+          if (snap.data()['toy_buy'] == true) {
+            this.toysOwned.push(snap.id);
+            console.log(this.toysOwned);
+          }
+        });
+      });
+  }
 }

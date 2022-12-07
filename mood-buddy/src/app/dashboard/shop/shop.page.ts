@@ -30,6 +30,19 @@ export class ShopPage implements OnInit {
   houseOwnedId: string;
   houseOwnedName: string;
 
+  collarAppliedId: string;
+  glassesAppliedId: string;
+  hatsAppliedId: string;
+  bowsAppliedId: string;
+  accOwnedId: string;
+  accOwnedName: string;
+
+  toyLeftAppliedId: string;
+  toyMiddleAppliedId: string;
+  toyRightAppliedId: string;
+  toyOwnedId: string;
+  toyOwnedName: string;
+
   currentDate: any;
   dayName: any;
 
@@ -39,7 +52,13 @@ export class ShopPage implements OnInit {
       acc_price: number;
       acc_level: number;
       acc_exp: number;
-      acc_img: string; }[];
+      acc_img: string;
+      users:
+        {
+          acc_apply: boolean;
+          acc_buy: boolean;
+        }
+    }[];
 
   housesList:
     { house_id: string;
@@ -75,7 +94,13 @@ export class ShopPage implements OnInit {
       toy_price: number;
       toy_level: number;
       toy_exp: number;
-      toy_img: string; }[];
+      toy_img: string;
+      users:
+        {
+          toy_apply: boolean;
+          toy_buy: boolean;
+        }
+    }[];
 
   constructor(
     private firestore: AngularFirestore,
@@ -108,7 +133,7 @@ export class ShopPage implements OnInit {
     this.firestore
       .collection('gamification/')
       .doc('items/')
-      .collection('items_acc/')
+      .collection('items_acc/', ref => ref.orderBy('acc_price', 'asc'))
       .snapshotChanges()
       .subscribe(res=>{
         if(res){
@@ -120,6 +145,10 @@ export class ShopPage implements OnInit {
               acc_level: e.payload.doc.data()['acc_level'],
               acc_exp: e.payload.doc.data()['acc_exp'],
               acc_img: e.payload.doc.data()['acc_img'],
+              users: {
+                acc_apply: e.payload.doc.data()['users'][this.userId]['acc_apply'],
+                acc_buy: e.payload.doc.data()['users'][this.userId]['acc_buy']
+              }
             }
           })
         }
@@ -129,7 +158,7 @@ export class ShopPage implements OnInit {
     this.firestore
       .collection('gamification/')
       .doc('items/')
-      .collection('items_houses/')
+      .collection('items_houses/', ref => ref.orderBy('house_price', 'asc'))
       .snapshotChanges()
       .subscribe(res=>{
         if(res){
@@ -154,7 +183,7 @@ export class ShopPage implements OnInit {
     this.firestore
       .collection('gamification/')
       .doc('items/')
-      .collection('items_skins/')
+      .collection('items_skins/', ref => ref.orderBy('skin_price', 'asc'))
       .snapshotChanges()
       .subscribe(res=>{
         if(res){
@@ -182,7 +211,7 @@ export class ShopPage implements OnInit {
     this.firestore
       .collection('gamification/')
       .doc('items/')
-      .collection('items_toys/')
+      .collection('items_toys/', ref => ref.orderBy('toy_price', 'asc'))
       .snapshotChanges()
       .subscribe(res=>{
         if(res){
@@ -194,6 +223,10 @@ export class ShopPage implements OnInit {
               toy_level: e.payload.doc.data()['toy_level'],
               toy_exp: e.payload.doc.data()['toy_exp'],
               toy_img: e.payload.doc.data()['toy_img'],
+              users: {
+                toy_apply: e.payload.doc.data()['users'][this.userId]['toy_apply'],
+                toy_buy: e.payload.doc.data()['users'][this.userId]['toy_buy']
+              }
             }
           })
         }
@@ -225,7 +258,7 @@ export class ShopPage implements OnInit {
     this.router.navigate(['/dashboard/badges']);
   }
 
-  BuySkin(skinId, skinName, skinPrice) {
+  BuySkin(skinId, skinName, skinPrice, skinExp) {
     console.log('Coin: '+ this.coins);
     console.log('Skin Price: '+ skinPrice);
 
@@ -258,15 +291,13 @@ export class ShopPage implements OnInit {
           skin_buy: true
         });
 
-      // let remainingCoins;
-      // remainingCoins = this.coins - skinPrice;
-
       this.firestore.collection('/users/')
         .doc(this.userId)
         .collection('userGamification/')
         .doc('gameData')
         .update({
-          coins: this.coins - skinPrice
+          coins: this.coins - skinPrice,
+          points: this.points + skinExp
         });
     }
   }
@@ -384,7 +415,7 @@ export class ShopPage implements OnInit {
       });
   }
 
-  BuyHouse (houseId, houseName, housePrice) {
+  BuyHouse (houseId, houseName, housePrice, houseExp) {
     console.log('Coin: '+ this.coins);
     console.log('House Price: '+ housePrice);
 
@@ -422,7 +453,8 @@ export class ShopPage implements OnInit {
         .collection('userGamification/')
         .doc('gameData')
         .update({
-          coins: this.coins - housePrice
+          coins: this.coins - housePrice,
+          points: this.points + houseExp
         });
     }
   }
@@ -536,6 +568,792 @@ export class ShopPage implements OnInit {
       .doc(houseId)
       .update({
         house_apply: true
+      });
+  }
+
+  BuyAccesory(accId, accName, accPrice, accExp) {
+    console.log('Coin: '+ this.coins);
+    console.log('Acc Price: '+ accPrice);
+
+    if (this.coins >= accPrice) {
+      this.firestore
+        .collection('gamification/')
+        .doc('items/')
+        .collection('items_acc/')
+        .doc(accId)
+        .update({
+          users:
+            {
+              [this.userId]:
+                {
+                  acc_apply: false,
+                  acc_buy: true
+                }
+            }
+        });
+
+        this.firestore.collection('/users/')
+          .doc(this.userId)
+          .collection('userGamification/')
+          .doc('ownedItems/')
+          .collection('accessories')
+          .doc(accId)
+          .set({
+            acc_name: accName,
+            acc_apply: false,
+            acc_buy: true
+          });
+
+      this.firestore.collection('/users/')
+        .doc(this.userId)
+        .collection('userGamification/')
+        .doc('gameData')
+        .update({
+          coins: this.coins - accPrice,
+          points: this.points + accExp
+        });
+    }
+  }
+
+  ApplyAccessory(accId) {
+      this.firestore.collection('/users/')
+        .doc(this.userId)
+        .collection('userGamification/')
+        .doc('appliedItems')
+        .snapshotChanges()
+        .subscribe( res => {
+          this.collarAppliedId = res.payload.data()['accessories']['collar']['acc_id'];
+          this.glassesAppliedId = res.payload.data()['accessories']['glasses']['acc_id'];
+          this.bowsAppliedId = res.payload.data()['accessories']['bow']['acc_id'];
+          this.hatsAppliedId = res.payload.data()['accessories']['pandora']['acc_id'];
+
+          console.log(this.collarAppliedId);
+          console.log(this.glassesAppliedId);
+          console.log(this.bowsAppliedId);
+          console.log(this.hatsAppliedId);
+
+          if (accId.split('_')[1] == 'collar') {
+            if(this.collarAppliedId) {
+              this.firestore
+                .collection('gamification/')
+                .doc('items/')
+                .collection('items_acc/')
+                .doc(this.collarAppliedId)
+                .update({
+                  users:
+                    {
+                      [this.userId]:
+                        {
+                          acc_apply: true,
+                          acc_buy: true
+                        }
+                    }
+                })
+            }
+          }
+          if (accId.split('_')[1] == 'glasses') {
+            if(this.glassesAppliedId) {
+              this.firestore
+                .collection('gamification/')
+                .doc('items/')
+                .collection('items_acc/')
+                .doc(this.glassesAppliedId)
+                .update({
+                  users:
+                    {
+                      [this.userId]:
+                        {
+                          acc_apply: true,
+                          acc_buy: true
+                        }
+                    }
+                })
+            }
+          }
+          if (accId.split('_')[1] == 'bow') {
+            if (this.bowsAppliedId) {
+              this.firestore
+                .collection('gamification/')
+                .doc('items/')
+                .collection('items_acc/')
+                .doc(this.bowsAppliedId)
+                .update({
+                  users:
+                    {
+                      [this.userId]:
+                        {
+                          acc_apply: true,
+                          acc_buy: true
+                        }
+                    }
+                })
+            }
+          }
+          if (accId.split('_')[1] == 'pandora') {
+            if (this.hatsAppliedId) {
+              this.firestore
+                .collection('gamification/')
+                .doc('items/')
+                .collection('items_acc/')
+                .doc(this.hatsAppliedId)
+                .update({
+                  users:
+                    {
+                      [this.userId]:
+                        {
+                          acc_apply: true,
+                          acc_buy: true
+                        }
+                    }
+                })
+            }
+          }
+        });
+
+    this.firestore.collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('ownedItems/')
+      .collection('accessories')
+      .get()
+      .subscribe(res => {
+        res.forEach((snap) => {
+          this.accOwnedId = snap.id;
+          this.accOwnedName = snap.data()['acc_name'];
+          console.log('Acc Owned ID: ' + this.accOwnedId);
+          // console.log('Acc Owned NAME: ' + this.accOwnedName);
+
+          if (this.accOwnedId !== accId && accId.split('_')[1] == 'collar') {
+            this.firestore
+              .collection('gamification/')
+              .doc('items/')
+              .collection('items_acc/')
+              .doc(this.accOwnedId)
+              .update({
+                users:
+                  {
+                    [this.userId]:
+                      {
+                        acc_apply: false,
+                        acc_buy: true
+                      }
+                  }
+              })
+
+            this.firestore.collection('/users/')
+              .doc(this.userId)
+              .collection('userGamification/')
+              .doc('ownedItems/')
+              .collection('accessories')
+              .doc(this.accOwnedId)
+              .set({
+                acc_name: this.accOwnedName,
+                acc_apply: false,
+                acc_buy: true
+              });
+          }
+          if (this.accOwnedId !== accId && accId.split('_')[1] == 'bow') {
+            this.firestore
+              .collection('gamification/')
+              .doc('items/')
+              .collection('items_acc/')
+              .doc(this.accOwnedId)
+              .update({
+                users:
+                  {
+                    [this.userId]:
+                      {
+                        acc_apply: false,
+                        acc_buy: true
+                      }
+                  }
+              })
+
+            this.firestore.collection('/users/')
+              .doc(this.userId)
+              .collection('userGamification/')
+              .doc('ownedItems/')
+              .collection('accessories')
+              .doc(this.accOwnedId)
+              .set({
+                acc_name: this.accOwnedName,
+                acc_apply: false,
+                acc_buy: true
+              });
+          }
+          if (this.accOwnedId !== accId && accId.split('_')[1] == 'pandora') {
+            this.firestore
+              .collection('gamification/')
+              .doc('items/')
+              .collection('items_acc/')
+              .doc(this.accOwnedId)
+              .update({
+                users:
+                  {
+                    [this.userId]:
+                      {
+                        acc_apply: false,
+                        acc_buy: true
+                      }
+                  }
+              })
+
+            this.firestore.collection('/users/')
+              .doc(this.userId)
+              .collection('userGamification/')
+              .doc('ownedItems/')
+              .collection('accessories')
+              .doc(this.accOwnedId)
+              .set({
+                acc_name: this.accOwnedName,
+                acc_apply: false,
+                acc_buy: true
+              });
+          }
+          if (this.accOwnedId !== accId && accId.split('_')[1] == 'glasses') {
+            this.firestore
+              .collection('gamification/')
+              .doc('items/')
+              .collection('items_acc/')
+              .doc(this.accOwnedId)
+              .update({
+                users:
+                  {
+                    [this.userId]:
+                      {
+                        acc_apply: false,
+                        acc_buy: true
+                      }
+                  }
+              })
+
+            this.firestore.collection('/users/')
+              .doc(this.userId)
+              .collection('userGamification/')
+              .doc('ownedItems/')
+              .collection('accessories')
+              .doc(this.accOwnedId)
+              .set({
+                acc_name: this.accOwnedName,
+                acc_apply: false,
+                acc_buy: true
+              });
+          }
+        });
+      });
+
+    this.firestore
+      .collection('gamification/')
+      .doc('items/')
+      .collection('items_acc/')
+      .doc(accId)
+      .update({
+        users:
+          {
+            [this.userId]:
+              {
+                acc_apply: true,
+                acc_buy: true
+              }
+          }
+      })
+
+    if (accId.split('_')[1] == 'collar') {
+      this.firestore.collection('/users/')
+        .doc(this.userId)
+        .collection('userGamification/')
+        .doc('appliedItems')
+        .set({
+          accessories: {
+            collar: {
+              acc_id: accId,
+              acc_apply: true,
+              acc_buy: true,
+            }
+          }
+        }, {merge: true});
+    }
+    if (accId.split('_')[1] == 'glasses') {
+      this.firestore.collection('/users/')
+        .doc(this.userId)
+        .collection('userGamification/')
+        .doc('appliedItems')
+        .set({
+          accessories: {
+            glasses: {
+              acc_id: accId,
+              acc_apply: true,
+              acc_buy: true,
+            }
+          }
+        }, {merge: true});
+    }
+    if (accId.split('_')[1] == 'pandora') {
+      this.firestore.collection('/users/')
+        .doc(this.userId)
+        .collection('userGamification/')
+        .doc('appliedItems')
+        .set({
+          accessories: {
+            pandora: {
+              acc_id: accId,
+              acc_apply: true,
+              acc_buy: true,
+            }
+          }
+        }, {merge: true});
+    }
+    if (accId.split('_')[1] == 'bow') {
+      this.firestore.collection('/users/')
+        .doc(this.userId)
+        .collection('userGamification/')
+        .doc('appliedItems')
+        .set({
+          accessories: {
+            bow: {
+              acc_id: accId,
+              acc_apply: true,
+              acc_buy: true,
+            }
+          }
+        }, {merge: true});
+    }
+
+    this.firestore.collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('ownedItems/')
+      .collection('accessories')
+      .doc(accId)
+      .update({
+        acc_apply: true
+      });
+  }
+
+  RemoveAccessory(accId) {
+    this.firestore.collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('appliedItems')
+      .snapshotChanges()
+      .subscribe( res => {
+        this.glassesAppliedId = res.payload.data()['accessories']['glasses']['acc_id'];
+        this.bowsAppliedId = res.payload.data()['accessories']['bow']['acc_id'];
+        this.hatsAppliedId = res.payload.data()['accessories']['pandora']['acc_id'];
+        console.log(this.hatsAppliedId);
+        console.log(this.bowsAppliedId);
+        console.log(this.glassesAppliedId);
+
+        if (accId.split('_')[1] == 'glasses') {
+          if (this.glassesAppliedId) {
+            this.firestore
+              .collection('gamification/')
+              .doc('items/')
+              .collection('items_acc/')
+              .doc(this.glassesAppliedId)
+              .update({
+                users:
+                  {
+                    [this.userId]:
+                      {
+                        acc_apply: false,
+                        acc_buy: true
+                      }
+                  }
+              })
+          }
+        }
+        if (accId.split('_')[1] == 'bow') {
+          if (this.bowsAppliedId) {
+            this.firestore
+              .collection('gamification/')
+              .doc('items/')
+              .collection('items_acc/')
+              .doc(this.bowsAppliedId)
+              .update({
+                users:
+                  {
+                    [this.userId]:
+                      {
+                        acc_apply: false,
+                        acc_buy: true
+                      }
+                  }
+              })
+          }
+        }
+        if (accId.split('_')[1] == 'pandora') {
+          if (this.hatsAppliedId) {
+            this.firestore
+              .collection('gamification/')
+              .doc('items/')
+              .collection('items_acc/')
+              .doc(this.hatsAppliedId)
+              .update({
+                users:
+                  {
+                    [this.userId]:
+                      {
+                        acc_apply: false,
+                        acc_buy: true
+                      }
+                  }
+              })
+          }
+        }
+      });
+
+    // this.firestore.collection('/users/')
+    //   .doc(this.userId)
+    //   .collection('userGamification/')
+    //   .doc('ownedItems/')
+    //   .collection('accessories')
+    //   .get()
+    //   .subscribe(res => {
+    //     res.forEach((snap) => {
+    //       this.accOwnedId = snap.id;
+    //       this.accOwnedName = snap.data()['acc_name'];
+    //       console.log('Acc Owned ID' + this.accOwnedId);
+    //       console.log('Acc Owned NAME' + this.accOwnedName);
+    //
+    //       if (this.accOwnedId !== accId) {
+    //         this.firestore
+    //           .collection('gamification/')
+    //           .doc('items/')
+    //           .collection('items_acc/')
+    //           .doc(this.accOwnedId)
+    //           .update({
+    //             users:
+    //               {
+    //                 [this.userId]:
+    //                   {
+    //                     acc_apply: false,
+    //                     acc_buy: true
+    //                   }
+    //               }
+    //           })
+    //
+    //         this.firestore.collection('/users/')
+    //           .doc(this.userId)
+    //           .collection('userGamification/')
+    //           .doc('ownedItems/')
+    //           .collection('accessories')
+    //           .doc(this.accOwnedId)
+    //           .set({
+    //             acc_name: this.accOwnedName,
+    //             acc_apply: false,
+    //             acc_buy: true
+    //           });
+    //       }
+    //     });
+    //   });
+
+    this.firestore
+      .collection('gamification/')
+      .doc('items/')
+      .collection('items_acc/')
+      .doc(accId)
+      .update({
+        users:
+          {
+            [this.userId]:
+              {
+                acc_apply: false,
+                acc_buy: true
+              }
+          }
+      })
+
+    if (accId.split('_')[1] == 'glasses') {
+      this.firestore.collection('/users/')
+        .doc(this.userId)
+        .collection('userGamification/')
+        .doc('appliedItems')
+        .set({
+          accessories: {
+            glasses: {
+              acc_id: '',
+              acc_apply: false,
+              acc_buy: true,
+            }
+          }
+        }, {merge: true});
+    }
+    if (accId.split('_')[1] == 'pandora') {
+      this.firestore.collection('/users/')
+        .doc(this.userId)
+        .collection('userGamification/')
+        .doc('appliedItems')
+        .set({
+          accessories: {
+            pandora: {
+              acc_id: '',
+              acc_apply: false,
+              acc_buy: true,
+            }
+          }
+        }, {merge: true});
+    }
+    if (accId.split('_')[1] == 'bow') {
+      this.firestore.collection('/users/')
+        .doc(this.userId)
+        .collection('userGamification/')
+        .doc('appliedItems')
+        .set({
+          accessories: {
+            bow: {
+              acc_id: '',
+              acc_apply: false,
+              acc_buy: true,
+            }
+          }
+        }, {merge: true});
+    }
+
+    this.firestore.collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('ownedItems/')
+      .collection('accessories')
+      .doc(accId)
+      .update({
+        acc_apply: false
+      });
+  }
+
+  BuyToy(toyId, toyName, toyPrice, toyExp) {
+    console.log('Coin: '+ this.coins);
+    console.log('Toy Price: '+ toyPrice);
+
+    if (this.coins >= toyPrice) {
+      this.firestore
+        .collection('gamification/')
+        .doc('items/')
+        .collection('items_toys/')
+        .doc(toyId)
+        .set({
+          users:
+            {
+              [this.userId]:
+                {
+                  toy_apply: false,
+                  toy_buy: true
+                }
+            }
+        }, {merge: true})
+
+      this.firestore.collection('/users/')
+        .doc(this.userId)
+        .collection('userGamification/')
+        .doc('ownedItems/')
+        .collection('toys')
+        .doc(toyId)
+        .set({
+          toy_name: toyName,
+          toy_apply: false,
+          toy_buy: true
+        });
+
+      this.firestore.collection('/users/')
+        .doc(this.userId)
+        .collection('userGamification/')
+        .doc('gameData')
+        .update({
+          coins: this.coins - toyPrice,
+          points: this.points + toyExp
+        });
+    }
+  }
+
+  ApplyToy (toyId) {
+    this.firestore.collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('appliedItems')
+      .snapshotChanges()
+      .subscribe( res => {
+        this.toyLeftAppliedId = res.payload.data()['toys']['left']['toy_id'];
+        this.toyMiddleAppliedId = res.payload.data()['toys']['middle']['toy_id'];
+        this.toyRightAppliedId = res.payload.data()['toys']['right']['toy_id'];
+        console.log(this.toyLeftAppliedId);
+        console.log(this.toyMiddleAppliedId);
+        console.log(this.toyRightAppliedId);
+
+        if (toyId.split('_')[0] == 't1') {
+          if (this.toyLeftAppliedId) {
+            this.firestore
+              .collection('gamification/')
+              .doc('items/')
+              .collection('items_toys/')
+              .doc(this.toyLeftAppliedId)
+              .update({
+                users:
+                  {
+                    [this.userId]:
+                      {
+                        toy_apply: true,
+                        toy_buy: true
+                      }
+                  }
+              })
+          }
+        }
+        if (toyId.split('_')[0] == 't2') {
+          if (this.toyMiddleAppliedId) {
+            this.firestore
+              .collection('gamification/')
+              .doc('items/')
+              .collection('items_toys/')
+              .doc(this.toyMiddleAppliedId)
+              .update({
+                users:
+                  {
+                    [this.userId]:
+                      {
+                        toy_apply: true,
+                        toy_buy: true
+                      }
+                  }
+              })
+          }
+        }
+        if (toyId.split('_')[0] == 't3') {
+          if (this.toyRightAppliedId) {
+            this.firestore
+              .collection('gamification/')
+              .doc('items/')
+              .collection('items_toys/')
+              .doc(this.toyRightAppliedId)
+              .update({
+                users:
+                  {
+                    [this.userId]:
+                      {
+                        toy_apply: true,
+                        toy_buy: true
+                      }
+                  }
+              })
+          }
+        }
+      });
+
+    // this.firestore.collection('/users/')
+    //   .doc(this.userId)
+    //   .collection('userGamification/')
+    //   .doc('ownedItems/')
+    //   .collection('toys')
+    //   .get()
+    //   .subscribe(res => {
+    //     res.forEach((snap) => {
+    //       this.toyOwnedId = snap.id;
+    //       this.toyOwnedName = snap.data()['toy_name'];
+    //       console.log('Toy Owned ID' + this.toyOwnedId);
+    //       console.log('Toy Owned NAME' + this.toyOwnedName);
+    //
+    //       if (this.toyOwnedId !== toyId) {
+    //         this.firestore
+    //           .collection('gamification/')
+    //           .doc('items/')
+    //           .collection('items_toys/')
+    //           .doc(this.toyOwnedId)
+    //           .update({
+    //             users:
+    //               {
+    //                 [this.userId]:
+    //                   {
+    //                     toy_apply: false,
+    //                     toy_buy: true
+    //                   }
+    //               }
+    //           })
+    //
+    //         this.firestore.collection('/users/')
+    //           .doc(this.userId)
+    //           .collection('userGamification/')
+    //           .doc('ownedItems/')
+    //           .collection('toys')
+    //           .doc(this.toyOwnedId)
+    //           .set({
+    //             toy_name: this.toyOwnedName,
+    //             toy_apply: false,
+    //             toy_buy: true
+    //           });
+    //       }
+    //     });
+    //   });
+
+    this.firestore
+      .collection('gamification/')
+      .doc('items/')
+      .collection('items_toys/')
+      .doc(toyId)
+      .update({
+        users:
+          {
+            [this.userId]:
+              {
+                toy_apply: true,
+                toy_buy: true
+              }
+          }
+      })
+
+    if (toyId.split('_')[0] == 't1') {
+      this.firestore.collection('/users/')
+        .doc(this.userId)
+        .collection('userGamification/')
+        .doc('appliedItems')
+        .set({
+          toys: {
+            left: {
+              toy_id: toyId,
+              toy_apply: true,
+              toy_buy: true,
+            }
+          }
+        }, {merge: true});
+    }
+    if (toyId.split('_')[0] == 't2') {
+      this.firestore.collection('/users/')
+        .doc(this.userId)
+        .collection('userGamification/')
+        .doc('appliedItems')
+        .set({
+          toys: {
+            middle: {
+              toy_id: toyId,
+              toy_apply: true,
+              toy_buy: true,
+            }
+          }
+        }, {merge: true});
+    }
+    if (toyId.split('_')[0] == 't3') {
+      this.firestore.collection('/users/')
+        .doc(this.userId)
+        .collection('userGamification/')
+        .doc('appliedItems')
+        .set({
+          toys: {
+            right: {
+              toy_id: toyId,
+              toy_apply: true,
+              toy_buy: true,
+            }
+          }
+        }, {merge: true});
+    }
+
+
+    this.firestore.collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('ownedItems/')
+      .collection('toys')
+      .doc(toyId)
+      .update({
+        toy_apply: true
       });
   }
 }

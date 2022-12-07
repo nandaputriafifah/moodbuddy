@@ -1,26 +1,68 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Badges</ion-title>
-    <ion-buttons>
-      <ion-back-button></ion-back-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content>
+  <ion-toolbar>
+    <ion-title class="title ion-text-center">Badges</ion-title>
+    <ion-back-button></ion-back-button>
+<!--    <ion-buttons slot="start">-->
+<!--     -->
+<!--    </ion-buttons>-->
+  </ion-toolbar>
   <ion-list *ngFor="let badge of badgesList">
     <ion-card>
       <ion-row>
-        <ion-col><img src="{{badge.badge_img}}"></ion-col>
-        <ion-col>
-          <ion-list>
-            <ion-item>{{badge.badge_name}}</ion-item>
-            <ion-item>{{badge.badge_desc}}</ion-item>
-            <ion-item>{{badge.badge_count}}</ion-item>
-          </ion-list>
+        <ion-col size="2.5">
+          <img src="{{badge.badge_img}}" class="img-badges">
         </ion-col>
-        <ion-col>
-          <ion-button>{{badge.badge_reward}}</ion-button>
+        <ion-col size="6.5">
+          <ion-text class="text-badges-name">{{badge.badge_name}}</ion-text>
+          <br><div style="padding-bottom: 3px;"></div>
+          <ion-text class="text-badges-desc">{{badge.badge_desc}}</ion-text>
+          <br>
+          <div>
+            <ion-text class="text-reward">Rewards:
+              <ion-col>
+                <ion-text class="text-reward-plus">+ </ion-text>
+                <img src="assets/icon/coin.svg" class="img-coin-reward">
+                <ion-text class="text-reward">{{badge.badge_reward}}</ion-text>
+              </ion-col>
+            </ion-text>
+          </div>
+          <!-- Badges Cuteness Overload (Skins) -->
+          <div *ngIf="badge.badge_id == 'b4_CO'">
+            <ion-text>{{skinsOwned.length}}/{{badge.badge_count}}</ion-text>
+          </div>
+          <!-- Badges Home Paradise (Houses) -->
+          <div *ngIf="badge.badge_id == 'b6_HP'">
+            <ion-text>{{housesOwned.length}}/{{badge.badge_count}}</ion-text>
+          </div>
+          <!-- Badges Stylish Buddy (Accessories) -->
+          <div *ngIf="badge.badge_id == 'b9_SB'">
+            <ion-text>{{accessoriesOwned.length}}/{{badge.badge_count}}</ion-text>
+          </div>
+          <!-- Badges Toys Collector (Toys) -->
+          <div *ngIf="badge.badge_id == 'b9-1-TC'">
+            <ion-text>{{toysOwned.length}}/{{badge.badge_count}}</ion-text>
+          </div>
+        </ion-col>
+        <ion-col size="2">
+          <ion-button *ngIf="badge.badge_id == 'b4_CO' && skinsOwned.length == badge.badge_count ||
+                      badge.badge_id == 'b6_HP' && housesOwned.length == badge.badge_count ||
+                      badge.badge_id == 'b9_SB' && accessoriesOwned.length == badge.badge_count ||
+                      badge.badge_id == 'b9-1-TC' && toysOwned.length == badge.badge_count"
+                      class="button-reward">
+            <ion-text class="text-button">Claim</ion-text>
+          </ion-button>
+
+          <ion-button *ngIf="badge.badge_id == 'b4_CO' && skinsOwned.length < badge.badge_count ||
+                       badge.badge_id == 'b6_HP' && housesOwned.length < badge.badge_count ||
+                      badge.badge_id == 'b9_SB' && accessoriesOwned.length < badge.badge_count ||
+                      badge.badge_id == 'b9-1-TC' && toysOwned.length < badge.badge_count"
+                      [disabled]="badge.badge_id == 'b4_CO' && skinsOwned.length < badge.badge_count ||
+                       badge.badge_id == 'b6_HP' && housesOwned.length < badge.badge_count ||
+                      badge.badge_id == 'b9_SB' && accessoriesOwned.length < badge.badge_count ||
+                      badge.badge_id == 'b9-1-TC' && toysOwned.length < badge.badge_count"
+                      class="button-reward">
+            <ion-text class="text-button">Claim</ion-text>
+          </ion-button>
         </ion-col>
       </ion-row>
     </ion-card>

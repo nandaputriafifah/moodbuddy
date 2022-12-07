@@ -151,7 +151,7 @@ ion-card-subtitle {
   height: 30px;
 }
 
-.button-shop-apply {
+.button-remove {
   --background: red;
   color: white;
   border-radius: 10px;
@@ -162,5 +162,13 @@ ion-card-subtitle {
 .img-shop-coin {
   width: 30px;
   height: 30px;
+  padding-right: 5px;
+}
+
+.img-shop-locked {
+  color: white;
+  opacity: 0.5;
+  width: 20px;
+  height: 20px;
   padding-right: 5px;
 }

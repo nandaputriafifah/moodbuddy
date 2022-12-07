@@ -149,14 +149,108 @@ ion-card-subtitle {
   width: 182px;
   height: 182px;
   float: left;
-  position: fixed;
+  position: relative;
+}
+
+.img-collar {
+  margin-top: 395px;
+  width: 85px;
+  height: 25px;
+  left: 48px;
+  float: left;
+  position: absolute;
+}
+
+.img-glasses {
+  margin-top: 341px;
+  width: 85px;
+  height: 40px;
+  left: 46px;
+  float: left;
+  position: absolute;
+}
+
+.img-bows {
+  margin-top: 295px;
+  width: 85px;
+  height: 45px;
+  left: 48px;
+  float: left;
+  position: absolute;
+}
+
+.img-hats {
+  margin-top: 285px;
+  width: 85px;
+  height: 50px;
+  left: 48px;
+  float: left;
+  position: absolute;
+}
+
+.img-parent {
+  position: relative;
+  top: 0;
+  left: 0;
 }
 
 .img-house {
   width: 230px;
   height: 230px;
-  margin-top: 230px;
-  right: -10px;
+  margin-top: 190px;
+  right: -5px;
+  float: right;
+  position: fixed;
+}
+
+.img-toy-left {
+  width: 50px;
+  height: 50px;
+  margin-top: 425px;
+  float: left;
+  position: fixed;
+}
+
+.img-shadow-toy-left {
+  width: 50px;
+  height: 20px;
+  margin-top: 460px;
+  float: left;
+  position: fixed;
+}
+
+.img-toy-middle {
+  width: 50px;
+  height: 50px;
+  margin-top: 425px;
+  right: 85px;
+  float: left;
+  position: fixed;
+}
+
+.img-shadow-toy-middle {
+  width: 50px;
+  height: 20px;
+  margin-top: 460px;
+  right: 85px;
+  float: left;
+  position: fixed;
+}
+
+.img-toy-right {
+  width: 50px;
+  height: 50px;
+  margin-top: 425px;
+  left: 335px;
+  float: right;
+  position: fixed;
+}
+
+.img-shadow-toy-right {
+  width: 50px;
+  height: 20px;
+  margin-top: 460px;
+  left: 335px;
   float: right;
   position: fixed;
 }

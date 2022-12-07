@@ -18,6 +18,8 @@ export class AuthenticationService {
 
   skinId: any;
   houseId: any;
+  accId: any;
+  toyId: any;
 
   tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
   currDate = (new Date(Date.now() - this.tzoffset)).toISOString().slice(0, -1);
@@ -74,8 +76,7 @@ export class AuthenticationService {
         this.SetUserGamification();
         this.SetUserOwnedItems();
         this.SetUserAppliedItems();
-        this.SetSkinGamification();
-        this.SetHouseGamification();
+        this.SetUserGamificationItems();
         this.SetUserMoodCheckInCounter();
         this.router.navigate(['verify-email']);
       })
@@ -125,8 +126,7 @@ export class AuthenticationService {
           this.SetUserGamification();
           this.SetUserOwnedItems();
           this.SetUserAppliedItems();
-          this.SetSkinGamification();
-          this.SetHouseGamification();
+          this.SetUserGamificationItems();
           this.SetUserMoodCheckInCounter();
         }
         console.log(result.user.metadata);
@@ -217,9 +217,49 @@ export class AuthenticationService {
     });
   }
 
+  SetAccessoriesItems() {
+    // Get current user id
+    this.userId = firebase.auth().currentUser.uid;
+
+    const userOwnedItemsRef: AngularFirestoreDocument<any> = this.afStore
+      .collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('ownedItems/')
+      .collection('accessories')
+      .doc('acc1_collar')
+
+    return userOwnedItemsRef.set({
+      acc_name: 'Basic Collar',
+      acc_apply: true,
+      acc_buy: true
+    });
+  }
+
+  SetToysItems() {
+    // Get current user id
+    this.userId = firebase.auth().currentUser.uid;
+
+    const userOwnedItemsRef: AngularFirestoreDocument<any> = this.afStore
+      .collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('ownedItems/')
+      .collection('toys')
+      .doc('t1_bone')
+
+    return userOwnedItemsRef.set({
+      toy_name: 'Bone',
+      toy_apply: false,
+      toy_buy: false
+    });
+  }
+
   SetUserOwnedItems() {
    this.SetSkinsItems();
    this.SetHousesItems();
+   this.SetAccessoriesItems();
+   this.SetToysItems();
   }
 
   SetSkinGamification() {
@@ -314,6 +354,92 @@ export class AuthenticationService {
       });
   }
 
+  SetAccessoriesGamification() {
+    // Get current user id
+    this.userId = firebase.auth().currentUser.uid;
+
+    this.afStore
+      .collection('gamification/')
+      .doc('items/')
+      .collection('items_acc/')
+      .get()
+      .subscribe((res) => {
+        res.forEach((snap) => {
+          this.accId = snap.id;
+
+          const setAccessoriesGamificationRef: AngularFirestoreDocument<any> = this.afStore
+            .collection('gamification/')
+            .doc('items/')
+            .collection('items_acc/')
+            .doc(this.accId)
+
+          if (this.accId == 'acc1_collar') {
+            return setAccessoriesGamificationRef.set({
+              users:
+                {
+                  [this.userId]:
+                    {
+                      acc_apply: true,
+                      acc_buy: true
+                    }
+                }
+            }, {merge: true});
+          }
+
+          return setAccessoriesGamificationRef.set({
+            users:
+              {
+                [this.userId]:
+                  {
+                    acc_apply: false,
+                    acc_buy: false
+                  }
+              }
+          }, {merge: true});
+        });
+      });
+  }
+
+  SetToysGamification() {
+    // Get current user id
+    this.userId = firebase.auth().currentUser.uid;
+
+    this.afStore
+      .collection('gamification/')
+      .doc('items/')
+      .collection('items_toys/')
+      .get()
+      .subscribe((res) => {
+        res.forEach((snap) => {
+          this.toyId = snap.id;
+
+          const setToysGamificationRef: AngularFirestoreDocument<any> = this.afStore
+            .collection('gamification/')
+            .doc('items/')
+            .collection('items_toys/')
+            .doc(this.toyId)
+
+          return setToysGamificationRef.set({
+            users:
+              {
+                [this.userId]:
+                  {
+                    toy_apply: false,
+                    toy_buy: false
+                  }
+              }
+          }, {merge: true});
+        });
+      });
+  }
+
+  SetUserGamificationItems() {
+    this.SetSkinGamification();
+    this.SetHouseGamification();
+    this.SetAccessoriesGamification();
+    this.SetToysGamification();
+  }
+
   SetUserAppliedItems(){
     // Get current user id
     this.userId = firebase.auth().currentUser.uid;
@@ -337,18 +463,52 @@ export class AuthenticationService {
           skin_buy: true,
         }
       ],
-      accessories: [
-        { acc_id: '',
-          acc_apply: false,
-          acc_buy: false,
-        }
-      ],
-      toys: [
-        { toy_id: '',
-          toy_apply: false,
-          toy_buy: false,
-        }
-      ],
+      accessories:
+        {  collar:
+            {
+              acc_id: 'acc1_collar',
+              acc_apply: true,
+              acc_buy: true
+            },
+          glasses:
+            {
+              acc_id: '',
+              acc_apply: false,
+              acc_buy: false
+            },
+          pandora:
+            {
+              acc_id: '',
+              acc_apply: false,
+              acc_buy: false
+            },
+          bow:
+            {
+              acc_id: '',
+              acc_apply: false,
+              acc_buy: false
+            },
+        },
+      toys:  {
+        left:
+          {
+            toy_id: '',
+            toy_apply: false,
+            toy_buy: false
+          },
+        middle:
+          {
+            toy_id: '',
+            toy_apply: false,
+            toy_buy: false
+          },
+        right:
+          {
+            toy_id: '',
+            toy_apply: false,
+            toy_buy: false
+          },
+      },
     };
     return userAppliedItemsRef.set(userAppliedItems);
   }

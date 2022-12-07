@@ -41,16 +41,50 @@
   </ion-col>
 
   <ion-col>
-    <div *ngFor="let skin of skinsList">
-      <img *ngIf="skinItem == skin.skin_id"
-           src="{{skin.skin_img}}"
-           class="img-buddy">
+    <div class="img-parent">
+      <div *ngFor="let skin of skinsList">
+        <img *ngIf="skinItem == skin.skin_id"
+             src="{{skin.skin_img}}"
+             class="img-buddy">
+      </div>
+      <div *ngFor="let acc of accessoriesList">
+        <img *ngIf="collarItem == acc.acc_id"
+             src="{{acc.acc_img}}"
+             class="img-collar">
+        <img *ngIf="glassesItem == acc.acc_id"
+             src="{{acc.acc_img}}"
+             class="img-glasses">
+        <img *ngIf="hatsItem == acc.acc_id"
+             src="{{acc.acc_img}}"
+             class="img-hats">
+        <img *ngIf="bowsItem == acc.acc_id"
+             src="{{acc.acc_img}}"
+             class="img-bows">
+      </div>
     </div>
 
     <div *ngFor="let house of housesList">
       <img *ngIf="houseItem == house.house_id"
            src="{{house.house_img}}"
            class="img-house">
+    </div>
+
+    <div *ngFor="let toy of toysList">
+      <div *ngIf="toysLeftItem == toy.toy_id">
+        <img src="assets/shadow.png" class="img-shadow-toy-left">
+        <img src="{{toy.toy_img}}"
+             class="img-toy-left">
+      </div>
+      <div *ngIf="toysMiddleItem == toy.toy_id">
+        <img src="assets/shadow.png" class="img-shadow-toy-middle">
+        <img src="{{toy.toy_img}}"
+             class="img-toy-middle">
+      </div>
+      <div *ngIf="toysRightItem == toy.toy_id">
+        <img src="assets/shadow.png" class="img-shadow-toy-right">
+        <img src="{{toy.toy_img}}"
+             class="img-toy-right">
+      </div>
     </div>
   </ion-col>
 <!--  <ion-grid>-->
