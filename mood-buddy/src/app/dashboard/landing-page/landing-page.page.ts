@@ -3,6 +3,10 @@ import firebase from "firebase/compat/app";
 import {AngularFirestore} from "@angular/fire/compat/firestore";
 import {Router} from "@angular/router";
 import {GamificationService} from "../../shared/gamification.service";
+import {LoadingController, PopoverController} from "@ionic/angular";
+import {PopoverComponent} from "../../components/popover/popover.component";
+import {AddbuttonComponent} from "../../components/popover/addbutton/addbutton.component";
+import {CompletepageComponent} from "../../components/popover/completepage/completepage.component";
 
 @Component({
   selector: 'app-landing-page',
@@ -12,6 +16,8 @@ import {GamificationService} from "../../shared/gamification.service";
 export class LandingPagePage implements OnInit {
   userId: any;
   displayName: string;
+
+  tutorial: boolean;
 
   skinItem: string;
   houseItem: string;
@@ -27,8 +33,27 @@ export class LandingPagePage implements OnInit {
   levels: number;
   points: number;
 
+  checkInId: number;
+  checkInNameReward: string;
+  checkInDate: any;
+  checkInClaim: boolean;
+  checkInReward: number;
+
+  dateCheckIn = [];
   currentDate: any;
-  currDate = new Date().toISOString()
+  tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+  currDate = (new Date(Date.now() - this.tzoffset)).toISOString().slice(0, -1);
+  tomorrow = new Date(Date.now()).toLocaleDateString();
+  // tomorrowDay = (new Date(Date.now() - this.tzoffset + 1)).toDateString().split(' ')[2];
+  // tomorrowMonth = this.tomorrow.split('/')[1];
+  // tomorrowYear = this.tomorrow.split('/')[2];
+  // tomorrowDate = `${this.tomorrowYear}-${this.tomorrowMonth}-${this.tomorrowDay}`;
+  //
+  // tomorrow;
+  tomorrowDay;
+  // tomorrowMonth = this.tomorrow.split('/')[1];
+  // tomorrowYear = this.tomorrow.split('/')[2];
+  // tomorrowDate = `${this.tomorrowYear}-${this.tomorrowMonth}-${this.tomorrowDay}`;
   dayName: any;
 
   // List Mood
@@ -72,9 +97,18 @@ export class LandingPagePage implements OnInit {
       toy_level: number;
       toy_img: string; }[];
 
+  dailyRewardlist:
+    { reward_id: number;
+      name_reward: string;
+      date_reward: string;
+      reward_coins: number;
+      claim_reward: boolean; }[];
+
   constructor(
     private firestore: AngularFirestore,
     private router: Router,
+    private loadingCtrl: LoadingController,
+    public popoverController: PopoverController,
     private gamificationService: GamificationService
   ) {
     this.userId = firebase.auth().currentUser.uid;
@@ -112,23 +146,6 @@ export class LandingPagePage implements OnInit {
       Toys Middle: ${this.toysMiddleItem}
       Toys Right: ${this.toysRightItem}`);
     });
-
-    //Get user gamification in gameData
-    this.firestore.collection('/users/')
-      .doc(this.userId)
-      .collection('userGamification/')
-      .doc('gameData')
-      .valueChanges()
-      .subscribe((res) => {
-        this.coins = res['coins'];
-        this.levels = res['levels'];
-        this.points = res['points'];
-
-        console.log(`
-          Coins: ${this.coins}
-          Level: ${this.levels}
-          Point: ${this.points}`);
-      });
 
     // Define Skins data in firebase
     this.firestore
@@ -210,6 +227,39 @@ export class LandingPagePage implements OnInit {
         }
       })
 
+    this.firestore
+      .collection('/users/')
+      .doc(this.userId)
+      .collection('userDailyReward/')
+      .doc(this.currDate.split('T')[0])
+      .get()
+      .subscribe(res => {
+        this.checkInId = res.data()['reward_id'];
+        this.checkInNameReward = res.data()['name_reward'];
+        this.checkInDate = res.data()['date_reward'];
+        this.checkInClaim = res.data()['claim_reward'];
+      });
+
+    this.firestore
+      .collection('/users/')
+      .doc(this.userId)
+      .collection('userDailyReward/')
+      .snapshotChanges()
+      .subscribe(res=>{
+        if(res){
+          this.dailyRewardlist = res.map(e=>{
+            return{
+              id: e.payload.doc.id,
+              reward_id: e.payload.doc.data()['reward_id'],
+              name_reward: e.payload.doc.data()['name_reward'],
+              date_reward: e.payload.doc.data()['date_reward'],
+              reward_coins: e.payload.doc.data()['reward_coins'],
+              claim_reward: e.payload.doc.data()['claim_reward']
+            }
+          })
+        }
+      })
+
     setTimeout(() => {
       // Get current date
       this.currentDate = new Date();
@@ -218,10 +268,67 @@ export class LandingPagePage implements OnInit {
     });
   }
 
-  ionViewDidEnter() {
-    this.gamificationService.UserLevelUp();
-    console.log('ionViewDidEnter');
+  ionViewWillEnter() {
+    //Get user gamification in gameData
+    this.firestore.collection('/users/')
+      .doc(this.userId)
+      .collection('userGamification/')
+      .doc('gameData')
+      .snapshotChanges()
+      .subscribe((res) => {
+        this.coins = res.payload.data()['coins'];
+        this.levels = res.payload.data()['levels'];
+        this.points = res.payload.data()['points'];
+
+        console.log(`
+          Coins: ${this.coins}
+          Level: ${this.levels}
+          Point: ${this.points}`);
+      });
   }
+
+  ionViewDidEnter() {
+    this.firestore
+      .collection('users/')
+      .doc(this.userId)
+      .get()
+      .subscribe((res) => {
+        this.tutorial = res.data()['showTutorial'];
+        console.log(this.tutorial);
+
+        // this.gamificationService.showTutorial();
+        if (this.tutorial == true) {
+          this.presentTutorial();
+        }
+
+        if (this.tutorial == false) {
+          this.gamificationService.showDailyReward();
+          console.log('Dailyreward');
+        }
+
+      });
+    this.gamificationService.UserLevelUp();
+    console.log('userLevelUp');
+  }
+
+  async presentTutorial() {
+    const popover = await this.popoverController.create({
+      cssClass: 'landing-page',
+      component: PopoverComponent,
+      backdropDismiss: false
+    });
+    return await popover.present();
+  }
+
+  //
+  // async showLoading() {
+  //   const loading = await this.loadingCtrl.create({
+  //     message: 'Loading...',
+  //     duration: 2000,
+  //   });
+  //
+  //   loading.present();
+  // }
 
   GoToAddMoodPage(){
     this.router.navigate(['/dashboard/add-mood']);

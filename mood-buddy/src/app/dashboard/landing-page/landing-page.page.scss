@@ -28,6 +28,27 @@ ion-card-subtitle {
   font-size: 12px;
 }
 
+ion-button {
+  --background: transparent;
+}
+
+ion-modal {
+  --height: 50%;
+  --border-radius: 16px;
+  --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+ion-modal::part(backdrop) {
+  background: rgba(209, 213, 219);
+  opacity: 1;
+}
+
+ion-modal ion-toolbar {
+  --background: #B7ABFB;
+  --min-height:50px!important;
+  --color: white;
+}
+
 .card-level {
   background: #B7ABFB;
   color: white;
@@ -91,12 +112,23 @@ ion-card-subtitle {
   //position: fixed;
 }
 
+.img-reward-before {
+  width: 40px;
+  height: 40px;
+  filter: brightness(1.8) grayscale(1) opacity(.7);
+}
+
+.img-reward-after {
+  width: 40px;
+  height: 40px;
+}
+
 .card-greeting {
   background: #B7ABFB;
   color: white;
   border-radius: 10px;
   padding: 15px;
-  width: 300px;
+  width: 250px;
   height: 80px;
   margin-left: 0;
   float: left;
@@ -107,19 +139,19 @@ ion-card-subtitle {
   background: #B7ABFB;
   color: white;
   border-radius: 10px;
-  right: -20px;
-  width: 52px;
-  height: 55px;
+  right: -65px;
+  width: 42px;
+  height: 35px;
   float: right;
   position: relative;
 }
 
 .img-badge {
-  width: 40px;
+  width: 30px;
   margin-left: auto;
   margin-right: auto;
   padding-left: 7px;
-  padding-top: 2px;
+  padding-top: 3px;
 }
 
 .text-badge {
@@ -150,6 +182,15 @@ ion-card-subtitle {
   height: 182px;
   float: left;
   position: relative;
+}
+
+.img-gif-face {
+  margin-top: 327.5px;
+  width: 83px;
+  height: 40px;
+  left: 47.5px;
+  float: left;
+  position: absolute;
 }
 
 .img-collar {

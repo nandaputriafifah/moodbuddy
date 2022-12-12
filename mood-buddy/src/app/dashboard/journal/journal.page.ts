@@ -2,11 +2,13 @@ import {Component, Inject, LOCALE_ID, OnInit, ViewChild} from '@angular/core';
 import firebase from "firebase/compat/app";
 import {AngularFirestore} from "@angular/fire/compat/firestore";
 import {Router} from "@angular/router";
-import {AlertController, ModalController} from "@ionic/angular";
+import {AlertController, ModalController, PopoverController} from "@ionic/angular";
 import {UpdatemoodComponent} from "../../components/updatemood/updatemood.component";
 import {CalendarComponent} from "ionic2-calendar";
 import {formatDate} from "@angular/common";
 import {GamificationService} from "../../shared/gamification.service";
+import {PopoverComponent} from "../../components/popover/popover.component";
+import {JournalpageComponent} from "../../components/popover/journalpage/journalpage.component";
 
 @Component({
   selector: 'app-journal',
@@ -19,6 +21,8 @@ export class JournalPage implements OnInit {
   dateNumber: any;
   maxDate: string;
   filterDate: any;
+
+  tutorial: boolean;
 
   tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
   currDate = (new Date(Date.now() - this.tzoffset)).toISOString().slice(0, -1);
@@ -58,6 +62,7 @@ export class JournalPage implements OnInit {
     private router: Router,
     private modalController: ModalController,
     private alertCtrl: AlertController,
+    public popoverController: PopoverController,
     // public gamificationService: GamificationService,
     @Inject(LOCALE_ID) private locale: string,
     ) {
@@ -115,6 +120,31 @@ export class JournalPage implements OnInit {
     });
   }
 
+  ionViewDidEnter() {
+    this.firestore
+      .collection('users/')
+      .doc(this.userId)
+      .get()
+      .subscribe((res) => {
+        this.tutorial = res.data()['showTutorial'];
+
+        if (this.tutorial == true) {
+          this.presentPopover();
+        }
+      });
+  }
+
+
+  async presentPopover() {
+    const popover = await this.popoverController.create({
+      cssClass: 'journal-page',
+      component: JournalpageComponent,
+      backdropDismiss: false
+    });
+    return await popover.present();
+  }
+
+
   // Calendar
   // Change current month/week/day
   next() {
@@ -128,15 +158,6 @@ export class JournalPage implements OnInit {
   // Selected date reange and hence title changed
   onViewTitleChanged(title) {
     this.viewTitle = title;
-  }
-
-  cek(e) {
-    // let array = [];
-    // for (let i = 0; i < e.length; i++) {
-    //   array.push(e[i].title);
-    // }
-    // console.log(array);
-    console.log(e);
   }
 
   // Calendar event was clicked

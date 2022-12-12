@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import {AngularFirestore} from "@angular/fire/compat/firestore";
 import {Router} from "@angular/router";
-import {LoadingController, ModalController} from "@ionic/angular";
+import {LoadingController, ModalController, PopoverController} from "@ionic/angular";
 import firebase from "firebase/compat/app";
 import {GamificationService} from "../../shared/gamification.service";
+import {PopoverComponent} from "../../components/popover/popover.component";
+import {ShoppageComponent} from "../../components/popover/shoppage/shoppage.component";
 
 @Component({
   selector: 'app-shop',
@@ -13,6 +15,8 @@ import {GamificationService} from "../../shared/gamification.service";
 export class ShopPage implements OnInit {
   userId: any;
   displayName: string;
+
+  tutorial: boolean;
 
   skinItem: string;
   houseItem: string;
@@ -107,6 +111,7 @@ export class ShopPage implements OnInit {
     private router: Router,
     private modalController: ModalController,
     private loadingCtrl: LoadingController,
+    public popoverController: PopoverController,
     private gamificationService: GamificationService
   ) {
     this.userId = firebase.auth().currentUser.uid;
@@ -241,8 +246,29 @@ export class ShopPage implements OnInit {
   }
 
   ionViewDidEnter() {
+    this.firestore
+      .collection('users/')
+      .doc(this.userId)
+      .get()
+      .subscribe((res) => {
+        this.tutorial = res.data()['showTutorial'];
+
+        if (this.tutorial == true) {
+          this.presentPopover();
+        }
+      });
+
     this.gamificationService.UserLevelUp();
     console.log('ionViewDidEnter');
+  }
+
+  async presentPopover() {
+    const popover = await this.popoverController.create({
+      cssClass: 'shop-page',
+      component: ShoppageComponent,
+      backdropDismiss: false
+    });
+    return await popover.present();
   }
 
   async showLoading() {

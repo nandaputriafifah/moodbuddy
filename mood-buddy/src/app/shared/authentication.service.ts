@@ -8,6 +8,7 @@ import auth = firebase.auth;
 import {Gamification} from "./gamification";
 import {CheckIn} from "./check-in";
 import {Items} from "./items";
+import {DailyRewards} from "./daily-rewards";
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,12 @@ export class AuthenticationService {
   houseId: any;
   accId: any;
   toyId: any;
+
+  tomorrow;
+  tomorrowDay;
+  tomorrowMonth;
+  tomorrowYear;
+  tomorrowDate;
 
   tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
   currDate = (new Date(Date.now() - this.tzoffset)).toISOString().slice(0, -1);
@@ -46,6 +53,7 @@ export class AuthenticationService {
   SignIn(email, password) {
     return this.ngFireAuth.signInWithEmailAndPassword(email, password);
   }
+
   // Register user with email, password, name
   RegisterUser(email, password, name) {
     return this.ngFireAuth.createUserWithEmailAndPassword(email, password).then((result) => {
@@ -58,7 +66,8 @@ export class AuthenticationService {
         email: result.user.email,
         displayName: name,
         emailVerified: result.user.emailVerified,
-        moodCount: 0
+        moodCount: 0,
+        showTutorial: true
       };
       return userRef.set(userData, {
         merge: true,
@@ -77,6 +86,8 @@ export class AuthenticationService {
         this.SetUserOwnedItems();
         this.SetUserAppliedItems();
         this.SetUserGamificationItems();
+        this.SetDailyReward();
+        this.createNextDailyReward();
         this.SetUserMoodCheckInCounter();
         this.router.navigate(['verify-email']);
       })
@@ -104,10 +115,12 @@ export class AuthenticationService {
     const user = JSON.parse(localStorage.getItem('user'));
     return user.emailVerified !== false ? true : false;
   }
+
   // Sign in with Gmail
   GoogleAuth() {
     return this.AuthLogin(new auth.GoogleAuthProvider());
   }
+
   // Auth providers
   AuthLogin(provider) {
     return this.ngFireAuth
@@ -127,6 +140,8 @@ export class AuthenticationService {
           this.SetUserOwnedItems();
           this.SetUserAppliedItems();
           this.SetUserGamificationItems();
+          this.SetDailyReward();
+          this.createNextDailyReward();
           this.SetUserMoodCheckInCounter();
         }
         console.log(result.user.metadata);
@@ -148,7 +163,8 @@ export class AuthenticationService {
       email: user.email,
       displayName: user.displayName,
       emailVerified: user.emailVerified,
-      moodCount: 0
+      moodCount: 0,
+      showTutorial: true
     };
     return userRef.set(userData, {
       merge: true,
@@ -169,7 +185,7 @@ export class AuthenticationService {
     const userGamification: Gamification = {
       levels: 1,
       points: 0,
-      coins: 50,
+      coins: 0,
       badges: {
         badge_id: '',
         // badge_name: '',
@@ -511,6 +527,49 @@ export class AuthenticationService {
       },
     };
     return userAppliedItemsRef.set(userAppliedItems);
+  }
+
+  SetDailyReward() {
+    this.userId = firebase.auth().currentUser.uid;
+    const userDailyRewardRef: AngularFirestoreDocument<any> = this.afStore
+      .collection('/users/')
+      .doc(this.userId)
+      .collection('userDailyReward/')
+      .doc(this.currDate.split('T')[0])
+
+    const userDailyReward: DailyRewards = {
+      reward_id: 1,
+      name_reward: 'Day 1',
+      date_reward: this.currDate.split('T')[0],
+      reward_coins: 100,
+      claim_reward: false
+    };
+    return userDailyRewardRef.set(userDailyReward);
+  }
+
+  createNextDailyReward () {
+    for (let i = 1; i < 7; i++) {
+      this.tomorrow = new Date(Date.now()).toLocaleDateString();
+      this.tomorrowDay = parseInt(this.tomorrow.split('/')[1], 10) + i;
+      this.tomorrowMonth = this.tomorrow.split('/')[0];
+      this.tomorrowYear = this.tomorrow.split('/')[2];
+      this.tomorrowDate = `${this.tomorrowYear}-${this.tomorrowMonth}-${this.tomorrowDay}`;
+
+      console.log('TOMORROW DATE: ' + this.tomorrowDate);
+
+      this.afStore
+        .collection('/users/')
+        .doc(this.userId)
+        .collection('userDailyReward/')
+        .doc(this.tomorrowDate)
+        .set({
+          reward_id: 1 + i,
+          name_reward: `Day ${1 + i}`,
+          date_reward: this.tomorrowDate,
+          reward_coins: 100 + (i * 25),
+          claim_reward: false
+        }, {merge: true});
+    }
   }
 
   SetUserMoodCheckInCounter(){

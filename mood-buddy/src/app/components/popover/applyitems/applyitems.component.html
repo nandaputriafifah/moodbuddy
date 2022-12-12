@@ -1,0 +1,18 @@
+<ion-content class="apply-items" scroll-y="false">
+  <div class="padding-button">
+    <ion-card>
+      <p>Click this button to apply item.</p>
+    </ion-card>
+  </div>
+
+  <ion-card class="card-shop-img">
+    <img src="assets/buddy/acc/Acc%20-%20Collar%20Heart.png" class="img-shop">
+  </ion-card>
+  <ion-text class="card-shop-text">Heart Collar</ion-text><br>
+  <ion-button (click)="ApplyAccessory('acc2_collar');
+                     dismiss();presentCompleteTutorial()"
+              class="button-shop">
+    <ion-text>Apply</ion-text>
+  </ion-button>
+  <img src="assets/click.gif" class="img-gif-click">
+</ion-content>

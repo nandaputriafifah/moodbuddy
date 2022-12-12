@@ -4,4 +4,5 @@ export class User {
   displayName: string;
   emailVerified: boolean;
   moodCount: number;
+  showTutorial: boolean;
 }

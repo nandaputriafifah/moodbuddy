@@ -31,6 +31,52 @@
 <ion-grid>
   <ion-row>
     <ion-card class="card-shop-title">
+      <ion-card-title class="text-shop-title">Accessories</ion-card-title>
+    </ion-card>
+  </ion-row>
+  <ion-row>
+    <ion-col *ngFor="let acc of accList" size="4">
+      <ion-card class="card-shop-img">
+        <img src="{{acc.acc_img}}" class="img-shop">
+      </ion-card>
+      <ion-text class="card-shop-text">{{acc.acc_name}}</ion-text>
+
+      <ion-button *ngIf="acc.acc_level > levels"
+                  [disabled]="acc.acc_level > levels"
+                  class="button-shop">
+        <img src="assets/icon/lock-closed-outline.svg" class="img-shop-locked">
+        <ion-text>Lv. {{acc.acc_level}}</ion-text>
+      </ion-button>
+
+      <ion-button *ngIf="acc.acc_level <= levels && acc.acc_price > 0 && acc.users.acc_apply == false && acc.users.acc_buy == false"
+                  (click)="BuyAccesory(acc.acc_id,acc.acc_name,acc.acc_price, acc.acc_exp)"
+                  class="button-shop">
+        <img src="assets/icon/coin.svg" class="img-shop-coin">
+        <ion-text>{{acc.acc_price}}</ion-text>
+      </ion-button>
+
+      <ion-button *ngIf="acc.acc_level <= levels && acc.users.acc_apply == false && acc.users.acc_buy== true"
+                  (click)="ApplyAccessory(acc.acc_id)"
+                  class="button-shop">
+        <ion-text>Apply</ion-text>
+      </ion-button>
+
+      <ion-button *ngIf="acc.acc_level <= levels && acc.acc_id.split('_')[1] !== 'collar' && acc.users.acc_apply == true && acc.users.acc_buy == true"
+                  (click)="RemoveAccessory(acc.acc_id)"
+                  class="button-remove">
+        <ion-text>Remove</ion-text>
+      </ion-button>
+
+      <ion-button *ngIf="acc.acc_level <= levels && acc.acc_id.split('_')[1] == 'collar' && acc.users.acc_apply == true && acc.users.acc_buy == true"
+                  [disabled]="acc.users.acc_apply == true && acc.users.acc_buy == true"
+                  class="button-shop">
+        <ion-text>Applied</ion-text>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-card class="card-shop-title">
       <ion-card-title class="text-shop-title">Skins</ion-card-title>
     </ion-card>
   </ion-row>
@@ -103,52 +149,6 @@
 
       <ion-button *ngIf="house.house_level <= levels && house.users.house_apply == true && house.users.house_buy == true"
                   [disabled]="house.users.house_apply == true && house.users.house_buy == true"
-                  class="button-shop">
-        <ion-text>Applied</ion-text>
-      </ion-button>
-    </ion-col>
-  </ion-row>
-
-  <ion-row>
-    <ion-card class="card-shop-title">
-      <ion-card-title class="text-shop-title">Accessories</ion-card-title>
-    </ion-card>
-  </ion-row>
-  <ion-row>
-    <ion-col *ngFor="let acc of accList" size="4">
-      <ion-card class="card-shop-img">
-        <img src="{{acc.acc_img}}" class="img-shop">
-      </ion-card>
-      <ion-text class="card-shop-text">{{acc.acc_name}}</ion-text>
-
-      <ion-button *ngIf="acc.acc_level > levels"
-                  [disabled]="acc.acc_level > levels"
-                  class="button-shop">
-        <img src="assets/icon/lock-closed-outline.svg" class="img-shop-locked">
-        <ion-text>Lv. {{acc.acc_level}}</ion-text>
-      </ion-button>
-
-      <ion-button *ngIf="acc.acc_level <= levels && acc.acc_price > 0 && acc.users.acc_apply == false && acc.users.acc_buy == false"
-                  (click)="BuyAccesory(acc.acc_id,acc.acc_name,acc.acc_price, acc.acc_exp)"
-                  class="button-shop">
-        <img src="assets/icon/coin.svg" class="img-shop-coin">
-        <ion-text>{{acc.acc_price}}</ion-text>
-      </ion-button>
-
-      <ion-button *ngIf="acc.acc_level <= levels && acc.users.acc_apply == false && acc.users.acc_buy== true"
-                  (click)="ApplyAccessory(acc.acc_id)"
-                  class="button-shop">
-        <ion-text>Apply</ion-text>
-      </ion-button>
-
-      <ion-button *ngIf="acc.acc_level <= levels && acc.acc_id.split('_')[1] !== 'collar' && acc.users.acc_apply == true && acc.users.acc_buy == true"
-                  (click)="RemoveAccessory(acc.acc_id)"
-                  class="button-remove">
-        <ion-text>Remove</ion-text>
-      </ion-button>
-
-      <ion-button *ngIf="acc.acc_level <= levels && acc.acc_id.split('_')[1] == 'collar' && acc.users.acc_apply == true && acc.users.acc_buy == true"
-                  [disabled]="acc.users.acc_apply == true && acc.users.acc_buy == true"
                   class="button-shop">
         <ion-text>Applied</ion-text>
       </ion-button>

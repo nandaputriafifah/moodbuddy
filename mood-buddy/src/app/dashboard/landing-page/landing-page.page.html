@@ -20,18 +20,65 @@
   </ion-toolbar>
 
   <ion-row>
-    <ion-card class="card-greeting">
-      <ion-card-title class="ion-text-capitalize">Hello, {{displayName}}!</ion-card-title>
-      <ion-card-subtitle>
-        Buddy wants to know, how was your day?
-      </ion-card-subtitle>
-    </ion-card>
+    <ion-col>
+      <ion-card class="card-greeting">
+        <ion-card-title class="ion-text-capitalize">Hello, {{displayName}}!</ion-card-title>
+        <ion-card-subtitle>
+          Buddy wants to know, how was your day?
+        </ion-card-subtitle>
+      </ion-card>
+    </ion-col>
 
-    <ion-card class="card-badge" (click)="GoToBadgesPage()">
-      <img src="assets/icon/badge.png" class="img-badge">
-      <ion-text class="text-badge">Badge</ion-text>
-    </ion-card>
+    <ion-col>
+      <ion-row>
+        <ion-card class="card-badge" (click)="GoToBadgesPage()">
+          <img src="assets/icon/badge.png" class="img-badge">
+        </ion-card>
+      </ion-row>
+      <ion-row>
+        <ion-card class="card-badge">
+<!--          <ion-button id="open-modal">-->
+            <img id="open-modal" src="assets/icon/treasure-chest.png" class="img-badge">
+<!--          </ion-button>-->
+        </ion-card>
+      </ion-row>
+    </ion-col>
   </ion-row>
+
+  <ion-modal #modal trigger="open-modal">
+    <ng-template>
+      <ion-content>
+        <ion-toolbar>
+          <ion-title>Daily Rewards</ion-title>
+          <ion-buttons slot="end">
+            <ion-button color="light" (click)="modal.dismiss()">Close</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+        <ion-list>
+          <ion-item *ngFor="let dailyr of dailyRewardlist">
+            <ion-avatar slot="start">
+              <ion-img src="https://i.pravatar.cc/300?u=b"></ion-img>
+            </ion-avatar>
+            <ion-label>
+              <h2>{{dailyr.name_reward}}</h2>
+              <p>Reward: {{dailyr.reward_coins}}</p>
+            </ion-label>
+            <img *ngIf="dailyr.claim_reward == true"
+                 src="assets/icon/done.png"
+                 class="img-reward-after">
+            <img *ngIf="dailyr.claim_reward == false"
+                 src="assets/icon/done.png"
+                 class="img-reward-before">
+          </ion-item>
+          <ion-button *ngIf="checkInClaim == false"> Claim </ion-button>
+          <div *ngIf="checkInClaim == true">
+            <ion-text>Come Back Tomorrow!</ion-text> <br>
+            <ion-button [disabled]="checkInClaim == true">Claim</ion-button>
+          </div>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 
   <ion-col size="auto" *ngFor="let mood of Mood">
     <img src="{{mood.moodImg}}" class="img-mood-card" (click)="GoToAddMoodPage()">
@@ -46,6 +93,9 @@
         <img *ngIf="skinItem == skin.skin_id"
              src="{{skin.skin_img}}"
              class="img-buddy">
+      </div>
+      <div class="img-gif-face">
+        <img src="assets/buddy/buddy-face-gif.gif">
       </div>
       <div *ngFor="let acc of accessoriesList">
         <img *ngIf="collarItem == acc.acc_id"
